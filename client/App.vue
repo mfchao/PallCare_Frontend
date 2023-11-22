@@ -1,15 +1,20 @@
 <script setup lang="ts">
+import { usePreferenceStore } from "@/stores/preference";
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 
+
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
+const { isPreferenceViewOn } = usePreferenceStore();
+
+
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
@@ -22,30 +27,39 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <header>
-    <nav>
+  <header >
+    <nav v-if="isLoggedIn && !isPreferenceViewOn">
       <div class="title">
-        <img src="@/assets/images/logo.svg" />
-        <RouterLink :to="{ name: 'Home' }">
-          <h1>Social Media App</h1>
-        </RouterLink>
+        <!-- <img src="@/assets/images/logo.svg" /> -->
       </div>
+      
       <ul>
-        <li>
-          <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
-        </li>
-        <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> Settings </RouterLink>
+        <li v-if="isFamily">
+          <RouterLink :to="{ name: 'ForumF' }" :class="{ underline: currentRouteName == 'ForumF' }"> Forum </RouterLink>
         </li>
         <li v-else>
-          <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
+          <RouterLink :to="{ name: 'ForumP' }" :class="{ underline: currentRouteName == 'ForumP' }"> Forum </RouterLink>
+        </li>
+
+        <li>
+          <RouterLink :to="{ name: 'Diary' }" :class="{ underline: currentRouteName == 'Diary' }"> Diary </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Delay' }" :class="{ underline: currentRouteName == 'Delay' }"> Delay </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Wish' }" :class="{ underline: currentRouteName == 'Wish' }"> Wish </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Letter' }" :class="{ underline: currentRouteName == 'Letter' }"> Letter </RouterLink>
         </li>
       </ul>
     </nav>
-    <article v-if="toast !== null" class="toast" :class="toast.style">
+    <!-- <article v-if="toast !== null" class="toast" :class="toast.style">
       <p>{{ toast.message }}</p>
-    </article>
+    </article> -->
   </header>
+ 
   <RouterView />
 </template>
 
@@ -53,10 +67,12 @@ onBeforeMount(async () => {
 @import "./assets/toast.css";
 
 nav {
-  padding: 1em 2em;
+  padding: 0.5em;
   background-color: lightgray;
-  display: flex;
   align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
 }
 
 h1 {

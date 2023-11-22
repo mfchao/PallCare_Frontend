@@ -8,15 +8,21 @@ export const useUserStore = defineStore(
   () => {
     const currentUsername = ref("");
 
+    // is patient or family
+    const userType = ref("");
+
     const isLoggedIn = computed(() => currentUsername.value !== "");
+
+    // is patient or family state
+    const isFamily = computed(() => userType.value === "family");
 
     const resetStore = () => {
       currentUsername.value = "";
     };
 
-    const createUser = async (username: string, password: string) => {
+    const createUser = async (username: string, password: string, userType: string) => {
       await fetchy("/api/users", "POST", {
-        body: { username, password },
+        body: { username, password, userType },
       });
     };
 
@@ -29,9 +35,12 @@ export const useUserStore = defineStore(
     const updateSession = async () => {
       try {
         const { username } = await fetchy("/api/session", "GET", { alert: false });
+        const { userType } = await fetchy("/api/session", "GET", { alert: false });
         currentUsername.value = username;
+        userType.value = userType;
       } catch {
         currentUsername.value = "";
+        userType.value = "";
       }
     };
 
@@ -52,6 +61,8 @@ export const useUserStore = defineStore(
     return {
       currentUsername,
       isLoggedIn,
+      userType,
+      isFamily,
       createUser,
       loginUser,
       updateSession,
