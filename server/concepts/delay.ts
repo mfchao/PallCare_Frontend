@@ -22,7 +22,7 @@ export interface DelayDoc<T> extends BaseDoc {
   activation: Date;
   otherargs?: any[];
 }
-
+//test
 // export function testBehavior(content: any, other: string) {
 //   console.log(content, other );
 // }
