@@ -2,19 +2,26 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, User, WebSession } from "./app";
+import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
+import { WishDoc } from "./concepts/wish";
 import Responses from "./responses";
 
 class Routes {
+  // ############################################################
+  // session
+  // ############################################################
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     return await User.getUserById(user);
   }
 
+  // ############################################################
+  // user
+  // ############################################################
   @Router.get("/users")
   async getUsers() {
     return await User.getUsers();
@@ -57,6 +64,9 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
+  // ############################################################
+  // post
+  // ############################################################
   @Router.get("/posts")
   async getPosts(author?: string) {
     let posts;
@@ -90,6 +100,9 @@ class Routes {
     return Post.delete(_id);
   }
 
+  // ############################################################
+  // friend
+  // ############################################################
   @Router.get("/friends")
   async getFriends(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
@@ -135,6 +148,44 @@ class Routes {
     const user = WebSession.getUser(session);
     const fromId = (await User.getUserByUsername(from))._id;
     return await Friend.rejectRequest(fromId, user);
+  }
+
+  // ############################################################
+  // wish
+  // ############################################################
+  @Router.get("/wishes")
+  async getWishes(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Responses.wishes(await Wish.getByAuthor(user));
+  }
+
+  @Router.post("/wishes")
+  async createWish(session: WebSessionDoc, content: string, visibility: "public" | ObjectId[] | "private") {
+    const user = WebSession.getUser(session);
+    const created = await Wish.create(user, content, visibility);
+    return { msg: created.msg, wish: await Responses.wish(created.wish) };
+  }
+
+  @Router.patch("/wishes/:_id")
+  async updatewish(session: WebSessionDoc, _id: ObjectId, update: Partial<WishDoc>) {
+    const user = WebSession.getUser(session);
+    await Wish.isAuthor(user, _id);
+    return await Wish.update(_id, update);
+  }
+
+  @Router.delete("/wishes/:_id")
+  async deletewish(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Wish.isAuthor(user, _id);
+    return Wish.delete(_id);
+  }
+
+  // ############################################################
+  // Topic/Forum
+  // ############################################################
+  @Router.get("/topics")
+  async getAllTopics() {
+    //pagination
   }
 }
 
