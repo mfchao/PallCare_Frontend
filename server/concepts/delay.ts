@@ -6,10 +6,16 @@
 //         - *behavior*: *content* → One *function*
 //         - *activation*: content → One Date
 //     - **Actions**
-//         - createDelay (content: set T, behavior: *function, activation: Date, out d: Delay* )
-//         - deleteDelay (content: T)
-//         - checkDelaybyDate (activation: Date, out d: Set Delay)
-//         - checkDelaybyContent (content: T, out d: Delay)
+//         - *createDelay*: *content* → One Delay
+//         - *getDelay*: *content* → One Delay
+//         - *deleteDelay*: *content* → One Delay
+//         - *checkifDelayisOnTime*: *content* → One Boolean
+//         - *getSortedDelaysIndex*: *content* → One Number
+//         - *insertNewDelayIntoSortedDelays*: *content* → One Number
+//         - *getNearestDelay*: *content* → One Delay
+//         - *removeNearestDelay*: *content* → One Delay
+
+
 
 import { ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
@@ -17,8 +23,10 @@ import { NotFoundError } from "./errors";
 
 export interface DelayDoc<T> extends BaseDoc {
   content: ObjectId;
+  type: "Diary" | "Letter"
   // store a function in the behavior, although args are not all known
-  behavior: Function;
+  // behavior: Function;
+  behavior: "add" | "delete" | "reveal" | "hide"
   activation: Date;
   otherargs?: any[];
 }
@@ -26,20 +34,21 @@ export interface DelayDoc<T> extends BaseDoc {
 // export function testBehavior(content: any, other: string) {
 //   console.log(content, other );
 // }
+
 export default class DelayConcept<T> {
   public readonly Delays = new DocCollection<DelayDoc<T>>("Delays");
   // create a array of Date
   public readonly SortedDelaysTime =  new Array<Date>();
   public readonly SortedDelays = new Array<DelayDoc<T>>();
 
-  async createDelay(content: ObjectId, behavior: Function, activation: Date) {
-    const _id = await this.Delays.createOne({ content, behavior, activation });
+  async createDelay(content: ObjectId, behavior: "add" | "delete" | "reveal" | "hide" , activation: Date, otherargs?: any[]) {
+    const _id = await this.Delays.createOne({ content, behavior, activation, otherargs });
     // push the delay to the SortedDelays by comparing the activation time
     const newdelay = await this.Delays.readOne({ _id });
     if (newdelay === null) {
       throw new NotFoundError("New Delay did not create", _id);
     }
-    await this.insertNewDelayIntoSortedDelays(newdelay);
+    // await this.insertNewDelayIntoSortedDelays(newdelay);
     return { msg: "Created Delay!", delay: await this.Delays.readOne({ _id }) };
   }
 
@@ -69,10 +78,24 @@ export default class DelayConcept<T> {
     // delete the delay from doc
     await this.Delays.deleteOne({ _id });
     // delete the delay from SortedDelays
-    const index = this.SortedDelays.indexOf(thedelay);
-    this.SortedDelays.splice(index, 1);
-    this.SortedDelaysTime.splice(index, 1);
+    // const index = this.SortedDelays.indexOf(thedelay);
+    // this.SortedDelays.splice(index, 1);
+    // this.SortedDelaysTime.splice(index, 1);
     return { msg: "Deleted Delay!" };
+  }
+
+  async updateDelayActivation(_id: ObjectId, newactivation: Date) {
+    // update the activation time of the delay
+    const thedelay = await this.Delays.readOne({ _id });
+    if (thedelay === null) {
+      throw new NotFoundError("No such delay", _id);
+    }
+    // update the activation time of the delay
+    await this.Delays.updateOne({ _id }, { activation: newactivation });
+    // update the activation time of the SortedDelays
+    // const index = this.SortedDelays.indexOf(thedelay);
+    // this.SortedDelaysTime[index] = newactivation;
+    return { msg: "Updated Delay Activation!" };
   }
 
   async checkifDelayisOnTime(id: ObjectId, activation: Date) {
@@ -132,6 +155,8 @@ export default class DelayConcept<T> {
 // }
 
 // Everything is fine, do your work
+
+
   // async testDelay(content: T) {
   //   // test the createDelay function using a lambda function
   //   const afunction = testBehavior;
