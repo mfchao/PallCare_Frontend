@@ -12,10 +12,16 @@ const password = route.params.password[0];
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
+<<<<<<< Updated upstream
 const { createUser, loginUser, updateSession, isFamily } = useUserStore();
 
 
 
+=======
+const { updateUser, getUserType } = useUserStore();
+const { setOn } = usePreferenceStore();
+const { showNav} = storeToRefs(usePreferenceStore());
+>>>>>>> Stashed changes
 
 
 async function preferences() {
@@ -37,6 +43,16 @@ async function preferences() {
     }
 }
 
+<<<<<<< Updated upstream
+=======
+
+
+onBeforeMount(() => {
+  setOn();
+});
+
+
+>>>>>>> Stashed changes
 </script>
 
 <template>

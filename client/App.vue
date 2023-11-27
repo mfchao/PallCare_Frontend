@@ -12,8 +12,18 @@ const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
+<<<<<<< Updated upstream
 const { isPreferenceViewOn } = usePreferenceStore();
 
+=======
+const { showNav} = storeToRefs(usePreferenceStore());
+const { logoutUser} = useUserStore();
+
+async function logout() {
+  await logoutUser();
+  void router.push({ name: "Home" });
+}
+>>>>>>> Stashed changes
 
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -23,7 +33,17 @@ onBeforeMount(async () => {
   } catch {
     // User is not logged in
   }
+<<<<<<< Updated upstream
 });
+=======
+
+});
+
+
+
+
+
+>>>>>>> Stashed changes
 </script>
 
 <template>

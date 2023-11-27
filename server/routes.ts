@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
+import { Friend, Mood, Post, Topic, User, WebSession, Wish } from "./app";
+import { MoodDoc } from "./concepts/mood";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -186,6 +187,54 @@ class Routes {
   @Router.get("/topics")
   async getAllTopics() {
     //pagination
+  }
+
+  // ############################################################
+  // Mood
+  // ############################################################
+  @Router.post("/moods")
+  async createMood(session: WebSessionDoc, mood: string, notify: boolean, viewers?: ObjectId[]) {
+    const user = WebSession.getUser(session);
+    return await Mood.create(user, mood, notify, viewers);
+  }
+
+  @Router.patch("/moods/:_id")
+  async updateMood(session: WebSessionDoc, _id: ObjectId, update: Partial<MoodDoc>) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.update(_id, update);
+  }
+
+  @Router.get("/moods")
+  async getMoods(owner?: string) {
+    let moods;
+    if (owner) {
+      const id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(id);
+    } else {
+      moods = await Mood.getMoods({});
+    }
+    return moods;
+  }
+
+  @Router.delete("/moods/:_id")
+  async deleteMood(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return Mood.delete(_id);
+  }
+
+  @Router.patch("/moods/:_id/addViewers")
+  async addViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Mood.addViewer(user, viewer);
+  }
+
+  @Router.patch("/moods/:_id/removeViewers")
+  async removeViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.removeViewer(user, viewer);
   }
 }
 

@@ -6,6 +6,18 @@ import router from "@/router";
 async function goHome() {
   void router.push({ name: "Home" });
 }
+<<<<<<< Updated upstream
+=======
+
+onBeforeMount(() => {
+  setOn();
+});
+
+
+
+
+
+>>>>>>> Stashed changes
 </script>
 
 <template>
