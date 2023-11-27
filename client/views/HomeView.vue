@@ -35,13 +35,17 @@ async function registerUser() {
            </div>
     
           <div class="forms fade-in">
-            <h1>Welcome to Palliative Care App</h1>
-            <div class="info">
-                info...
+            <div class="welcometitle>">
+              <h1>Welcome to Palliative Care App</h1>
             </div>
+            
+            <div class="info">
+              <img src="@/assets/images/placeholderimage0.png" width="300"/>
+            </div>
+
             <div class="button-container">
-              <button @click="loginUser" > LOGIN</button>
-              <button @click="registerUser"> REGISTER</button>
+              <button @click="loginUser" ><p class="login">LOGIN</p></button>
+              <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
             </div>
             
             
@@ -64,13 +68,32 @@ async function registerUser() {
   }
   
 .info {
-    padding: 3em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.welcometitle {
+  width: 299px;
+  height: 100px;
+}
+
   
 h1 {
-text-align: center;
-letter-spacing: 0.03em;
-font-size: 1.2em;
+  display: flex;
+  width: 350px;
+
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  text-align: center;
+  font-family: New York;
+  font-size: 30px;
+  font-style: italic;
+  font-weight: 496;
+  line-height: normal;
+  text-transform: uppercase;
 }
 
 * {
@@ -78,29 +101,66 @@ transition: all 0.5s ease;
 }
 
 .button-container {
-margin-top: 25px;
+/* margin-top: 25px;
 display: flex;
 justify-content: center;
 gap: 30px;
-margin-bottom: 20px;
+margin-bottom: 20px; */
+display: flex;
+width: 290px;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: var(--numbers-spacing-16, 16px);
 }
 
 button {
 -webkit-backdrop-filter: blur(8px);  /* Safari 9+ */
 backdrop-filter: blur(8px); /* Chrome and Opera */
 box-shadow: 0px 2px 10px 2px rgb(0 0 0 / 15%);
-background: rgba(255, 255, 255, 0.09); 
+/* background: rgba(255, 255, 255, 0.09); 
     color: black;
     border: none;
-    padding: 0.8em;
+    padding: 0.8em; */
 border-radius: 10px;
-    font: "SF-Compact-Medium";
+font-family: SF Pro Display;
 letter-spacing: 0.08em;
 font-size: 0.8em;
     cursor: pointer;
     outline: inherit;
 text-transform: uppercase;
 transition: .3s ease;
+display: flex;
+width: 290px;
+height: 55px;
+padding: 18px 105px;
+border:none;
+justify-content: center;
+align-items: center;
+gap: 80px;
+border-radius: 33px;
+background: #131313;
+}
+button.bluebutton {
+  background: #9FB9C7;
+}
+p.login {
+  color: #FFF;
+  text-align: center;
+  
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+p.Register {
+  color: #131313;
+  text-align: center;
+  font-family: SF Pro Display;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 button:hover {
@@ -193,15 +253,19 @@ animation: fadein 0.2s linear forwards;
 
 .forms {
 position: absolute;
-top: 50%;
+top: 40%;
 left: 50%;
 transform: translate(-50%, -50%);
 width: 100%;
+height: 120%;
 display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
 z-index: 10;
+gap: 57px;
+/* display: inline-flex; */
+background: #F0E7D8;
 }
 
 main {
