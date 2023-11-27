@@ -2,10 +2,29 @@
 
 import router from "@/router";
 
+import { usePreferenceStore } from "@/stores/preference";
+import { storeToRefs } from "pinia";
+import { onBeforeMount } from "vue";
+
+
+const { setOn, setOff } = usePreferenceStore();
+const { showNav} = storeToRefs(usePreferenceStore());
+
 
 async function goHome() {
+  setOff();
   void router.push({ name: "Home" });
 }
+
+onBeforeMount(() => {
+  setOn();
+});
+
+console.log(showNav);
+
+
+
+
 </script>
 
 <template>

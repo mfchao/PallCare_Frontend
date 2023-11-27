@@ -20,9 +20,9 @@ export const useUserStore = defineStore(
       currentUsername.value = "";
     };
 
-    const createUser = async (username: string, password: string, userType: string) => {
+    const createUser = async (username: string, password: string) => {
       await fetchy("/api/users", "POST", {
-        body: { username, password, userType },
+        body: { username, password },
       });
     };
 
@@ -35,13 +35,19 @@ export const useUserStore = defineStore(
     const updateSession = async () => {
       try {
         const { username } = await fetchy("/api/session", "GET", { alert: false });
-        const { userType } = await fetchy("/api/session", "GET", { alert: false });
         currentUsername.value = username;
-        userType.value = userType;
       } catch {
         currentUsername.value = "";
-        userType.value = "";
       }
+    };
+
+    const getUserType = async () => {
+      const { userType: fetchedUserType } = await fetchy(`/api/users/${currentUsername.value}`, "GET");
+      userType.value = fetchedUserType;
+    };
+
+    const getUsers = async () => {
+      return await fetchy(`/api/users`, "GET");
     };
 
     const logoutUser = async () => {
@@ -66,6 +72,8 @@ export const useUserStore = defineStore(
       createUser,
       loginUser,
       updateSession,
+      getUserType,
+      getUsers,
       logoutUser,
       updateUser,
       deleteUser,
