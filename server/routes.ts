@@ -2,9 +2,9 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
+import { Friend, Mood, Post, User, WebSession, Wish } from "./app";
+import { MoodDoc } from "./concepts/mood";
 import { PostDoc, PostOptions } from "./concepts/post";
-import { TopicDoc } from "./concepts/topic";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
 import { WishDoc } from "./concepts/wish";
@@ -28,15 +28,9 @@ class Routes {
     return await User.getUsers();
   }
 
-  // @Router.get("/users/:username")
-  // async getUser(username: string) {
-  //   return await User.getUserByUsername(username);
-  // }
-
   @Router.get("/users/:username")
-  async getUserType(username: string) {
-    const userType = await User.getUserType(username);
-    return { userType };
+  async getUser(username: string) {
+    return await User.getUserByUsername(username);
   }
 
   @Router.post("/users")
@@ -191,46 +185,56 @@ class Routes {
   // Topic/Forum
   // ############################################################
   @Router.get("/topics")
-  async getTopics(page?: number, pagesize?: number) {
-    // default page = 1, pagesize = 10
-    const currentPage = page || 1;
-    const pageSize = pagesize || 10;
-    const totoalCount = await Topic.topics.count({});
-    const pageCount = Math.ceil(totoalCount / pageSize);
-    return { topics: await Topic.getNextTopics(currentPage, pageSize), page: currentPage, pageSize: pageSize, totalPage: pageCount, totalCount: totoalCount };
+  async getAllTopics() {
+    //pagination
   }
 
-  @Router.post("/topics")
-  async createTopic(session: WebSessionDoc, title: string, content: string) {
+  // ############################################################
+  // Mood
+  // ############################################################
+  @Router.post("/moods")
+  async createMood(session: WebSessionDoc, mood: string, notify: boolean, viewers?: ObjectId[]) {
     const user = WebSession.getUser(session);
-    const created = await Topic.create(user, title, content);
-    return { msg: created.msg, topic: await Responses.topic(created.topic) };
+    return await Mood.create(user, mood, notify, viewers);
   }
 
-  @Router.patch("/topics/:_id")
-  async updateTopic(session: WebSessionDoc, _id: ObjectId, update: Partial<TopicDoc>) {
+  @Router.patch("/moods/:_id")
+  async updateMood(session: WebSessionDoc, _id: ObjectId, update: Partial<MoodDoc>) {
     const user = WebSession.getUser(session);
-    await Topic.isAuthor(user, _id);
-    return await Topic.update(_id, update);
+    await Mood.isOwner(user);
+    return await Mood.update(_id, update);
   }
 
-  @Router.delete("/topics/:_id")
-  async deleteTopic(session: WebSessionDoc, _id: ObjectId) {
+  @Router.get("/moods")
+  async getMoods(owner?: string) {
+    let moods;
+    if (owner) {
+      const id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(id);
+    } else {
+      moods = await Mood.getMoods({});
+    }
+    return moods;
+  }
+
+  @Router.delete("/moods/:_id")
+  async deleteMood(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    await Topic.isAuthor(user, _id);
-    return Topic.delete(_id);
+    await Mood.isOwner(user);
+    return Mood.delete(_id);
   }
 
-  @Router.post("/topic/:_id/post")
-  async addPostToTopic(_id: ObjectId, post: ObjectId) {
-    return await Topic.addPost(_id, post);
-  }
-
-  @Router.delete("topic/:_id/post")
-  async removePostFromTopic(session: WebSessionDoc, _id: ObjectId, post: ObjectId) {
+  @Router.patch("/moods/:_id/addViewers")
+  async addViewer(session: WebSessionDoc, viewer: ObjectId) {
     const user = WebSession.getUser(session);
-    await Post.isAuthor(user, post);
-    return await Topic.removePost(_id, post);
+    return await Mood.addViewer(user, viewer);
+  }
+
+  @Router.patch("/moods/:_id/removeViewers")
+  async removeViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.removeViewer(user, viewer);
   }
 }
 
