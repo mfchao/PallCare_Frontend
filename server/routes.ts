@@ -4,6 +4,7 @@ import { Router, getExpressRouter } from "./framework/router";
 
 import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
+import { TopicDoc } from "./concepts/topic";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
 import { WishDoc } from "./concepts/wish";
@@ -184,8 +185,46 @@ class Routes {
   // Topic/Forum
   // ############################################################
   @Router.get("/topics")
-  async getAllTopics() {
-    //pagination
+  async getTopics(page?: number, pagesize?: number) {
+    // default page = 1, pagesize = 10
+    const currentPage = page || 1;
+    const pageSize = pagesize || 10;
+    const totoalCount = await Topic.topics.count({});
+    const pageCount = Math.ceil(totoalCount / pageSize);
+    return { topics: await Topic.getNextTopics(currentPage, pageSize), page: currentPage, pageSize: pageSize, totalPage: pageCount, totalCount: totoalCount };
+  }
+
+  @Router.post("/topics")
+  async createTopic(session: WebSessionDoc, title: string, content: string) {
+    const user = WebSession.getUser(session);
+    const created = await Topic.create(user, title, content);
+    return { msg: created.msg, topic: await Responses.topic(created.topic) };
+  }
+
+  @Router.patch("/topics/:_id")
+  async updateTopic(session: WebSessionDoc, _id: ObjectId, update: Partial<TopicDoc>) {
+    const user = WebSession.getUser(session);
+    await Topic.isAuthor(user, _id);
+    return await Topic.update(_id, update);
+  }
+
+  @Router.delete("/topics/:_id")
+  async deleteTopic(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Topic.isAuthor(user, _id);
+    return Topic.delete(_id);
+  }
+
+  @Router.post("/topic/:_id/post")
+  async addPostToTopic(_id: ObjectId, post: ObjectId) {
+    return await Topic.addPost(_id, post);
+  }
+
+  @Router.delete("topic/:_id/post")
+  async removePostFromTopic(session: WebSessionDoc, _id: ObjectId, post: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Post.isAuthor(user, post);
+    return await Topic.removePost(_id, post);
   }
 }
 
