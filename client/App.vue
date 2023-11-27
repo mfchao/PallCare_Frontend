@@ -14,7 +14,7 @@ const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
-const { isPreferenceViewOn } = usePreferenceStore();
+const { showNav} = storeToRefs(usePreferenceStore());
 const { logoutUser} = useUserStore();
 
 
@@ -30,19 +30,14 @@ onBeforeMount(async () => {
   }}else {
     logout();
   }
+  console.log(showNav);
+
 });
 
 async function logout() {
   await logoutUser();
   void router.push({ name: "Home" });
 }
-const hideNavbar = computed(() => {
-  if (currentRouteName.value == "AccountType" || "PreferenceF" || "PreferenceP") {
-    return true;
-  } else {
-    return false;
-  }
-});
 
 
 
@@ -50,7 +45,7 @@ const hideNavbar = computed(() => {
 
 <template>
   <header >
-    <nav v-if="isLoggedIn && !hideNavbar">
+    <nav v-if="isLoggedIn && !showNav">
       <div class="title">
         <!-- <img src="@/assets/images/logo.svg" /> -->
       </div>

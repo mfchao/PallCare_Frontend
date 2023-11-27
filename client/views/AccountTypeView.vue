@@ -4,6 +4,9 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
+
+import { usePreferenceStore } from "@/stores/preference";
+import { onBeforeMount } from "vue";
 import { useRoute } from 'vue-router';
 
 
@@ -17,6 +20,8 @@ const patient = ref(false);
 const userType = ref("");
 const { isFamily, updateUser, getUserType, getUsers } = useUserStore();
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { isPreferenceViewOn, setOn } = usePreferenceStore();
+const { showNav} = storeToRefs(usePreferenceStore());
 
 
 async function preferences() {
@@ -35,6 +40,14 @@ async function preferences() {
     void router.push({ name: "PreferenceP" });
   }
 }
+
+console.log(showNav);
+
+
+onBeforeMount(() => {
+  setOn();
+});
+
 
 </script>
 
