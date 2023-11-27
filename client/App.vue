@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import router from "@/router";
 import { usePreferenceStore } from "@/stores/preference";
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user";
@@ -8,59 +7,38 @@ import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 
 
-
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 const { isPreferenceViewOn } = usePreferenceStore();
-const { logoutUser} = useUserStore();
-
 
 
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
-  if(isLoggedIn.value)  {
   try {
     await userStore.updateSession();
   } catch {
     // User is not logged in
-  }}else {
-    logout();
   }
 });
-
-async function logout() {
-  await logoutUser();
-  void router.push({ name: "Home" });
-}
-const hideNavbar = computed(() => {
-  if (currentRouteName.value == "AccountType" || "PreferenceF" || "PreferenceP") {
-    return true;
-  } else {
-    return false;
-  }
-});
-
-
-
 </script>
 
 <template>
   <header >
-    <nav v-if="isLoggedIn && !hideNavbar">
+    <nav v-if="isLoggedIn && !isPreferenceViewOn">
       <div class="title">
         <!-- <img src="@/assets/images/logo.svg" /> -->
       </div>
       
       <ul>
         <li v-if="isFamily">
-          <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
+          <RouterLink :to="{ name: 'ForumF' }" :class="{ underline: currentRouteName == 'ForumF' }"> Forum </RouterLink>
         </li>
         <li v-else>
-          <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
+          <RouterLink :to="{ name: 'ForumP' }" :class="{ underline: currentRouteName == 'ForumP' }"> Forum </RouterLink>
         </li>
 
         <li>

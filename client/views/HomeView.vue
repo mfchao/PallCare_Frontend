@@ -6,7 +6,6 @@ import { storeToRefs } from "pinia";
 
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-const { logoutUser} = useUserStore();
 
 
 
@@ -18,10 +17,6 @@ async function registerUser() {
   void router.push({ name: "Register" });
 }
 
-async function logout() {
-  await logoutUser();
-  void router.push({ name: "Home" });
-}
 </script>
 
 <template>
@@ -30,8 +25,8 @@ async function logout() {
 
         <div v-if="isLoggedIn" class="home">
           <!-- <h1>This week's SpotLite</h1> -->
-          welcome
-          <button @click="logout">logout</button>
+          <SpotInfoComponent/>
+          <PostListComponent />
         </div>
     
         <div v-else class="relative">
@@ -61,6 +56,7 @@ async function logout() {
 
 <style scoped>
 .home {
+    background-image: url("@/assets/images/gradient2.png");
     background-repeat: no-repeat;
     background-size: fill;
     background-position: center;
