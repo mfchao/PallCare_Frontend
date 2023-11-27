@@ -38,6 +38,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/forum",
+      name: "Forum",
+      component: HomeView,
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/delay",
       name: "Delay",
       component: HomeView,
@@ -84,6 +90,7 @@ const router = createRouter({
       name: "AccountType",
       component: AccountTypeView,
       meta: { requiresAuth: false },
+      props: true,
     },
     {
       path: "/setting",
