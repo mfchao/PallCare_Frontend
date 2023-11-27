@@ -1,7 +1,9 @@
 import DelayConcept from "./concepts/delay";
+import DiaryConcept from "./concepts/diary";
 import FriendConcept from "./concepts/friend";
 import LetterConcept from "./concepts/letter";
 import PostConcept from "./concepts/post";
+import PreferenceConcept from "./concepts/preferences";
 import TopicConcept from "./concepts/topic";
 import UserConcept from "./concepts/user";
 import WebSessionConcept from "./concepts/websession";
@@ -16,3 +18,5 @@ export const Wish = new WishConcept();
 export const Topic = new TopicConcept();
 export const Delay = new DelayConcept();
 export const Letter = new LetterConcept();
+export const Diary = new DiaryConcept();
+export const Preference = new PreferenceConcept();

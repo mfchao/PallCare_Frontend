@@ -2,12 +2,20 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
+import { Delay, Diary, Friend, Letter, Post, User, WebSession, Wish } from "./app";
+import { NotAllowedError } from "./concepts/errors";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
 import { WishDoc } from "./concepts/wish";
 import Responses from "./responses";
+
+//===============================================================
+// HELPER FUNCTIONS FOR ROUTES
+//===============================================================
+async function timeCapsuleByOwner(user: ObjectId) {
+  return (await Delay.getDelaysByOwner(user)).filter((delay) => Delay.isTimeCapsule(delay._id));
+}
 
 class Routes {
   // ############################################################
@@ -186,6 +194,170 @@ class Routes {
   @Router.get("/topics")
   async getAllTopics() {
     //pagination
+  }
+  // ############################################################
+  // Diary
+  // ############################################################
+  @Router.post("/diaries")
+  async createDiary(session: WebSessionDoc, content: string) {
+    const user = WebSession.getUser(session);
+    return await Diary.create(user, content);
+  }
+
+  @Router.get("/diaries/entries/:author")
+  async getEntriesByAuthor(session: WebSessionDoc, author: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Diary.getEntriesByAuthor(user, author);
+  }
+
+  @Router.get("/diaries/:_id")
+  async getDiaryById(_id: ObjectId) {
+    return await Diary.getEntryById(_id);
+  }
+
+  @Router.get("/diaries/revealed/:_id")
+  async isDiaryHidden(_id: ObjectId) {
+    return await Diary.isHidden(_id);
+  }
+
+  @Router.delete("/diaries/:_id")
+  async deleteDiary(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Diary.checkRep(user, _id);
+    return await Diary.delete(_id);
+  }
+
+  @Router.patch("/diaries/:_id&content")
+  async modifyDiaryContent(session: WebSessionDoc, _id: ObjectId, content: string) {
+    const user = WebSession.getUser(session);
+    await Diary.checkRep(user, _id);
+    const update = { content };
+    return await Diary.update(_id, update);
+  }
+
+  @Router.patch("/diaries/reveal/:_id")
+  async revealDiary(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Diary.checkRep(user, _id);
+    const update = { revealed: true };
+    return await Diary.update(_id, update);
+  }
+
+  @Router.patch("/diaries/hide/:_id")
+  async hideDiary(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Diary.checkRep(user, _id);
+    const update = { revealed: false };
+    return await Diary.update(_id, update);
+  }
+  // ############################################################
+  // Delay
+  // ############################################################
+  @Router.post("/delay")
+  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+    const user = WebSession.getUser(session);
+    return await Delay.create(user, content, type, behavior, activation);
+  }
+
+  @Router.get("/delay/:_id")
+  async getDelayById(_id: ObjectId) {
+    return await Delay.getDelayByContent(_id);
+  }
+
+  @Router.get("/delay/content/:_id")
+  async getDelayByContent(content: ObjectId) {
+    return await Delay.getDelayByContent(content);
+  }
+
+  @Router.get("/delay/owner")
+  async getDelaysByUser(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Delay.getDelaysByOwner(user);
+  }
+
+  @Router.get("/delay/expired/:_id")
+  async isDelayExpired(_id: ObjectId) {
+    return await Delay.isExpired(_id);
+  }
+
+  @Router.delete("delay/:_id")
+  async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Delay.checkRep(user, _id);
+    return await Delay.delete(_id);
+  }
+
+  /**System function**/
+  @Router.delete("/delay/executed/:_id")
+  async executeDelay(_id: ObjectId) {
+    const delay = await Delay.getDelayById(_id);
+    await Delay.delete(_id); // want to delete Delay upon execution (whether it throws error or not)
+    switch (delay.type) {
+      case "Diary":
+        switch (delay.behavior) {
+          case "hide":
+            return await Diary.update(delay.content, { revealed: false });
+          case "reveal":
+            return await Diary.update(delay.content, { revealed: true });
+          case "delete":
+            return await Diary.delete(delay.content);
+          default:
+            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
+        }
+      case "Letter":
+        switch (delay.behavior) {
+          case "send":
+            return await Letter.sendLetter(delay.content);
+          case "delete":
+            return await Letter.deleteLetter_server(delay.content);
+          default:
+            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+        }
+      default:
+        throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+    }
+  }
+
+  @Router.patch("/delay/activation/:_id&time")
+  async updateDelayExpiration(session: WebSessionDoc, _id: ObjectId, activation: Date) {
+    const user = WebSession.getUser(session);
+    await Delay.checkRep(user, _id);
+    return await Delay.updateActivation(_id, activation);
+  }
+
+  // ############################################################
+  // Time Capsule: Delay + Diary + Letter
+  // ############################################################
+  @Router.post("/delay/timecapsule")
+  async addToTimeCapsule(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter") {
+    const user = WebSession.getUser(session);
+    const behavior = type === "Diary" ? "reveal" : "send";
+    return await Delay.create(user, content, type, behavior, new Date(0));
+  }
+
+  @Router.get("delay/timecapsule")
+  async getUserTimeCapsule(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await timeCapsuleByOwner(user);
+  }
+
+  /**System function**/
+  @Router.delete("delay/timecapsule")
+  async releaseTimeCapsule(user: ObjectId) {
+    const timeCapsule = await timeCapsuleByOwner(user);
+    for (const delay of timeCapsule) {
+      await Delay.delete(delay._id);
+      switch (delay.type) {
+        case "Diary":
+          await Diary.update(delay.content, { revealed: true });
+          break;
+        case "Letter":
+          await Letter.sendLetter(delay.content);
+          break;
+        default:
+          throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+      }
+    }
   }
 }
 

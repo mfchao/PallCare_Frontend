@@ -39,8 +39,7 @@ export default class DiaryConcept {
    * @param newContent updated content to associate w/ a diary entry
    * @returns updates 'this.diaries.content' to 'newContent'
    */
-  async updateDiary(user: ObjectId, _id: ObjectId, update: Partial<DiaryDoc>) {
-    await this.checkRep(user, _id);
+  async update(_id: ObjectId, update: Partial<DiaryDoc>) {
     await this.diaries.updateOne({ _id }, update);
     return { msg: "Updated diary entry." };
   }
@@ -50,8 +49,7 @@ export default class DiaryConcept {
    * @param _id ObjectId associated with a specific diary entry
    * @returns deletes diary w/ '_id' from 'this.diaries'
    */
-  async delete(user: ObjectId, _id: ObjectId) {
-    await this.checkRep(user, _id);
+  async delete(_id: ObjectId) {
     await this.diaries.deleteOne({ _id });
     return { msg: "Deleted diary entry." };
   }
@@ -68,6 +66,14 @@ export default class DiaryConcept {
       allEntries = allEntries.filter((diary) => diary.revealed);
     }
     return allEntries;
+  }
+
+  async getEntryById(_id: ObjectId) {
+    const entry = await this.diaries.readOne({ _id });
+    if (!entry) {
+      throw new NotFoundError("No Diary associated with given id.");
+    }
+    return entry;
   }
 
   /**
