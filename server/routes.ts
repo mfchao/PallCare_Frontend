@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, Topic, User, WebSession, Wish } from "./app";
+import { Friend, Post, User, WebSession, Wish } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -27,15 +27,21 @@ class Routes {
     return await User.getUsers();
   }
 
+  // @Router.get("/users/:username")
+  // async getUser(username: string) {
+  //   return await User.getUserByUsername(username);
+  // }
+
   @Router.get("/users/:username")
-  async getUser(username: string) {
-    return await User.getUserByUsername(username);
+  async getUserType(username: string) {
+    const userType = await User.getUserType(username);
+    return { userType };
   }
 
   @Router.post("/users")
-  async createUser(session: WebSessionDoc, username: string, password: string, userType: string) {
+  async createUser(session: WebSessionDoc, username: string, password: string) {
     WebSession.isLoggedOut(session);
-    return await User.create(username, password, userType);
+    return await User.create(username, password);
   }
 
   @Router.patch("/users")

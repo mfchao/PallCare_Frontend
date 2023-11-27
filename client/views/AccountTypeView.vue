@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
+
 import { useRoute } from 'vue-router';
 
 
 const route = useRoute();
-const username = route.params.username[0];
-const password = route.params.password[0];
+// const username = route.params.username as string;
+// const password = route.params.password as string;
+
 
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
-const { createUser, loginUser, updateSession, isFamily } = useUserStore();
-
-
-
+const { isFamily, updateUser, getUserType, getUsers } = useUserStore();
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
 async function preferences() {
@@ -25,16 +26,14 @@ async function preferences() {
     userType.value = "patient";
   }
 
-  await createUser(username, password, userType.value);
-  await loginUser(username, password);
+  await updateUser({ userType: userType.value });
+  void getUserType();
 
-  void updateSession();
-
-    if (isFamily) {
-        void router.push({ name: "PreferenceF" });
-    } else {
-        void router.push({ name: "PreferenceP" });
-    }
+  if (family.value) {
+      void router.push({ name: "PreferenceF" });
+  } else if (patient.value) {
+    void router.push({ name: "PreferenceP" });
+  }
 }
 
 </script>
