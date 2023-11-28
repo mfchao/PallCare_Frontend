@@ -20,7 +20,9 @@ onBeforeMount(() => {
   setOn();
 });
 
-console.log(showNav);
+async function accountType() {
+  void router.push({ name: "AccountType" });
+}
 
 
 
@@ -29,6 +31,8 @@ console.log(showNav);
 
 <template>
   <main>
+    <img @click="accountType" src="@/assets/images/back.svg"/>
+
     <h1>Preference View Family</h1>
     <section>
       <!-- <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>

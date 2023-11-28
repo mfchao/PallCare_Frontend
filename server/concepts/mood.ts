@@ -13,24 +13,24 @@ export default class MoodConcept {
   public readonly moods = new DocCollection<MoodDoc>("moods");
 
   async create(owner: ObjectId, mood: string, notify: boolean, viewers?: ObjectId[]) {
+    console.log(owner, mood, notify);
     const existingMood = await this.moods.readOne({ owner });
     if (existingMood) {
       // If a mood already exists, update it
       await this.update(existingMood._id, { mood });
-      return { msg: "Mood updated successfully!" };
+      return { msg: "Mood updated successfully!", mood: await this.moods.readOne({ owner }) };
     } else {
-      if (mood && owner && notify) {
+      if (mood && owner) {
         const _id = await this.moods.createOne({ owner, mood, notify, viewers });
         return { msg: "User created successfully!", user: await this.moods.readOne({ _id }) };
       } else {
-        throw new NotAllowedError("owner, mood, and notify must be non-empty!");
+        throw new NotAllowedError("owner and mood must be non-empty!");
       }
     }
   }
 
   async update(_id: ObjectId, update: Partial<MoodDoc>) {
     await this.moods.updateOne({ _id }, update);
-    return { msg: "Mood successfully updated!" };
   }
 
   async isOwner(user: ObjectId) {
