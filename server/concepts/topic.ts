@@ -25,6 +25,26 @@ export default class TopicConcept {
     return topics;
   }
 
+  async getNextTopics(page: number, pageSize: number) {
+    try {
+      // calculate skip
+      const skip = (page - 1) * pageSize;
+      // get topics
+      const topics = await this.topics.readMany(
+        {},
+        {
+          sort: { dateUpdated: -1 },
+          skip: skip,
+          limit: pageSize,
+        },
+      );
+      // return topics
+      return topics;
+    } catch (err) {
+      throw new NotFoundError(`No topics found!`);
+    }
+  }
+
   async getByAuthor(author: ObjectId) {
     return await this.getTopics({ author });
   }
@@ -50,7 +70,7 @@ export default class TopicConcept {
     return { msg: "Topic deleted successfully!" };
   }
 
-  async deletePost(_id: ObjectId, post: ObjectId) {
+  async removePost(_id: ObjectId, post: ObjectId) {
     const topic = await this.topics.readOne({ _id });
     if (!topic) {
       throw new NotFoundError(`Topic ${_id} does not exist!`);
