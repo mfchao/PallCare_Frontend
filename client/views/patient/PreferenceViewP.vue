@@ -14,6 +14,10 @@ async function goHome() {
   void router.push({ name: "Home" });
 }
 
+async function accountType() {
+  void router.push({ name: "AccountType" });
+}
+
 onBeforeMount(() => {
   setOn();
 });
@@ -22,6 +26,8 @@ onBeforeMount(() => {
 
 <template>
   <main>
+    <img @click="accountType" src="@/assets/images/back.svg"/>
+
     <h1>Preference View Patient</h1>
     <section>
       <!-- <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>

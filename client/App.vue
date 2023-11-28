@@ -30,7 +30,6 @@ onBeforeMount(async () => {
   }}else {
     logout();
   }
-  console.log(showNav);
 
 });
 
