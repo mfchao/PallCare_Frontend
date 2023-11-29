@@ -1,4 +1,5 @@
 import { User } from "./app";
+import { DiaryDoc } from "./concepts/diary";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friend";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/post";
 import { TopicDoc } from "./concepts/topic";
@@ -72,6 +73,25 @@ export default class Responses {
    */
   static topics(topics: TopicDoc[]) {
     return topics.map((topic) => ({ ...topic, author: topic.author.toString() }));
+  }
+
+  /**
+   * Convert DiaryDoc into more readable format for the frontend by converting the author id into a username.
+   */
+  static async diary(diary: DiaryDoc | null) {
+    if (!diary) {
+      return diary;
+    }
+    const author = await User.getUserById(diary.author);
+    return { ...diary, author: author.username };
+  }
+
+  /**
+   * Same as {@link diary} but for an array of DiaryDoc for improved performance.
+   */
+  static async diaries(diaries: DiaryDoc[]) {
+    const authors = await User.idsToUsernames(diaries.map((diary) => diary.author));
+    return diaries.map((diary, i) => ({ ...diary, author: authors[i] }));
   }
 }
 

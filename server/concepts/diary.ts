@@ -15,10 +15,11 @@ export default class DiaryConcept {
    * Create a new diary entry
    * @param author ObjectId associated w/ the author
    * @param content string representing the diary entry
+   * @param revealed boolean to set if diary is initially hidden (false) or showing (true)
    * @returns adds a new DiaryDoc to 'this.diaries'
    */
-  async create(author: ObjectId, content: string) {
-    const _id = await this.diaries.createOne({ author, content, revealed: false });
+  async create(author: ObjectId, content: string, revealed: boolean) {
+    const _id = await this.diaries.createOne({ author, content, revealed });
     return { msg: "Created a diary entry.", diary: await this.diaries.readOne({ _id }) };
   }
 
@@ -39,8 +40,7 @@ export default class DiaryConcept {
    * @param newContent updated content to associate w/ a diary entry
    * @returns updates 'this.diaries.content' to 'newContent'
    */
-  async updateDiary(user: ObjectId, _id: ObjectId, update: Partial<DiaryDoc>) {
-    await this.checkRep(user, _id);
+  async update(_id: ObjectId, update: Partial<DiaryDoc>) {
     await this.diaries.updateOne({ _id }, update);
     return { msg: "Updated diary entry." };
   }
@@ -50,8 +50,7 @@ export default class DiaryConcept {
    * @param _id ObjectId associated with a specific diary entry
    * @returns deletes diary w/ '_id' from 'this.diaries'
    */
-  async delete(user: ObjectId, _id: ObjectId) {
-    await this.checkRep(user, _id);
+  async delete(_id: ObjectId) {
     await this.diaries.deleteOne({ _id });
     return { msg: "Deleted diary entry." };
   }
@@ -62,12 +61,16 @@ export default class DiaryConcept {
    * @returns all DiaryDocs in 'this.diaries' with 'this.diaries.author' === 'author'
    *          If user !== author, then only show the visible diary entries.
    */
-  async getEntriesByAuthor(user: ObjectId, author: ObjectId) {
-    let allEntries = await this.diaries.readMany({ author });
-    if (author !== user) {
-      allEntries = allEntries.filter((diary) => diary.revealed);
+  async getEntriesByAuthor(author: ObjectId) {
+    return await this.diaries.readMany({ author }, { sort: { dateUpdated: -1 } });
+  }
+
+  async getEntryById(_id: ObjectId) {
+    const entry = await this.diaries.readOne({ _id });
+    if (!entry) {
+      throw new NotFoundError("No Diary associated with given id.");
     }
-    return allEntries;
+    return entry;
   }
 
   /**

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
 import AccountTypeView from "../views/AccountTypeView.vue";
+import { CreateDiaryView, DiaryView, EditDiaryView } from "../views/Diary/_diaryViews";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
@@ -34,7 +35,20 @@ const router = createRouter({
     {
       path: "/diary",
       name: "Diary",
-      component: HomeView,
+      component: DiaryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/diary/create",
+      name: "CreateDiary",
+      component: CreateDiaryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/diary/edit/:_id",
+      name: "EditDiary",
+      component: EditDiaryView,
+      props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },
     {
