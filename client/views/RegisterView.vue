@@ -11,7 +11,7 @@ async function goHome() {
 <template>
   <main class="centered">
     <div class="navigation">
-      <img @click="goHome" src="@/assets/images/backicon.png"/>
+      <img @click="goHome" src="@/assets/images/back.svg"/>
       <!-- <button @click="goHome" > BACK</button> -->
     </div>
     
@@ -49,12 +49,12 @@ h1 {
   gap: 10px;
 }
 .centered{
-  position: absolute;
+position: absolute;
 top: 40%;
 left: 50%;
 transform: translate(-50%, -50%);
-width: 100%;
-height: 120%;
+width: 100vw;
+height: 120vh;
 display: flex;
 flex-direction: column;
 align-items: center;
@@ -62,7 +62,6 @@ justify-content: center;
 z-index: 10;
 gap: 27px;
 /* display: inline-flex; */
-background: #F0E7D8;
 }
 
 img:hover{
