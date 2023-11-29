@@ -13,7 +13,6 @@ export default class MoodConcept {
   public readonly moods = new DocCollection<MoodDoc>("moods");
 
   async create(owner: ObjectId, mood: string, notify: boolean, viewers?: ObjectId[]) {
-    console.log(owner, mood, notify);
     const existingMood = await this.moods.readOne({ owner });
     if (existingMood) {
       // If a mood already exists, update it

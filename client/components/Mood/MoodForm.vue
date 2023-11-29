@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 
-const { currentMood} = storeToRefs(useMoodStore());
+const { userMood } = storeToRefs(useMoodStore());
 
 
 
@@ -16,7 +16,7 @@ async function create(mood:string) {
   await createMood(mood, notify.value);
   void refreshMood();
 
-    console.log(currentMood.value)
+    console.log(userMood.value)
 }
 
 
