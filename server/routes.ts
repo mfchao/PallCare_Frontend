@@ -224,6 +224,8 @@ class Routes {
   async removePostFromTopic(session: WebSessionDoc, _id: ObjectId, post: ObjectId) {
     const user = WebSession.getUser(session);
     await Post.isAuthor(user, post);
+    // sync delete post
+    await Post.delete(post);
     return await Topic.removePost(_id, post);
   }
 }
