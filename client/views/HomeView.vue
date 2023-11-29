@@ -2,11 +2,10 @@
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-
+import MoodForm from "../components/Mood/MoodForm.vue";
 
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-const { logoutUser} = useUserStore();
 
 
 
@@ -18,24 +17,41 @@ async function registerUser() {
   void router.push({ name: "Register" });
 }
 
-async function logout() {
-  await logoutUser();
-  void router.push({ name: "Home" });
+async function settings() {
+  void router.push({ name: "Settings" });
 }
+
 </script>
 
 <template>
     <main>
   
-
-        <div v-if="isLoggedIn" class="home">
-          <!-- <h1>This week's SpotLite</h1> -->
-          welcome
-          <button @click="logout">logout</button>
+<!-- home page -->
+        <div v-if="isLoggedIn">
+          <div class="flex-container">
+            <div>
+              <p id="date" class="text-left">Date</p>
+              <h1 class="text-left">Hi {{ currentUsername }} !</h1>
+            </div>
+            <div class="profile-container">
+              <img class="profile-pic" src="@/assets/images/profile.svg"/>
+              <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
+            </div>
+          </div>
+          
+          <div>
+            <MoodForm/>
+          </div>
+          
         </div>
     
-        <div v-else class="relative">
-            <div class="centered ">
+
+
+
+<!-- welcome login -->
+
+        <div v-else>
+            <div >
               <img class="animate logo" src="@/assets/images/logo.svg" />
            </div>
     
@@ -49,27 +65,19 @@ async function logout() {
             </div>
 
             <div class="button-container">
-              <button @click="loginUser" ><p class="login">LOGIN</p></button>
+              <button class= "blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
               <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
             </div>
             
             
           </div>
-          <!-- <div class="bg-container fade-in">
-            <img class="background-image" src="@/assets/images/gradient1.png"/>
-          </div> -->
           
         </div>
       </main>
 </template>
 
 <style scoped>
-.home {
-    background-repeat: no-repeat;
-    background-size: fill;
-    background-position: center;
-    background-attachment: fixed;
-  }
+
   
 .info {
   display: flex;
@@ -77,77 +85,65 @@ async function logout() {
   gap: 10px;
 }
 
-.welcometitle {
-  width: 299px;
-  height: 100px;
-}
 
-  
-h1 {
+.flex-container {
   display: flex;
-  width: 350px;
-
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  text-align: center;
-  font-family: New York;
-  font-size: 30px;
-  font-style: italic;
-  font-weight: 496;
-  line-height: normal;
-  text-transform: uppercase;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.text-left {
+  text-align: left;
+}
+
+.profile-container {
+  position: relative;
+}
+
+.profile-pic {
+  position: relative;
+  margin-right: 10px;
+  width: 50px;
+}
+
+.settings-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22px;
+}
+
 
 * {
 transition: all 0.5s ease;
 }
 
+
 .button-container {
-/* margin-top: 25px;
-display: flex;
-justify-content: center;
-gap: 30px;
-margin-bottom: 20px; */
-display: flex;
-width: 290px;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-gap: var(--numbers-spacing-16, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-button {
--webkit-backdrop-filter: blur(8px);  /* Safari 9+ */
-backdrop-filter: blur(8px); /* Chrome and Opera */
-box-shadow: 0px 2px 10px 2px rgb(0 0 0 / 15%);
-/* background: rgba(255, 255, 255, 0.09); 
-    color: black;
-    border: none;
-    padding: 0.8em; */
-border-radius: 10px;
-font-family: SF Pro Display;
-letter-spacing: 0.08em;
-font-size: 0.8em;
-    cursor: pointer;
-    outline: inherit;
-text-transform: uppercase;
-transition: .3s ease;
-display: flex;
-width: 290px;
-height: 55px;
-padding: 18px 105px;
-border:none;
-justify-content: center;
-align-items: center;
-gap: 80px;
-border-radius: 33px;
-background: #131313;
+.bluebutton {
+  /* background: #1E1E1E; */
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
 }
-button.bluebutton {
-  background: #9FB9C7;
+
+.blackbutton {
+  background: #1E1E1E;
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
 }
+
 p.login {
   color: #FFF;
   text-align: center;
@@ -185,6 +181,7 @@ transform: translate(-50%, -50%);
 .logo {
 position: absolute;
 width: 10em;
+height: 100vh;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
@@ -205,14 +202,7 @@ height: 100%;
 object-fit: cover;
 }
 
-.relative {
-position: relative;
-width: 100vw;
-height: 100vh;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-}
+
 
 .animate {
 -webkit-animation: fadeinout 4s linear forwards;
@@ -257,7 +247,7 @@ animation: fadein 0.2s linear forwards;
 
 .forms {
 position: absolute;
-top: 40%;
+top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
 width: 100%;
@@ -272,7 +262,5 @@ gap: 57px;
 background: #F0E7D8;
 }
 
-main {
-animation: fadeInAll 1.5s ease-in;
-}
+
 </style>

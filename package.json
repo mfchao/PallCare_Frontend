@@ -43,6 +43,7 @@
     "vue-tsc": "^1.8.11"
   },
   "dependencies": {
+    "@types/nodemailer": "^6.4.14",
     "connect-mongo": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -51,6 +52,7 @@
     "moment": "^2.29.4",
     "mongodb": "^5.9.1",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.7",
     "pinia": "^2.1.6",
     "pinia-plugin-persistedstate": "^3.2.0",
     "purecss": "^3.0.0",

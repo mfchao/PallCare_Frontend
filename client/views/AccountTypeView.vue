@@ -1,28 +1,22 @@
 <script setup lang="ts">
 import router from "@/router";
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 
-
-import { usePreferenceStore } from "@/stores/preference";
-import { onBeforeMount } from "vue";
-import { useRoute } from 'vue-router';
-
-
-const route = useRoute();
-// const username = route.params.username as string;
-// const password = route.params.password as string;
 
 
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
-const { isFamily, updateUser, getUserType, getUsers } = useUserStore();
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-const { isPreferenceViewOn, setOn } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const { getUserType, isFamily } = useUserStore();
 
+
+
+const { updateUser } = useUserStore();
+const { setOn } = usePreferenceStore();
+const { showNav} = storeToRefs(usePreferenceStore());
 
 async function preferences() {
     if (family.value) {
@@ -41,12 +35,12 @@ async function preferences() {
   }
 }
 
-console.log(showNav);
-
 
 onBeforeMount(() => {
   setOn();
 });
+
+
 
 
 </script>
