@@ -26,18 +26,11 @@ async function goHome() {
 <style scoped>
 h1 {
   display: flex;
-  width: 299px;
-  height: 12px;
-  padding-top: 12px;
-  align-items: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: New York;
-  font-size: 35px;
-  font-style: normal;
-  font-weight: 496;
-  line-height: normal;
-  text-transform: uppercase;
+width: 299px;
+height: 45px;
+flex-direction: column;
+justify-content: center;
+flex-shrink: 0;
 }
 .navigation {
   display: flex;
