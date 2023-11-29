@@ -15,10 +15,11 @@ export default class DiaryConcept {
    * Create a new diary entry
    * @param author ObjectId associated w/ the author
    * @param content string representing the diary entry
+   * @param revealed boolean to set if diary is initially hidden (false) or showing (true)
    * @returns adds a new DiaryDoc to 'this.diaries'
    */
-  async create(author: ObjectId, content: string) {
-    const _id = await this.diaries.createOne({ author, content, revealed: false });
+  async create(author: ObjectId, content: string, revealed: boolean) {
+    const _id = await this.diaries.createOne({ author, content, revealed });
     return { msg: "Created a diary entry.", diary: await this.diaries.readOne({ _id }) };
   }
 
@@ -60,12 +61,8 @@ export default class DiaryConcept {
    * @returns all DiaryDocs in 'this.diaries' with 'this.diaries.author' === 'author'
    *          If user !== author, then only show the visible diary entries.
    */
-  async getEntriesByAuthor(user: ObjectId, author: ObjectId) {
-    let allEntries = await this.diaries.readMany({ author });
-    if (author !== user) {
-      allEntries = allEntries.filter((diary) => diary.revealed);
-    }
-    return allEntries;
+  async getEntriesByAuthor(author: ObjectId) {
+    return await this.diaries.readMany({ author }, { sort: { dateUpdated: -1 } });
   }
 
   async getEntryById(_id: ObjectId) {

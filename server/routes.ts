@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Delay, Diary, Friend, Letter, Post, User, WebSession, Wish } from "./app";
+import { Delay, Diary, Friend, Letter, Post, Topic, User, WebSession, Wish } from "./app";
+import { DiaryDoc } from "./concepts/diary";
 import { NotAllowedError } from "./concepts/errors";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { TopicDoc } from "./concepts/topic";
@@ -36,10 +37,10 @@ class Routes {
     return await User.getUsers();
   }
 
-  // @Router.get("/users/:username")
-  // async getUser(username: string) {
-  //   return await User.getUserByUsername(username);
-  // }
+  @Router.get("/users/:username")
+  async getUser(username: string) {
+    return await User.getUserByUsername(username);
+  }
 
   @Router.get("/users/:username")
   async getUserType(username: string) {
@@ -243,56 +244,37 @@ class Routes {
   // ############################################################
   // Diary
   // ############################################################
-  @Router.post("/diaries")
-  async createDiary(session: WebSessionDoc, content: string) {
+  @Router.post("/diary")
+  async createDiary(session: WebSessionDoc, content: string, revealed: boolean) {
     const user = WebSession.getUser(session);
-    return await Diary.create(user, content);
+    const created = await Diary.create(user, content, revealed);
+    return { msg: created.msg, diary: await Responses.diary(created.diary) };
   }
 
-  @Router.get("/diaries/entries/:author")
-  async getEntriesByAuthor(session: WebSessionDoc, author: ObjectId) {
-    const user = WebSession.getUser(session);
-    return await Diary.getEntriesByAuthor(user, author);
+  @Router.get("/diary/entries/:username")
+  async getEntriesByAuthor(username: string) {
+    const author = (await User.getUserByUsername(username))._id;
+    const entries = await Diary.getEntriesByAuthor(author);
+    return Responses.diaries(entries);
   }
 
-  @Router.get("/diaries/:_id")
+  @Router.get("/diary/:_id")
   async getDiaryById(_id: ObjectId) {
-    return await Diary.getEntryById(_id);
+    return Responses.diary(await Diary.getEntryById(_id));
   }
 
-  @Router.get("/diaries/revealed/:_id")
+  @Router.get("/diary/revealed/:_id")
   async isDiaryHidden(_id: ObjectId) {
     return await Diary.isHidden(_id);
   }
 
-  @Router.delete("/diaries/:_id")
+  @Router.delete("/diary/:_id")
   async deleteDiary(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    await Diary.checkRep(user, _id);
     return await Diary.delete(_id);
   }
 
-  @Router.patch("/diaries/:_id&content")
-  async modifyDiaryContent(session: WebSessionDoc, _id: ObjectId, content: string) {
-    const user = WebSession.getUser(session);
-    await Diary.checkRep(user, _id);
-    const update = { content };
-    return await Diary.update(_id, update);
-  }
-
-  @Router.patch("/diaries/reveal/:_id")
-  async revealDiary(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    await Diary.checkRep(user, _id);
-    const update = { revealed: true };
-    return await Diary.update(_id, update);
-  }
-
-  @Router.patch("/diaries/hide/:_id")
-  async hideDiary(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    await Diary.checkRep(user, _id);
-    const update = { revealed: false };
+  @Router.patch("/diary/:_id")
+  async modifyDiary(session: WebSessionDoc, _id: ObjectId, update: Partial<DiaryDoc>) {
     return await Diary.update(_id, update);
   }
   // ############################################################
