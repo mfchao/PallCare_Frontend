@@ -65,7 +65,7 @@ async function settings() {
             </div>
 
             <div class="button-container">
-              <button @click="loginUser" ><p class="login">LOGIN</p></button>
+              <button class= "blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
               <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
             </div>
             
@@ -119,6 +119,30 @@ transition: all 0.5s ease;
 }
 
 
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bluebutton {
+  /* background: #1E1E1E; */
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
+}
+
+.blackbutton {
+  background: #1E1E1E;
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
+}
 
 p.login {
   color: #FFF;

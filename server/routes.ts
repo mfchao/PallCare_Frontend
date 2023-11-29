@@ -2,8 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Contact, Delay, Email, Friend, Letter, Post, Topic, User, WebSession, Wish } from "./app";
-import { Friend, Mood, Post, Topic, User, WebSession, Wish } from "./app";
+import { Contact, Delay, Email, Friend, Letter, Mood, Post, Topic, User, WebSession, Wish } from "./app";
 import { MoodDoc } from "./concepts/mood";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { TopicDoc } from "./concepts/topic";
@@ -446,6 +445,7 @@ class Routes {
     const username = (await User.getUserById(user)).username;
     await Email.send(username,to, content);
     return { msg: "Email sent!" };
+  }
   // Mood
   // ############################################################
   @Router.post("/moods")
