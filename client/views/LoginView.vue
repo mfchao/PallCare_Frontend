@@ -10,7 +10,7 @@ async function goHome() {
 
 <template>
   <main class="centered">
-    <button @click="goHome" > BACK</button>
+    <img @click="goHome" src="@/assets/images/back.svg"/>
 
     <h1>Welcome Back</h1>
     <LoginForm />

@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 import { Router, getExpressRouter } from "./framework/router";
 
 import { Contact, Delay, Email, Friend, Letter, Post, Topic, User, WebSession, Wish } from "./app";
+import { Friend, Mood, Post, Topic, User, WebSession, Wish } from "./app";
+import { MoodDoc } from "./concepts/mood";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { TopicDoc } from "./concepts/topic";
 import { UserDoc } from "./concepts/user";
@@ -28,15 +30,9 @@ class Routes {
     return await User.getUsers();
   }
 
-  // @Router.get("/users/:username")
-  // async getUser(username: string) {
-  //   return await User.getUserByUsername(username);
-  // }
-
   @Router.get("/users/:username")
-  async getUserType(username: string) {
-    const userType = await User.getUserType(username);
-    return { userType };
+  async getUser(username: string) {
+    return await User.getUserByUsername(username);
   }
 
   @Router.post("/users")
@@ -230,6 +226,8 @@ class Routes {
   async removePostFromTopic(session: WebSessionDoc, _id: ObjectId, post: ObjectId) {
     const user = WebSession.getUser(session);
     await Post.isAuthor(user, post);
+    // sync delete post
+    await Post.delete(post);
     return await Topic.removePost(_id, post);
   }
 
@@ -448,6 +446,51 @@ class Routes {
     const username = (await User.getUserById(user)).username;
     await Email.send(username,to, content);
     return { msg: "Email sent!" };
+  // Mood
+  // ############################################################
+  @Router.post("/moods")
+  async createMood(session: WebSessionDoc, mood: string, notify: boolean, viewers?: ObjectId[]) {
+    const user = WebSession.getUser(session);
+    return await Mood.create(user, mood, notify, viewers);
+  }
+
+  @Router.patch("/moods/:_id")
+  async updateMood(session: WebSessionDoc, _id: ObjectId, update: Partial<MoodDoc>) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.update(_id, update);
+  }
+
+  @Router.get("/moods")
+  async getMoods(owner?: string) {
+    let moods;
+    if (owner) {
+      const id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(id);
+    } else {
+      moods = await Mood.getMoods({});
+    }
+    return moods;
+  }
+
+  @Router.delete("/moods/:_id")
+  async deleteMood(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return Mood.delete(_id);
+  }
+
+  @Router.patch("/moods/:_id/addViewers")
+  async addViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Mood.addViewer(user, viewer);
+  }
+
+  @Router.patch("/moods/:_id/removeViewers")
+  async removeViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.removeViewer(user, viewer);
   }
 }
 

@@ -1,18 +1,26 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const usePreferenceStore = defineStore(
   "preference",
   () => {
-    const isPreferenceViewOn = ref(false);
+    let isPreferenceViewOn = ref(false);
 
-    const togglePreferenceView = () => {
-      isPreferenceViewOn.value = !isPreferenceViewOn.value;
+    const showNav = computed(() => isPreferenceViewOn.value !== false);
+
+    const setOff = () => {
+      isPreferenceViewOn.value = false;
+    };
+
+    const setOn = () => {
+      isPreferenceViewOn.value = true;
     };
 
     return {
       isPreferenceViewOn,
-      togglePreferenceView,
+      showNav,
+      setOff,
+      setOn,
     };
   },
   { persist: true },
