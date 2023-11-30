@@ -6,9 +6,9 @@ import { ObjectId } from "mongodb";
 export const useDiaryStore = defineStore(
   "diary",
   () => {
-    const createDiary = async (content: string, revealed: boolean) => {
+    const createDiary = async (content: string, hidden: boolean) => {
       await fetchy("/api/diary", "POST", {
-        body: { content, revealed },
+        body: { content, hidden },
       });
     };
 

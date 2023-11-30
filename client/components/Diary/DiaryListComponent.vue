@@ -23,7 +23,7 @@ onBeforeMount(async () => {
 <template>
   <section class="diaryList" v-if="loaded && diaryList.length !== 0">
     <article v-for="diary in diaryList" :key="diary._id">
-      <DiaryComponent v-if="currentUsername == diary.author || diary.revealed" :diary="diary" @refreshDiaries="getEntries" />
+      <DiaryComponent v-if="currentUsername == diary.author || !diary.hidden" :diary="diary" @refreshDiaries="getEntries" />
     </article>
   </section>
   <p v-else-if="loaded">No diaries found</p>
