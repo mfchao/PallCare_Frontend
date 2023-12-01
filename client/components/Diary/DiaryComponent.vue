@@ -23,7 +23,7 @@ async function deleteDiaryEntry() {
   <div class="base">
     <menu v-if="props.diary.author == currentUsername">
       <li>
-        <p>{{ props.diary.revealed ? "Public" : "Private" }}</p>
+        <p>{{ props.diary.hidden ? "Private" : "Public" }}</p>
       </li>
       <li><button class="btn-small pure-button" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button></li>
       <li><button class="button-error btn-small pure-button" @click="deleteDiaryEntry">Delete</button></li>

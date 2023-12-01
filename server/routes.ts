@@ -242,9 +242,9 @@ class Routes {
   // Diary
   // ############################################################
   @Router.post("/diary")
-  async createDiary(session: WebSessionDoc, content: string, revealed: boolean) {
+  async createDiary(session: WebSessionDoc, content: string, hidden: boolean) {
     const user = WebSession.getUser(session);
-    const created = await Diary.create(user, content, revealed);
+    const created = await Diary.create(user, content, hidden);
     return { msg: created.msg, diary: await Responses.diary(created.diary) };
   }
 
@@ -260,7 +260,7 @@ class Routes {
     return Responses.diary(await Diary.getEntryById(_id));
   }
 
-  @Router.get("/diary/revealed/:_id")
+  @Router.get("/diary/hidden/:_id")
   async isDiaryHidden(_id: ObjectId) {
     return await Diary.isHidden(_id);
   }
@@ -320,9 +320,9 @@ class Routes {
       case "Diary":
         switch (delay.behavior) {
           case "hide":
-            return await Diary.update(delay.content, { revealed: false });
+            return await Diary.update(delay.content, { hidden: true });
           case "reveal":
-            return await Diary.update(delay.content, { revealed: true });
+            return await Diary.update(delay.content, { hidden: false });
           case "delete":
             return await Diary.delete(delay.content);
           default:
@@ -373,7 +373,7 @@ class Routes {
       await Delay.delete(delay._id);
       switch (delay.type) {
         case "Diary":
-          await Diary.update(delay.content, { revealed: true });
+          await Diary.update(delay.content, { hidden: false });
           break;
         case "Letter":
           await Letter.sendLetter(delay.content);
@@ -611,12 +611,12 @@ class Routes {
     return await Mood.update(_id, update);
   }
 
-  @Router.get("/moods")
+  @Router.get("/moods/:owner")
   async getMoods(owner?: string) {
     let moods;
     if (owner) {
-      const id = (await User.getUserByUsername(owner))._id;
-      moods = await Mood.getByOwner(id);
+      const _id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(_id);
     } else {
       moods = await Mood.getMoods({});
     }

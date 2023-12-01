@@ -7,16 +7,16 @@ import { formatEntryDate } from "../../utils/formatDate";
 const { getDiaryById, modifyDiaryContent } = useDiaryStore();
 const props = defineProps(["_id"]);
 let content = ref("");
-let revealed = ref<boolean>(false);
+let hidden = ref<boolean>(false);
 
 async function submitForm() {
-  await modifyDiaryContent(props._id, { content: content.value, revealed: revealed.value });
+  await modifyDiaryContent(props._id, { content: content.value, hidden: hidden.value });
   await router.push({ name: "Diary" });
 }
 onBeforeMount(async () => {
   const diary = await getDiaryById(props._id);
   content.value = diary.content;
-  revealed.value = diary.revealed;
+  hidden.value = diary.hidden;
 });
 </script>
 <template>
@@ -26,8 +26,8 @@ onBeforeMount(async () => {
     <form class="edit-form" @submit.prevent="submitForm">
       <textarea class="diary-content" id="content" v-model="content" required> </textarea>
       <fieldset class="diary-fields">
-        <label for="revealed">{{ revealed ? "Public" : "Private" }}</label>
-        <input type="checkbox" v-model="revealed" />
+        <label for="hidden">{{ hidden ? "Private" : "Public" }}</label>
+        <input id="hidden" type="checkbox" v-model="hidden" />
       </fieldset>
       <button type="submit" class="pure-button-primary pure-button">Submit Edits</button>
     </form>

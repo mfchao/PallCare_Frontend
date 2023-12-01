@@ -1,25 +1,18 @@
 <script setup lang="ts">
 import { useMoodStore } from "@/stores/mood";
+import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 
-const { userMood } = storeToRefs(useMoodStore());
-
-
-
 const notify = ref(false);
 const { createMood, refreshMood} = useMoodStore();
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 async function create(mood:string) {
-    
   await createMood(mood, notify.value);
-  void refreshMood();
-
-    console.log(userMood.value)
+  await refreshMood(currentUsername.value);
 }
-
-
 
 
 </script>
@@ -28,8 +21,8 @@ async function create(mood:string) {
     <div>
         <h2>How are you feeling today?</h2>
     </div>
-    <div class="moods" @click="create('Happy')">
-        <div class="mood">
+    <div class="moods" >
+        <div class="mood"  @click="create('Happy')">
             <p>Happy</p>
         </div>
         <div class="mood" @click="create('Chill')">

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import router from "@/router";
+import { useMoodStore } from "@/stores/mood";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { computed } from "vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
 
 
+
+const { userMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
@@ -21,6 +25,10 @@ async function settings() {
   void router.push({ name: "Settings" });
 }
 
+const moodClass = computed(() => {
+  return userMood.value ? `mood-${userMood.value.toLowerCase()}` : '';
+});
+
 </script>
 
 <template>
@@ -34,7 +42,7 @@ async function settings() {
               <h1 class="text-left">Hi {{ currentUsername }} !</h1>
             </div>
             <div class="profile-container">
-              <img class="profile-pic" src="@/assets/images/profile.svg"/>
+              <img  :class="moodClass" class="profile-pic" src="@/assets/images/profile.svg"/>
               <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
             </div>
           </div>
@@ -65,7 +73,7 @@ async function settings() {
             </div>
 
             <div class="button-container">
-              <button class= "blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
+              <button class="blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
               <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
             </div>
             
@@ -77,7 +85,30 @@ async function settings() {
 </template>
 
 <style scoped>
+.mood-happy {
+  border: 3px solid yellow;
+  border-radius: 50%;
+}
 
+.mood-chill {
+  border: 3px solid blue;
+  border-radius: 50%;
+}
+
+.mood-stressed {
+  border: 3px solid red;
+  border-radius: 50%;
+}
+
+.mood-sad {
+  border: 3px solid gray;
+  border-radius: 50%;
+}
+
+.mood-custom {
+  border: 3px solid green;
+  border-radius: 50%;
+}
   
 .info {
   display: flex;

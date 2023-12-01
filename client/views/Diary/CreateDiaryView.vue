@@ -6,10 +6,10 @@ import { formatEntryDate } from "../../utils/formatDate";
 
 const { createDiary } = useDiaryStore();
 let content = ref("");
-let revealed = ref<boolean>(false);
+let hidden = ref<boolean>(false);
 
 async function submitForm() {
-  await createDiary(content.value, revealed.value);
+  await createDiary(content.value, hidden.value);
   await router.push({ name: "Diary" });
 }
 </script>
@@ -20,8 +20,8 @@ async function submitForm() {
     <form class="create-form" @submit.prevent="submitForm">
       <textarea class="diary-content" id="content" v-model="content" placeholder="Write a Diary Entry!" required> </textarea>
       <fieldset class="diary-fields">
-        <label for="revealed">{{ revealed ? "Revealed" : "Hidden" }}</label>
-        <input type="checkbox" v-model="revealed" />
+        <label for="revealed">{{ hidden ? "Private" : "Public" }}</label>
+        <input id="hidden" type="checkbox" v-model="hidden" />
       </fieldset>
       <button type="submit" class="pure-button-primary pure-button">Create Diary</button>
     </form>
