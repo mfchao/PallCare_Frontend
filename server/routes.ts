@@ -226,6 +226,411 @@ class Routes {
     await Post.isAuthor(user, post);
     return await Topic.removePost(_id, post);
   }
+  // ############################################################
+  // Diary
+  // ############################################################
+  @Router.post("/diary")
+  async createDiary(session: WebSessionDoc, content: string, hidden: boolean) {
+    const user = WebSession.getUser(session);
+    const created = await Diary.create(user, content, hidden);
+    return { msg: created.msg, diary: await Responses.diary(created.diary) };
+  }
+
+  @Router.get("/diary/entries/:username")
+  async getEntriesByAuthor(username: string) {
+    const author = (await User.getUserByUsername(username))._id;
+    const entries = await Diary.getEntriesByAuthor(author);
+    return Responses.diaries(entries);
+  }
+
+  @Router.get("/diary/:_id")
+  async getDiaryById(_id: ObjectId) {
+    return Responses.diary(await Diary.getEntryById(_id));
+  }
+
+  @Router.get("/diary/hidden/:_id")
+  async isDiaryHidden(_id: ObjectId) {
+    return await Diary.isHidden(_id);
+  }
+
+  @Router.delete("/diary/:_id")
+  async deleteDiary(session: WebSessionDoc, _id: ObjectId) {
+    return await Diary.delete(_id);
+  }
+
+  @Router.patch("/diary/:_id")
+  async modifyDiary(session: WebSessionDoc, _id: ObjectId, update: Partial<DiaryDoc>) {
+    return await Diary.update(_id, update);
+  }
+  // ############################################################
+  // Delay
+  // ############################################################
+  @Router.post("/delay")
+  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+    const user = WebSession.getUser(session);
+    return await Delay.create(user, content, type, behavior, activation);
+  }
+
+  @Router.get("/delay/:_id")
+  async getDelayById(_id: ObjectId) {
+    return await Delay.getDelayByContent(_id);
+  }
+
+  @Router.get("/delay/content/:_id")
+  async getDelayByContent(content: ObjectId) {
+    return await Delay.getDelayByContent(content);
+  }
+
+  @Router.get("/delay/owner")
+  async getDelaysByUser(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Delay.getDelaysByOwner(user);
+  }
+
+  @Router.get("/delay/expired/:_id")
+  async isDelayExpired(_id: ObjectId) {
+    return await Delay.isExpired(_id);
+  }
+
+  @Router.delete("delay/:_id")
+  async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Delay.checkRep(user, _id);
+    return await Delay.delete(_id);
+  }
+
+  /**System function**/
+  @Router.delete("/delay/executed/:_id")
+  async executeDelay(_id: ObjectId) {
+    const delay = await Delay.getDelayById(_id);
+    await Delay.delete(_id); // want to delete Delay upon execution (whether it throws error or not)
+    switch (delay.type) {
+      case "Diary":
+        switch (delay.behavior) {
+          case "hide":
+            return await Diary.update(delay.content, { hidden: true });
+          case "reveal":
+            return await Diary.update(delay.content, { hidden: false });
+          case "delete":
+            return await Diary.delete(delay.content);
+          default:
+            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
+        }
+      case "Letter":
+        switch (delay.behavior) {
+          case "send":
+            return await Letter.sendLetter(delay.content);
+          case "delete":
+            return await Letter.deleteLetter_server(delay.content);
+          default:
+            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+        }
+      default:
+        throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+    }
+  }
+
+  @Router.patch("/delay/activation/:_id&time")
+  async updateDelayExpiration(session: WebSessionDoc, _id: ObjectId, activation: Date) {
+    const user = WebSession.getUser(session);
+    await Delay.checkRep(user, _id);
+    return await Delay.updateActivation(_id, activation);
+  }
+
+  // ############################################################
+  // Time Capsule: Delay + Diary + Letter
+  // ############################################################
+  @Router.post("/delay/timecapsule")
+  async addToTimeCapsule(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter") {
+    const user = WebSession.getUser(session);
+    const behavior = type === "Diary" ? "reveal" : "send";
+    return await Delay.create(user, content, type, behavior, new Date(0));
+  }
+
+  @Router.get("delay/timecapsule")
+  async getUserTimeCapsule(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await timeCapsuleByOwner(user);
+  }
+
+  /**System function**/
+  @Router.delete("delay/timecapsule")
+  async releaseTimeCapsule(user: ObjectId) {
+    const timeCapsule = await timeCapsuleByOwner(user);
+    for (const delay of timeCapsule) {
+      await Delay.delete(delay._id);
+      switch (delay.type) {
+        case "Diary":
+          await Diary.update(delay.content, { hidden: false });
+          break;
+        case "Letter":
+          await Letter.sendLetter(delay.content);
+          break;
+        default:
+          throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+      }
+    }
+  }
+
+  // ############################################################
+  // Letter
+  // ############################################################
+  //CHECK//
+  @Router.post("/letter")
+  async createLetter(session: WebSessionDoc, to: ObjectId[], content: string, responseEnabled: boolean, delay?: string) {
+    const user = WebSession.getUser(session);
+    const newletter = await Letter.createLetter(user, to, content, responseEnabled);
+    if (delay) {
+      const delaydate = new Date(delay);
+      if (newletter.letter !== null) {
+        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
+        return { letter: newletter, delay: letterdelay };
+      }
+    }
+    return newletter;
+  }
+
+  //CHECK//
+  @Router.get("/letter")
+  async getLetterbySender(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Letter.getLetterBySender(user);
+  }
+
+  //CHECK//
+  @Router.get("/letter/receiver")
+  async getLetterbyReceiver(user: ObjectId) {
+    return await Letter.getLetterByReceiver(user);
+  }
+
+  //CHECK//
+  @Router.get("/letter/id")
+  async getLetterbyId(id: ObjectId) {
+    return await Letter.getLetterById(id);
+  }
+
+  //CHECK//
+  @Router.get("/letterunsent")
+  async getAllunsendLetter(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Letter.getAllUnsentLetterbySender(user);
+  }
+
+  //CHECK//
+  @Router.patch("/letter/content")
+  async updateLetterContent(session: WebSessionDoc, letter: ObjectId, content: string) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the author of this letter!");
+    }
+    return await Letter.updateLetterContent(letter, content);
+  }
+
+  //TODO//
+  @Router.delete("/letter/receiver")
+  async removeReceiver(session: WebSessionDoc, letter: ObjectId, receiver: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the sender of this letter!");
+    }
+    return await Letter.removeLetterReceiver(letter, receiver);
+  }
+
+  //TODO//
+  @Router.patch("/letter/receiver")
+  async addReceiver(session: WebSessionDoc, letter: ObjectId, receiver: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the sender of this letter!");
+    }
+    return await Letter.addLetterReceiver(letter, receiver);
+  }
+
+  //CHECK//
+  @Router.patch("/letter")
+  async sendLetter(session: WebSessionDoc, letter: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    const username = (await User.getUserById(user)).username;
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the author of this letter!");
+    }
+    await Letter.sendLetter(letter);
+    const thereceiver = theletter.to;
+    for (const receiver of thereceiver) {
+      if ((await Contact.checkContactType(user, receiver)) === "NonUser") {
+        const receiveremail = await Contact.getemailaddressbyId(receiver);
+        if (receiveremail === null) {
+          continue;
+        }
+        await Email.send(username, receiveremail, theletter.content);
+      }
+    }
+    return { msg: "Letter sent!" };
+  }
+
+  //check//
+  @Router.get("/receiveletter")
+  async receiveLetter(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Letter.receiveLetter(user);
+  }
+
+  @Router.patch("/letter/unshow")
+  async unshowLetter(session: WebSessionDoc, letter: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the author of this letter!");
+    }
+    return await Letter.unshowLetter(letter);
+  }
+
+  @Router.delete("/letter")
+  async deleteLetterServer(letter: ObjectId) {
+    return await Letter.deleteLetter_server(letter);
+  }
+
+  @Router.delete("/letter/client")
+  async deleteLetterClient(session: WebSessionDoc, letter: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the author of this letter!");
+    }
+    return await Letter.deleteLetter_client(letter);
+  }
+
+  @Router.patch("/letter/email")
+  async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
+    const user = WebSession.getUser(session);
+    const theletter = await Letter.getLetterById(letter);
+    if (theletter.from.toString() !== user.toString()) {
+      throw new Error("You are not the author of this letter!");
+    }
+    // const thereceiver = theletter.to;
+    return { msg: "No email sent!" };
+  }
+  // #############Letter Response#####################
+  @Router.post("/letterrespond")
+  async respondtoLetter(session: WebSessionDoc, originalletter: ObjectId, content: string) {
+    const user = WebSession.getUser(session);
+    const theresponse = await Letter.respondtoLetter(user, originalletter, content);
+    return theresponse;
+  }
+
+  @Router.get("/letterrespond")
+  async getLetterResponse(originalletter: ObjectId) {
+    const theresponse = await Letter.getLetterResponseByLetter(originalletter);
+    return theresponse;
+  }
+
+  //USE THIS IN ALPHA VERSION??
+  @Router.get("/primaryrespond")
+  async getPrimaryResponse(originalletter: ObjectId) {
+    const theresponse = await Letter.getPrimaryResponse(originalletter);
+    return theresponse;
+  }
+
+  // ############################################################
+  // Contact
+  // ############################################################
+  @Router.post("/contact")
+  async createUserContact(session: WebSessionDoc, contact: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Contact.createAppUserContact(user, contact);
+  }
+
+  @Router.get("/contact")
+  async getContacts(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Contact.getContactsbyOwner(user);
+  }
+
+  @Router.get("/contact/type")
+  async checkContactType(session: WebSessionDoc, contact: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Contact.checkContactType(user, contact);
+  }
+
+  // ##################### email #######################################
+  @Router.post("/contact/email")
+  async createEmailContact(session: WebSessionDoc, username: string, email: string) {
+    const user = WebSession.getUser(session);
+    return await Contact.createEmailContact(user, username, email);
+  }
+
+  @Router.get("/email")
+  async getEmailaddressbyid(_id: ObjectId) {
+    return await Contact.getemailaddressbyId(_id);
+  }
+
+  @Router.get("/email/:username")
+  async getEmailaddressbyusername(username: string) {
+    const emailcontact = await Contact.getEmailContactbyUsername(username);
+    if (emailcontact === null) {
+      throw new Error("Email contact not found!");
+    }
+    return emailcontact.email;
+  }
+
+  @Router.post("/email")
+  async sendEmail(user: ObjectId, to: string, content: string) {
+    const username = (await User.getUserById(user)).username;
+    await Email.send(username, to, content);
+    return { msg: "Email sent!" };
+  }
+
+  // ############################################################
+  // Mood
+  // ############################################################
+  @Router.post("/moods")
+  async createMood(session: WebSessionDoc, mood: string, notify: boolean, viewers?: ObjectId[]) {
+    const user = WebSession.getUser(session);
+    return await Mood.create(user, mood, notify, viewers);
+  }
+
+  @Router.patch("/moods/:_id")
+  async updateMood(session: WebSessionDoc, _id: ObjectId, update: Partial<MoodDoc>) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.update(_id, update);
+  }
+
+  @Router.get("/moods/:owner")
+  async getMoods(owner?: string) {
+    let moods;
+    if (owner) {
+      const _id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(_id);
+    } else {
+      moods = await Mood.getMoods({});
+    }
+    return moods;
+  }
+
+  @Router.delete("/moods/:_id")
+  async deleteMood(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return Mood.delete(_id);
+  }
+
+  @Router.patch("/moods/:_id/addViewers")
+  async addViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Mood.addViewer(user, viewer);
+  }
+
+  @Router.patch("/moods/:_id/removeViewers")
+  async removeViewer(session: WebSessionDoc, viewer: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Mood.isOwner(user);
+    return await Mood.removeViewer(user, viewer);
+  }
 }
 
 export default getExpressRouter(new Routes());
