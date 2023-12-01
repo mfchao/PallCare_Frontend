@@ -16,12 +16,12 @@ export default class MoodConcept {
     const existingMood = await this.moods.readOne({ owner });
     if (existingMood) {
       // If a mood already exists, update it
-      await this.update(existingMood._id, { mood });
+      await this.update(existingMood._id, { mood: mood });
       return { msg: "Mood updated successfully!", mood: await this.moods.readOne({ owner }) };
     } else {
       if (mood && owner) {
         const _id = await this.moods.createOne({ owner, mood, notify, viewers });
-        return { msg: "User created successfully!", user: await this.moods.readOne({ _id }) };
+        return { msg: "User created successfully!", mood: await this.moods.readOne({ _id }) };
       } else {
         throw new NotAllowedError("owner and mood must be non-empty!");
       }
