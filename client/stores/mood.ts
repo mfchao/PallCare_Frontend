@@ -8,7 +8,7 @@ export const useMoodStore = defineStore(
   () => {
     const userMood = ref("");
 
-    const currentMood = computed(() => userMood.value !== "");
+    const hasMood = computed(() => userMood.value !== "");
 
     const resetStore = () => {
       userMood.value = "";
@@ -42,7 +42,7 @@ export const useMoodStore = defineStore(
 
     return {
       userMood,
-      currentMood,
+      hasMood,
       createMood,
       refreshMood,
       getMoods,
