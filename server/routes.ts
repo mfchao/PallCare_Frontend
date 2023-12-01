@@ -244,12 +244,12 @@ class Routes {
     return await Mood.update(_id, update);
   }
 
-  @Router.get("/moods")
+  @Router.get("/moods/:owner")
   async getMoods(owner?: string) {
     let moods;
     if (owner) {
-      const id = (await User.getUserByUsername(owner))._id;
-      moods = await Mood.getByOwner(id);
+      const _id = (await User.getUserByUsername(owner))._id;
+      moods = await Mood.getByOwner(_id);
     } else {
       moods = await Mood.getMoods({});
     }

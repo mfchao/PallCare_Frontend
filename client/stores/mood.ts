@@ -18,13 +18,14 @@ export const useMoodStore = defineStore(
       const moodcreated = await fetchy("/api/moods", "POST", {
         body: { mood, notify },
       });
-      //   console.log(moodcreated);
+      //   userMood.value = moodcreated.mood.mood;
     };
 
-    const refreshMood = async () => {
+    const refreshMood = async (_id: string) => {
+      let mood;
       try {
-        const { mood } = await fetchy("/api/moods", "GET", { alert: false });
-        userMood.value = mood;
+        mood = await fetchy(`/api/moods/${_id}`, "GET", { alert: false });
+        userMood.value = mood[0].mood;
       } catch {
         userMood.value = "";
       }
@@ -40,6 +41,7 @@ export const useMoodStore = defineStore(
     // };
 
     return {
+      userMood,
       currentMood,
       createMood,
       refreshMood,
