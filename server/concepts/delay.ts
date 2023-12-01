@@ -89,4 +89,9 @@ export default class DelayConcept {
     const delay = await this.getDelayById(_id);
     return delay.activation === new Date(0);
   }
+
+  async checkExpiredDelays(owner: ObjectId) {
+    const delays = await this.getDelaysByOwner(owner);
+    return delays.filter(async (delay) => await this.isExpired(delay._id));
+  }
 }

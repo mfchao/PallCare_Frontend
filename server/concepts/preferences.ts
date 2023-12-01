@@ -4,22 +4,27 @@ import { NotFoundError } from "./errors";
 
 export interface PreferenceDoc extends BaseDoc {
   user: ObjectId;
-  interval: number;
-  expiry: number;
-  features: Map<String, String>;
+  interval: number; // number of days bertween re-prompting about updating preferences
+  expiry: number; // next date to prompt about updating preferences
+  timeCapsule: number; //number of days after login to release time capsule
+  fontSize: string; // set the font size across the application
 }
 
 export default class PreferenceConcept {
   public readonly preferences = new DocCollection<PreferenceDoc>("preferences");
 
+  // default values for a PreferenceDoc
+  private readonly interval = 7;
+  private readonly timeCapsule = 14;
+  private readonly fontSize = "default";
+
   /**
-   * Initialize a set of preferences for a user.
+   * Initialize a set of preferences for a user to the default values listed above.
    * @param user ObjectId associated with a user
-   * @param interval amount of time between prompting to update preferences
-   * @returns a PreferenceDoc w/ expiry= current time + interval, and an empty set of preferences
+   * @returns a PreferenceDoc w/ expiry= current time + interval
    */
-  async initialize(user: ObjectId, interval: number) {
-    const _id = await this.preferences.createOne({ user, interval, expiry: Date.now() + interval, features: new Map<String, String>() });
+  async initialize(user: ObjectId) {
+    const _id = await this.preferences.createOne({ user, interval: this.interval, expiry: Date.now() + this.interval, timeCapsule: this.timeCapsule, fontSize: this.fontSize });
     return { msg: "Initialized User preferences.", preferences: await this.preferences.readOne({ _id }) };
   }
 
@@ -39,28 +44,12 @@ export default class PreferenceConcept {
   /**
    * Create or Update a preference for a specific user
    * @param user ObjectId associated with a user
-   * @param feature name of preference to create/update
-   * @param setting value of the preference associated w/ 'feature'
-   * @returns adds k,v pair {feature: setting} to 'this.preferences.features'
+   * @param update partial of PreferenceDoc representing update(s)
+   * @returns modifies 'this.preferences'
    */
-  async setPreference(user: ObjectId, feature: string, setting: string) {
-    const features = (await this.getUserPreferences(user)).features;
-    features.set(feature, setting);
-    await this.preferences.updateOne({ user }, { features });
-    return { msg: `Set preference... "${feature}: ${setting}"` };
-  }
-
-  /**
-   * Remove a preference for a specific user
-   * @param user ObjectId associated with a user
-   * @param feature name of preference to remove
-   * @returns deleted k,v pair {feature: setting} from 'this.preferences.features'
-   */
-  async removePreference(user: ObjectId, feature: string) {
-    const features = (await this.getUserPreferences(user)).features;
-    features.delete(feature);
-    await this.preferences.updateOne({ user }, { features });
-    return { msg: `Removed preference for "${feature}"` };
+  async updatePreference(user: ObjectId, update: Partial<PreferenceDoc>) {
+    await this.preferences.updateOne({ user }, update);
+    return { msg: "Updated preferences." };
   }
 
   /**
@@ -69,19 +58,9 @@ export default class PreferenceConcept {
    * @returns updates 'this.preferences.features' to {}
    */
   async resetPreferences(user: ObjectId) {
-    await this.preferences.updateOne({ user }, { features: new Map<String, String>() });
+    const defaults: Partial<PreferenceDoc> = { interval: this.interval, timeCapsule: this.timeCapsule, fontSize: this.fontSize };
+    await this.preferences.updateOne({ user }, defaults);
     return { msg: "Reset all user preferences." };
-  }
-
-  /**
-   * Change the amount of time between prompting a user to update their preferences
-   * @param user ObjectId associated with a user
-   * @param interval (updated) amount of time for users to be prompted about preferences
-   * @returns updates 'this.preferences.interval' to interval
-   */
-  async changeInterval(user: ObjectId, interval: number) {
-    await this.preferences.updateOne({ user }, { interval });
-    return { msg: "Changed user's preference interval." };
   }
 
   /**
@@ -96,14 +75,25 @@ export default class PreferenceConcept {
     return Date.now() >= userPref.expiry;
   }
 
-  /**
-   * Updates the expiry date for a user
-   * @param user ObjectId associated with a user
-   * @returns sets 'this.preferences.expiry' = current time + 'this.preferences.interval'
-   */
-  async updateExpiry(user: ObjectId) {
-    const userPref = await this.getUserPreferences(user);
-    await this.preferences.updateOne({ user }, { expiry: Date.now() + userPref.interval });
-    return { msg: "Updated Preferences' expiry" };
-  }
+  // /**
+  //  * Change the amount of time between prompting a user to update their preferences
+  //  * @param user ObjectId associated with a user
+  //  * @param interval (updated) amount of time for users to be prompted about preferences
+  //  * @returns updates 'this.preferences.interval' to interval
+  //  */
+  // async changeInterval(user: ObjectId, interval: number) {
+  //   await this.preferences.updateOne({ user }, { interval });
+  //   return { msg: "Changed user's preference interval." };
+  // }
+
+  // /**
+  //  * Updates the expiry date for a user
+  //  * @param user ObjectId associated with a user
+  //  * @returns sets 'this.preferences.expiry' = current time + 'this.preferences.interval'
+  //  */
+  // async updateExpiry(user: ObjectId) {
+  //   const userPref = await this.getUserPreferences(user);
+  //   await this.preferences.updateOne({ user }, { expiry: Date.now() + userPref.interval });
+  //   return { msg: "Updated Preferences' expiry" };
+  // }
 }
