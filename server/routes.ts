@@ -168,8 +168,8 @@ class Routes {
   // wish
   // ############################################################
   @Router.get("/wishes")
-  async getWishes(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
+  async getWishes(username: string) {
+    const user = (await User.getUserByUsername(username))._id;
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
@@ -281,7 +281,7 @@ class Routes {
   // Delay
   // ############################################################
   @Router.post("/delay")
-  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete", activation: Date) {
     const user = WebSession.getUser(session);
     return await Delay.create(user, content, type, behavior, activation);
   }
@@ -319,42 +319,35 @@ class Routes {
   async executeDelay(_id: ObjectId) {
     const delay = await Delay.getDelayById(_id);
     await Delay.delete(_id); // want to delete Delay upon execution (whether it throws error or not)
-    switch (delay.type) {
-      case "Diary":
-        switch (delay.behavior) {
-          case "hide":
-            return await Diary.update(delay.content, { hidden: true });
-          case "reveal":
-            return await Diary.update(delay.content, { hidden: false });
-          case "delete":
-            return await Diary.delete(delay.content);
-          default:
-            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
-        }
-      case "Letter":
-        switch (delay.behavior) {
-          case "send":
-            const the_letter = await Letter.getLetterById(delay.content);
-            const username = (await User.getUserById(the_letter.from)).username;
-            await Letter.sendLetter(the_letter._id);
-            const thereceiver = the_letter.to;
-            for (const receiver of thereceiver) {
-              if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
-                const receiveremail = await Contact.getemailaddressbyId(receiver);
-                if (receiveremail === null) {
-                  continue;
-                }
-                await Email.send(username, receiveremail, the_letter.content);
-              }
+    if (delay.type === "Diary") {
+      if (delay.behavior === "send") {
+        return await Diary.update(delay.content, { hidden: false });
+      } else if (delay.behavior === "delete") {
+        return await Diary.delete(delay.content);
+      } else {
+        throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
+      }
+    } else if (delay.type === "Letter") {
+      if (delay.behavior === "send") {
+        const the_letter = await Letter.getLetterById(delay.content);
+        const username = (await User.getUserById(the_letter.from)).username;
+        await Letter.sendLetter(the_letter._id);
+        const thereceiver = the_letter.to;
+        for (const receiver of thereceiver) {
+          if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
+            const receiveremail = await Contact.getemailaddressbyId(receiver);
+            if (receiveremail === null) {
+              continue;
             }
-            return { msg: "Letter sent!" };
-          case "delete":
-            return await Letter.deleteLetter_server(delay.content);
-          default:
-            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+            await Email.send(username, receiveremail, the_letter.content);
+          }
         }
-      default:
-        throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+        return { msg: "Letter sent!" };
+      } else {
+        throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+      }
+    } else {
+      throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
     }
   }
 
@@ -369,7 +362,7 @@ class Routes {
   // Time Capsule: Delay + Diary + Letter
   // ############################################################
   @Router.post("/delay/timecapsule")
-  async addToTimeCapsule(username: string, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete") {
+  async addToTimeCapsule(username: string, content: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
       throw new NotAllowedError("Non-patients do not have a Time Capsule");
@@ -432,7 +425,7 @@ class Routes {
     if (delay) {
       const delaydate = new Date(delay);
       if (newletter.letter !== null) {
-        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
+        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "send", delaydate);
         return { letter: newletter, delay: letterdelay };
       }
     }

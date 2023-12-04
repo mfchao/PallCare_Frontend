@@ -22,8 +22,8 @@ import { NotAllowedError, NotFoundError } from "./errors";
 export interface DelayDoc extends BaseDoc {
   owner: ObjectId;
   content: ObjectId;
-  type: "Diary" | "Letter";
-  behavior: "send" | "delete" | "reveal" | "hide";
+  type: "Diary" | "Letter" | "Wish";
+  behavior: "send" | "delete";
   activation: Date;
 }
 //test
@@ -34,7 +34,7 @@ export interface DelayDoc extends BaseDoc {
 export default class DelayConcept {
   public readonly delays = new DocCollection<DelayDoc>("delays");
 
-  async create(owner: ObjectId, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+  async create(owner: ObjectId, content: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete", activation: Date) {
     const _id = await this.delays.createOne({ owner, content, type, behavior, activation });
     return { msg: "Created Delay!", delay: await this.delays.readOne({ _id }) };
   }
