@@ -683,19 +683,19 @@ class Routes {
   //#############################################################
   // Preferences
   //#############################################################
-  @Router.get("/preferences/:_id")
+  @Router.get("/preferences")
   async getPreferencesByUser(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     return await Preference.getUserPreferences(user);
   }
 
-  @Router.patch("/preferences/:_id")
+  @Router.patch("/preferences")
   async updatePreferences(session: WebSessionDoc, update: Partial<PreferenceDoc>) {
     const user = WebSession.getUser(session);
     return await Preference.updatePreference(user, update);
   }
 
-  @Router.patch("/preferences/:_id/default")
+  @Router.patch("/preferences/reset")
   async resetDefaultPreferences(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     return await Preference.resetPreferences(user);
