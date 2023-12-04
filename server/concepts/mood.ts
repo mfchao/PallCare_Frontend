@@ -50,7 +50,13 @@ export default class MoodConcept {
   }
 
   async getByOwner(owner: ObjectId) {
-    return await this.getMoods({ owner });
+    const mood = await this.getMoods({ owner });
+    return mood;
+  }
+
+  async getByOwnerId(owner: ObjectId) {
+    const mood = await this.getMoods({ owner });
+    return mood[0]._id;
   }
 
   async delete(_id: ObjectId) {
