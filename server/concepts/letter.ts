@@ -193,7 +193,7 @@ export default class LetterConcept<T> {
 
   // async addLetterResponsetoLetter(_id: ObjectId,response: LetterResponseDoc<T>) {
   //   const letters = await this.getLetterById(response.letter)
-  //   if (!letters.responseEnabled){
+  //   if (!letters.responseEnablxed){
   //     throw new NotAllowedError(`Letter ${_id} is not response allowed.`);
   //   }
   //   //push the new response to the letter response list

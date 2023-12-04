@@ -334,7 +334,20 @@ class Routes {
       case "Letter":
         switch (delay.behavior) {
           case "send":
-            return await Letter.sendLetter(delay.content);
+            const the_letter = await Letter.getLetterById(delay.content);
+            const username = (await User.getUserById(the_letter.from)).username;
+            await Letter.sendLetter(the_letter._id);
+            const thereceiver = the_letter.to;
+            for (const receiver of thereceiver) {
+              if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
+                const receiveremail = await Contact.getemailaddressbyId(receiver);
+                if (receiveremail === null) {
+                  continue;
+                }
+                await Email.send(username, receiveremail, the_letter.content);
+              }
+            }
+            return { msg: "Letter sent!" };
           case "delete":
             return await Letter.deleteLetter_server(delay.content);
           default:
@@ -540,16 +553,16 @@ class Routes {
     return await Letter.deleteLetter_client(letter);
   }
 
-  @Router.patch("/letter/email")
-  async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
-    const user = WebSession.getUser(session);
-    const theletter = await Letter.getLetterById(letter);
-    if (theletter.from.toString() !== user.toString()) {
-      throw new Error("You are not the author of this letter!");
-    }
-    // const thereceiver = theletter.to;
-    return { msg: "No email sent!" };
-  }
+  // @Router.patch("/letter/email")
+  // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
+  //   const user = WebSession.getUser(session);
+  //   const theletter = await Letter.getLetterById(letter);
+  //   if (theletter.from.toString() !== user.toString()) {
+  //     throw new Error("You are not the author of this letter!");
+  //   }
+  //   // const thereceiver = theletter.to;
+  //   return { msg: "No email sent!" };
+  // }
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
