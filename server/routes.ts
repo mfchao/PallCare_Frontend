@@ -2,11 +2,12 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Contact, Delay, Diary, Email, Friend, Letter, Mood, Post, Topic, User, WebSession, Wish } from "./app";
+import { Contact, Delay, Diary, Email, Friend, Letter, Mood, Post, Preference, Topic, User, WebSession, Wish } from "./app";
 import { DiaryDoc } from "./concepts/diary";
 import { NotAllowedError } from "./concepts/errors";
 import { MoodDoc } from "./concepts/mood";
 import { PostDoc, PostOptions } from "./concepts/post";
+import { PreferenceDoc } from "./concepts/preferences";
 import { TopicDoc } from "./concepts/topic";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -46,7 +47,9 @@ class Routes {
   @Router.post("/users")
   async createUser(session: WebSessionDoc, username: string, password: string) {
     WebSession.isLoggedOut(session);
-    return await User.create(username, password);
+    const output = await User.create(username, password);
+    await Preference.initialize(output.user!._id); // initialzie preferences for a user upon creation
+    return output;
   }
 
   @Router.patch("/users")
@@ -353,31 +356,52 @@ class Routes {
   // Time Capsule: Delay + Diary + Letter
   // ############################################################
   @Router.post("/delay/timecapsule")
-  async addToTimeCapsule(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter") {
-    const user = WebSession.getUser(session);
-    const behavior = type === "Diary" ? "reveal" : "send";
-    return await Delay.create(user, content, type, behavior, new Date(0));
+  async addToTimeCapsule(username: string, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete") {
+    const user = await User.getUserByUsername(username);
+    if (user.userType !== "patient") {
+      throw new NotAllowedError("Non-patients do not have a Time Capsule");
+    }
+    return await Delay.create(user._id, content, type, behavior, new Date(0));
   }
 
-  @Router.get("delay/timecapsule")
-  async getUserTimeCapsule(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
-    return await timeCapsuleByOwner(user);
+  @Router.get("delay/timecapsule/:username")
+  async getUserTimeCapsule(username: string) {
+    const user = await User.getUserByUsername(username);
+    if (user.userType !== "patient") {
+      throw new NotAllowedError("Non-patients do not have a Time Capsule");
+    }
+    return await timeCapsuleByOwner(user._id);
   }
 
   /**System function**/
-  @Router.delete("delay/timecapsule")
-  async releaseTimeCapsule(user: ObjectId) {
-    const timeCapsule = await timeCapsuleByOwner(user);
+  @Router.delete("delay/timecapsule/:username")
+  async releaseTimeCapsule(username: string) {
+    const user = await User.getUserByUsername(username);
+    if (user.userType !== "patient") {
+      throw new NotAllowedError("Non-patients do not have a Time Capsule");
+    }
+    const timeCapsule = await timeCapsuleByOwner(user._id);
     for (const delay of timeCapsule) {
       await Delay.delete(delay._id);
       switch (delay.type) {
         case "Diary":
-          await Diary.update(delay.content, { hidden: false });
-          break;
+          switch (delay.behavior) {
+            case "send":
+              return await Diary.update(delay.content, { hidden: false });
+            case "delete":
+              return await Diary.delete(delay.content);
+            default:
+              throw new NotAllowedError(`Delay does not currently support behavior of type ${delay.behavior}.`);
+          }
         case "Letter":
-          await Letter.sendLetter(delay.content);
-          break;
+          switch (delay.behavior) {
+            case "send":
+              return await Letter.sendLetter(delay.content);
+            case "delete":
+              return await Letter.deleteLetter_server(delay.content);
+            default:
+              throw new NotAllowedError(`Delay does not currently support behavior of type ${delay.behavior}.`);
+          }
         default:
           throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
       }
@@ -526,7 +550,7 @@ class Routes {
     // const thereceiver = theletter.to;
     return { msg: "No email sent!" };
   }
-  
+
   // #############Letter Response#####################
   @Router.post("/letterrespond")
   async respondtoLetter(session: WebSessionDoc, originalletter: ObjectId, content: string) {
@@ -641,6 +665,27 @@ class Routes {
     const user = WebSession.getUser(session);
     await Mood.isOwner(user);
     return await Mood.removeViewer(user, viewer);
+  }
+
+  //#############################################################
+  // Preferences
+  //#############################################################
+  @Router.get("/preferences/:_id")
+  async getPreferencesByUser(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Preference.getUserPreferences(user);
+  }
+
+  @Router.patch("/preferences/:_id")
+  async updatePreferences(session: WebSessionDoc, update: Partial<PreferenceDoc>) {
+    const user = WebSession.getUser(session);
+    return await Preference.updatePreference(user, update);
+  }
+
+  @Router.patch("/preferences/:_id/default")
+  async resetDefaultPreferences(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Preference.resetPreferences(user);
   }
 }
 
