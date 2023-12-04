@@ -3,12 +3,11 @@ import router from "@/router";
 import { useMoodStore } from "@/stores/mood";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
 
 
 
-const { userMood } = storeToRefs(useMoodStore());
+const { userMood, hasMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
@@ -25,9 +24,6 @@ async function settings() {
   void router.push({ name: "Settings" });
 }
 
-const moodClass = computed(() => {
-  return userMood.value ? `mood-${userMood.value.toLowerCase()}` : '';
-});
 
 </script>
 
@@ -41,9 +37,10 @@ const moodClass = computed(() => {
               <p id="date" class="text-left">Date</p>
               <h1 class="text-left">Hi {{ currentUsername }} !</h1>
             </div>
+            <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
             <div class="profile-container">
-              <img  :class="moodClass" class="profile-pic" src="@/assets/images/profile.svg"/>
-              <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
+              <img class="profile-pic" src="@/assets/images/profile.svg"/>
+              <div v-if="hasMood" class="mood-emoji">{{ userMood }}</div>
             </div>
           </div>
           
@@ -85,25 +82,16 @@ const moodClass = computed(() => {
 </template>
 
 <style scoped>
-.mood-happy {
-  border: 3px solid yellow;
-  border-radius: 50%;
+.mood-emoji {
+  position: absolute;
+  bottom: 0;
+  right: 0.4em;
+  font-size: 20px;
 }
 
-.mood-chill {
-  border: 3px solid blue;
-  border-radius: 50%;
-}
 
-.mood-stressed {
-  border: 3px solid red;
-  border-radius: 50%;
-}
 
-.mood-sad {
-  border: 3px solid gray;
-  border-radius: 50%;
-}
+
 
 .mood-custom {
   border: 3px solid green;
@@ -129,18 +117,20 @@ const moodClass = computed(() => {
 
 .profile-container {
   position: relative;
+  max-width: 500px;
 }
 
 .profile-pic {
   position: relative;
-  margin-right: 10px;
+  margin-right: 15px;
+  margin-top: 15px;
   width: 50px;
 }
 
 .settings-icon {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 15px;
+  right: 15px;
   width: 22px;
 }
 
