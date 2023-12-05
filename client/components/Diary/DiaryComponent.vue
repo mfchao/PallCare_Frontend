@@ -18,33 +18,86 @@ async function deleteDiaryEntry() {
 </script>
 
 <template>
-  <p class="author">{{ props.diary.author }}</p>
-  <p>{{ props.diary.content }}</p>
-  <div class="base">
-    <menu v-if="props.diary.author == currentUsername">
-      <li>
-        <p>{{ props.diary.hidden ? "Private" : "Public" }}</p>
-      </li>
-      <li><button class="btn-small pure-button" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button></li>
-      <li><button class="button-error btn-small pure-button" @click="deleteDiaryEntry">Delete</button></li>
-    </menu>
-    <article class="timestamp">
-      <p v-if="props.diary.dateCreated !== props.diary.dateUpdated">Edited on: {{ formatEntryDate(props.diary.dateUpdated) }}</p>
-      <p v-else>Created on: {{ formatEntryDate(props.diary.dateCreated) }}</p>
-    </article>
+  <div class="card">
+    <div class="top">
+      <span v-if="props.diary.hidden == true" class="ribbon">PRIVATE</span>
+      <span v-else class="ribbon2" >PUBLIC</span>
+      <!-- <text class="date" v-if="props.diary.dateCreated !== props.diary.dateUpdated">Edited on: {{ formatEntryDate(props.diary.dateUpdated) }}</text>
+      <text class="date" v-else>Created on: {{ formatEntryDate(props.diary.dateCreated) }}</text> -->
+      <text class="date">{{ formatEntryDate(props.diary.dateCreated) }}</text>
+    </div>
+    <div class="bottom">
+      <text class="diarycontent">{{ props.diary.content.substring(0,90)+".." }}</text>
+      <div class="buttons" v-if="props.diary.author == currentUsername">
+        <button class="little-black" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button>
+        <button class="little-gray" @click="deleteDiaryEntry">Delete</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.card{
+  display: flex;
+  width: 300px;
+  height: 95px;
+  padding: 1.5px 0px 9px 1.5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: var(--numbers-spacing-12, 12px);
+  border: 1.5px solid #000;
+}
+
 p {
   margin: 0em;
 }
-
-.author {
-  font-weight: bold;
-  font-size: 1.2em;
+.top{
+  display: flex;
+width: 350px;
+height: 28px;
+padding: 0px -10px;
+align-items: center ;
+gap: 40px;
+flex-shrink: 0;
 }
+.date{
+display: flex;
+width: 207px;
+height: 18px;
+flex-direction: column;
+justify-content: flex-end;
+flex-shrink: 0;
+  color: #000;
+  font-family: SF Pro Display;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+line-height: 82.938%;
+}
+.diarycontent{
+  display: flex;
+  width: 190px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #8D8989;
+  font-family: SF Pro Display;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.buttons{
+  display: flex;
+  width: 66px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 
+flex-shrink: 0;
+}
 menu {
   list-style-type: none;
   display: flex;
@@ -61,13 +114,60 @@ menu {
   font-style: italic;
 }
 
-.base {
+.bottom {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 225px;
+  padding: 0px 20px 0px 13px;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .base article:only-child {
   margin-left: auto;
+}
+
+.little-black {
+  display: flex;
+  width: 75px;
+  height: 25px;
+  padding: 10px;
+  background: #131313;
+  font:100% SF Pro Display;
+  font-size: 16px;
+}
+.ribbon{
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+  position: relative;
+  left: -10px;
+  box-shadow: 2px 2px 6px #9d9c9c;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(-20deg);
+  background-color: #EDB4C7;
+  color: white;
+}
+.ribbon2{
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+  position: relative;
+  left: -10px;
+  box-shadow: 2px 2px 6px #9d9c9c;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(-20deg);
+  background-color: #9FB9C7;
+  color: rgb(0, 0, 0);
+}
+.little-gray {
+  display: flex;
+  width: 75px;
+  height: 25px;
+  padding: 10px;
+  background: rgb(101, 103, 104);
+  font:100% SF Pro Display;
+  font-size: 16px;
 }
 </style>
