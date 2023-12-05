@@ -5,16 +5,13 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
-
+import router from "./router";
 
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
-<<<<<<< Updated upstream
-const { isPreferenceViewOn } = usePreferenceStore();
-=======
 const { showNav} = storeToRefs(usePreferenceStore());
 const { logoutUser} = useUserStore();
 
@@ -22,34 +19,23 @@ async function logout() {
   await logoutUser();
   void router.push({ name: "Home" });
 }
->>>>>>> Stashed changes
 
+const hideNavbar = computed(() => {
+  if (currentRouteName.value) {
+    return currentRouteName.value in ["Home", "Login", "Register", "AccountType", "PreferenceF", "PreferenceP"];
+  }
+});
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
   try {
     await userStore.updateSession();
+    if (isLoggedIn.value) {
+      void router.push({ name: "Home" });
+    }
   } catch {
     // User is not logged in
-  }}else {
-    logout();
-  }
-});
-
-async function logout() {
-  await logoutUser();
-  void router.push({ name: "Home" });
-}
-const hideNavbar = computed(() => {
-  if (currentRouteName.value == "AccountType" || "PreferenceF" || "PreferenceP") {
-    return true;
-  } else {
-    return false;
-  }
-});
-
-
-
+  }});
 </script>
 
 <template>

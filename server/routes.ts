@@ -47,7 +47,7 @@ class Routes {
   @Router.post("/users")
   async createUser(session: WebSessionDoc, username: string, password: string, userType: string) {
     WebSession.isLoggedOut(session);
-    const output = await User.create(username, password);
+    const output = await User.create(username, password, userType);
     await Preference.initialize(output.user!._id); // initialzie preferences for a user upon creation
     return output;
   }

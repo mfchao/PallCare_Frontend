@@ -5,14 +5,11 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import MoodForm from "../components/Mood/MoodForm.vue";
 
-
-
 const { userMood, hasMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
-
-
 async function loginUser() {
+  console.log(isLoggedIn.value);
   void router.push({ name: "Login" });
 }
 
@@ -23,62 +20,52 @@ async function registerUser() {
 async function settings() {
   void router.push({ name: "Settings" });
 }
-
-
 </script>
 
 <template>
-    <main>
-  
-<!-- home page -->
-        <div v-if="isLoggedIn">
-          <div class="flex-container">
-            <div>
-              <p id="date" class="text-left">Date</p>
-              <h1 class="text-left">Hi {{ currentUsername }} !</h1>
-            </div>
-            <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
-            <div class="profile-container">
-              <img class="profile-pic" src="@/assets/images/profile.svg"/>
-              <div v-if="hasMood" class="mood-emoji">{{ userMood }}</div>
-            </div>
-          </div>
-          
-          <div>
-            <MoodForm/>
-          </div>
-          
+  <main>
+    <!-- home page -->
+    <div v-if="isLoggedIn">
+      <div class="flex-container">
+        <div>
+          <p id="date" class="text-left">Date</p>
+          <h1 class="text-left">Hi {{ currentUsername }} !</h1>
         </div>
-    
-
-
-
+        <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
+        <div class="profile-container">
+          <img class="profile-pic" src="@/assets/images/profile.svg"/>
+          <div v-if="hasMood" class="mood-emoji">{{ userMood }}</div>
+        </div>
+      </div>
+      
+      <div>
+        <MoodForm/>
+      </div>
+      
+    </div>
 <!-- welcome login -->
 
-        <div v-else>
-            <div >
-              <img class="animate logo" src="@/assets/images/logo.svg" />
-           </div>
-    
-          <div class="forms fade-in">
-            <div class="welcometitle>">
-              <h1>Welcome to Palliative Care App</h1>
-            </div>
-            
-            <div class="info">
-              <img src="@/assets/images/placeholderimage0.png" width="300"/>
-            </div>
+    <div v-else>
+      <div >
+        <img class="animate logo" src="@/assets/images/logo.svg" />
+      </div>
 
-            <div class="button-container">
-              <button class="blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
-              <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
-            </div>
-            
-            
-          </div>
-          
+      <div class="forms fade-in">
+        <div class="welcometitle>">
+          <h1>Welcome to Always</h1>
         </div>
-      </main>
+        
+        <div class="info">
+          <img src="@/assets/images/placeholderimage0.png" width="300"/>
+        </div>
+
+        <div class="button-container">
+          <button class="blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
+          <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
 
 <style scoped>

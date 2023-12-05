@@ -4,13 +4,15 @@ import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import { useRoute } from "vue-router";
 
-
-
+const route = useRoute();
+const username = route.query.username as string;
+const password = route.query.password as string;
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
-const { getUserType, isFamily } = useUserStore();
+const { createUser, loginUser, updateSession, isFamily } = useUserStore();
 
 
 
@@ -41,21 +43,6 @@ async function preferences() {
 onBeforeMount(() => {
   setOn();
 });
-
-
-
-
-
-<<<<<<< Updated upstream
-=======
-
-
-onBeforeMount(() => {
-  setOn();
-});
-
-
->>>>>>> Stashed changes
 </script>
 
 <template>
