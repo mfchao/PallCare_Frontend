@@ -361,16 +361,16 @@ class Routes {
   // ############################################################
   // Time Capsule: Delay + Diary + Letter
   // ############################################################
-  @Router.post("/delay/timecapsule")
-  async addToTimeCapsule(username: string, content: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") {
+  @Router.post("/timecapsule/:contentID")
+  async addToTimeCapsule(username: string, contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
       throw new NotAllowedError("Non-patients do not have a Time Capsule");
     }
-    return await Delay.create(user._id, content, type, behavior, new Date(0));
+    return await Delay.create(user._id, contentID, type, behavior, new Date(0));
   }
 
-  @Router.get("delay/timecapsule/:username")
+  @Router.get("timecapsule/:username")
   async getUserTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
@@ -380,7 +380,7 @@ class Routes {
   }
 
   /**System function**/
-  @Router.delete("delay/timecapsule/:username")
+  @Router.delete("timecapsule/:username")
   async releaseTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {

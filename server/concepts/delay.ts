@@ -66,7 +66,7 @@ export default class DelayConcept {
   }
 
   async getDelaysByOwner(owner: ObjectId) {
-    return await this.delays.readMany({ owner });
+    return await this.delays.readMany({ owner }, { sort: { dateUpdated: -1 } });
   }
 
   async delete(_id: ObjectId) {
