@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const usePreferenceStore = defineStore(
   "preference",
   () => {
-    const isPreferenceViewOn = ref(false);
+    let isPreferenceViewOn = ref(false);
+
+    const showNav = computed(() => isPreferenceViewOn.value !== false);
 
     const setOff = () => {
       isPreferenceViewOn.value = false;

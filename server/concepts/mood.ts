@@ -16,21 +16,20 @@ export default class MoodConcept {
     const existingMood = await this.moods.readOne({ owner });
     if (existingMood) {
       // If a mood already exists, update it
-      await this.update(existingMood._id, { mood });
-      return { msg: "Mood updated successfully!" };
+      await this.update(existingMood._id, { mood: mood });
+      return { msg: "Mood updated successfully!", mood: await this.moods.readOne({ owner }) };
     } else {
-      if (mood && owner && notify) {
+      if (mood && owner) {
         const _id = await this.moods.createOne({ owner, mood, notify, viewers });
-        return { msg: "User created successfully!", user: await this.moods.readOne({ _id }) };
+        return { msg: "User created successfully!", mood: await this.moods.readOne({ _id }) };
       } else {
-        throw new NotAllowedError("owner, mood, and notify must be non-empty!");
+        throw new NotAllowedError("owner and mood must be non-empty!");
       }
     }
   }
 
   async update(_id: ObjectId, update: Partial<MoodDoc>) {
     await this.moods.updateOne({ _id }, update);
-    return { msg: "Mood successfully updated!" };
   }
 
   async isOwner(user: ObjectId) {
@@ -51,7 +50,13 @@ export default class MoodConcept {
   }
 
   async getByOwner(owner: ObjectId) {
-    return await this.getMoods({ owner });
+    const mood = await this.getMoods({ owner });
+    return mood;
+  }
+
+  async getByOwnerId(owner: ObjectId) {
+    const mood = await this.getMoods({ owner });
+    return mood[0]._id;
   }
 
   async delete(_id: ObjectId) {

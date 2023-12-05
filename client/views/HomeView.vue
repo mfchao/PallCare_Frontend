@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import router from "@/router";
+import { useMoodStore } from "@/stores/mood";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import MoodForm from "../components/Mood/MoodForm.vue";
 
 
 
+const { userMood, hasMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
@@ -17,90 +20,168 @@ async function registerUser() {
   void router.push({ name: "Register" });
 }
 
+async function settings() {
+  void router.push({ name: "Settings" });
+}
+
+
 </script>
 
 <template>
     <main>
   
-
-        <div v-if="isLoggedIn" class="home">
-          <!-- <h1>This week's SpotLite</h1> -->
-          <SpotInfoComponent/>
-          <PostListComponent />
+<!-- home page -->
+        <div v-if="isLoggedIn">
+          <div class="flex-container">
+            <div>
+              <p id="date" class="text-left">Date</p>
+              <h1 class="text-left">Hi {{ currentUsername }} !</h1>
+            </div>
+            <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
+            <div class="profile-container">
+              <img class="profile-pic" src="@/assets/images/profile.svg"/>
+              <div v-if="hasMood" class="mood-emoji">{{ userMood }}</div>
+            </div>
+          </div>
+          
+          <div>
+            <MoodForm/>
+          </div>
+          
         </div>
     
-        <div v-else class="relative">
-            <div class="centered ">
+
+
+
+<!-- welcome login -->
+
+        <div v-else>
+            <div >
               <img class="animate logo" src="@/assets/images/logo.svg" />
            </div>
     
           <div class="forms fade-in">
-            <h1>Welcome to Palliative Care App</h1>
-            <div class="info">
-                info...
+            <div class="welcometitle>">
+              <h1>Welcome to Palliative Care App</h1>
             </div>
+            
+            <div class="info">
+              <img src="@/assets/images/placeholderimage0.png" width="300"/>
+            </div>
+
             <div class="button-container">
-              <button @click="loginUser" > LOGIN</button>
-              <button @click="registerUser"> REGISTER</button>
+              <button class="blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
+              <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
             </div>
             
             
           </div>
-          <!-- <div class="bg-container fade-in">
-            <img class="background-image" src="@/assets/images/gradient1.png"/>
-          </div> -->
           
         </div>
       </main>
 </template>
 
 <style scoped>
-.home {
-    background-image: url("@/assets/images/gradient2.png");
-    background-repeat: no-repeat;
-    background-size: fill;
-    background-position: center;
-    background-attachment: fixed;
-  }
+.mood-emoji {
+  position: absolute;
+  bottom: 0;
+  right: 0.4em;
+  font-size: 20px;
+}
+
+
+
+
+
+.mood-custom {
+  border: 3px solid green;
+  border-radius: 50%;
+}
   
 .info {
-    padding: 3em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-  
-h1 {
-text-align: center;
-letter-spacing: 0.03em;
-font-size: 1.2em;
+
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.text-left {
+  text-align: left;
+}
+
+.profile-container {
+  position: relative;
+  max-width: 500px;
+}
+
+.profile-pic {
+  position: relative;
+  margin-right: 15px;
+  margin-top: 15px;
+  width: 50px;
+}
+
+.settings-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 22px;
+}
+
 
 * {
 transition: all 0.5s ease;
 }
 
+
 .button-container {
-margin-top: 25px;
-display: flex;
-justify-content: center;
-gap: 30px;
-margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-button {
--webkit-backdrop-filter: blur(8px);  /* Safari 9+ */
-backdrop-filter: blur(8px); /* Chrome and Opera */
-box-shadow: 0px 2px 10px 2px rgb(0 0 0 / 15%);
-background: rgba(255, 255, 255, 0.09); 
-    color: black;
-    border: none;
-    padding: 0.8em;
-border-radius: 10px;
-    font: "SF-Compact-Medium";
-letter-spacing: 0.08em;
-font-size: 0.8em;
-    cursor: pointer;
-    outline: inherit;
-text-transform: uppercase;
-transition: .3s ease;
+.bluebutton {
+  /* background: #1E1E1E; */
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
+}
+
+.blackbutton {
+  background: #1E1E1E;
+  border-radius: 40px;
+  width: 300px;
+  height: 60px;
+  border: none;
+  outline: none;
+}
+
+p.login {
+  color: #FFF;
+  text-align: center;
+  
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+p.Register {
+  color: #131313;
+  text-align: center;
+  font-family: SF Pro Display;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 button:hover {
@@ -121,6 +202,7 @@ transform: translate(-50%, -50%);
 .logo {
 position: absolute;
 width: 10em;
+height: 100vh;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
@@ -141,14 +223,7 @@ height: 100%;
 object-fit: cover;
 }
 
-.relative {
-position: relative;
-width: 100vw;
-height: 100vh;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-}
+
 
 .animate {
 -webkit-animation: fadeinout 4s linear forwards;
@@ -197,14 +272,16 @@ top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
 width: 100%;
+height: 120%;
 display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
 z-index: 10;
+gap: 57px;
+/* display: inline-flex; */
+background: #F0E7D8;
 }
 
-main {
-animation: fadeInAll 1.5s ease-in;
-}
+
 </style>

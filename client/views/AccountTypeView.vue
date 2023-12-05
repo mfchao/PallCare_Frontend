@@ -1,28 +1,22 @@
 <script setup lang="ts">
 import router from "@/router";
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
-import { ref } from "vue";
-import { useRoute } from 'vue-router';
+import { storeToRefs } from "pinia";
+import { onBeforeMount, ref } from "vue";
 
 
-const route = useRoute();
-const username = route.params.username[0];
-const password = route.params.password[0];
 
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
-<<<<<<< Updated upstream
-const { createUser, loginUser, updateSession, isFamily } = useUserStore();
+const { getUserType, isFamily } = useUserStore();
 
 
 
-=======
-const { updateUser, getUserType } = useUserStore();
+const { updateUser } = useUserStore();
 const { setOn } = usePreferenceStore();
 const { showNav} = storeToRefs(usePreferenceStore());
->>>>>>> Stashed changes
-
 
 async function preferences() {
     if (family.value) {
@@ -42,6 +36,15 @@ async function preferences() {
         void router.push({ name: "PreferenceP" });
     }
 }
+
+
+onBeforeMount(() => {
+  setOn();
+});
+
+
+
+
 
 <<<<<<< Updated upstream
 =======

@@ -3,7 +3,9 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
 import AccountTypeView from "../views/AccountTypeView.vue";
+import { CreateDiaryView, DiaryView, EditDiaryView } from "../views/Diary/_diaryViews";
 import HomeView from "../views/HomeView.vue";
+import { CreateLetterView, EditLetterView, LetterView } from "../views/Letter/_letterView";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import RegisterView from "../views/RegisterView.vue";
@@ -34,7 +36,39 @@ const router = createRouter({
     {
       path: "/diary",
       name: "Diary",
-      component: HomeView,
+      component: DiaryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/diary/create",
+      name: "CreateDiary",
+      component: CreateDiaryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/diary/edit/:_id",
+      name: "EditDiary",
+      component: EditDiaryView,
+      props: (route) => ({ _id: route.params._id }),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letter",
+      name: "Letter",
+      component: LetterView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letter/create",
+      name: "CreateLetter",
+      component: CreateLetterView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letter/edit/:_id",
+      name: "EditLetter",
+      component: EditLetterView,
+      props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },
     {
@@ -46,12 +80,6 @@ const router = createRouter({
     {
       path: "/wish",
       name: "Wish",
-      component: HomeView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/letter",
-      name: "Letter",
       component: HomeView,
       meta: { requiresAuth: true },
     },

@@ -14,7 +14,6 @@ const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 <<<<<<< Updated upstream
 const { isPreferenceViewOn } = usePreferenceStore();
-
 =======
 const { showNav} = storeToRefs(usePreferenceStore());
 const { logoutUser} = useUserStore();
@@ -32,23 +31,30 @@ onBeforeMount(async () => {
     await userStore.updateSession();
   } catch {
     // User is not logged in
+  }}else {
+    logout();
   }
-<<<<<<< Updated upstream
-});
-=======
-
 });
 
+async function logout() {
+  await logoutUser();
+  void router.push({ name: "Home" });
+}
+const hideNavbar = computed(() => {
+  if (currentRouteName.value == "AccountType" || "PreferenceF" || "PreferenceP") {
+    return true;
+  } else {
+    return false;
+  }
+});
 
 
 
-
->>>>>>> Stashed changes
 </script>
 
 <template>
   <header >
-    <nav v-if="isLoggedIn && !isPreferenceViewOn">
+    <nav v-if="isLoggedIn && !hideNavbar">
       <div class="title">
         <!-- <img src="@/assets/images/logo.svg" /> -->
       </div>
