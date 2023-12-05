@@ -546,6 +546,7 @@ class Routes {
     return await Letter.deleteLetter_client(letter);
   }
 
+
   // @Router.patch("/letter/email")
   // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
   //   const user = WebSession.getUser(session);
@@ -556,6 +557,7 @@ class Routes {
   //   // const thereceiver = theletter.to;
   //   return { msg: "No email sent!" };
   // }
+
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
@@ -653,11 +655,11 @@ class Routes {
     return moods;
   }
 
-  @Router.delete("/moods/:_id")
-  async deleteMood(session: WebSessionDoc, _id: ObjectId) {
+  @Router.delete("/moods")
+  async deleteMood(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
-    await Mood.isOwner(user);
-    return Mood.delete(_id);
+    const moodId = await Mood.getByOwnerId(user);
+    return Mood.delete(moodId);
   }
 
   @Router.patch("/moods/:_id/addViewers")
