@@ -35,10 +35,10 @@ export const useMoodStore = defineStore(
       return await fetchy(`/api/moods`, "GET");
     };
 
-    // const deleteMood = async () => {
-    //   await fetchy("/api/moods", "DELETE");
-    //   resetStore();
-    // };
+    const deleteMood = async () => {
+      await fetchy("/api/moods/", "DELETE");
+      resetStore();
+    };
 
     return {
       userMood,
@@ -46,6 +46,7 @@ export const useMoodStore = defineStore(
       createMood,
       refreshMood,
       getMoods,
+      deleteMood,
     };
   },
   { persist: true },
