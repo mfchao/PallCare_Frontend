@@ -22,9 +22,9 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <button @click="router.push({ name: 'Home' })">Home</button>
+  <button @click="router.push({ name: 'TimeCapsule' })">back</button>
   <h1>Capsule Content</h1>
-  <button @click="router.push({ name: 'CreateLetter' })">Create a new letter to store in Time Capsule</button>
+  <button @click="router.push({ name: 'CreateLetter' })" @refreshContent="getTimeCapsule">Create a new letter to store in Time Capsule</button>
   <article v-for="delay in delays" :key="delay._id">
     <TimeCapsuleContentComponent :delay="delay" @deleteContent="getTimeCapsule" />
   </article>

@@ -16,13 +16,11 @@ export const useTCStore = defineStore(
       return await fetchy(`/api/timecapsule/${username}`, "GET");
     };
 
-    const getDiariesAndWishes = async (username: string) => {
-      const diaries = await fetchy(`/api/diary/entries/${username}`, "GET");
-      const wishes = await fetchy(`/api/wishes/${username}`, "GET");
-      return [...diaries, ...wishes].sort((a, b) => (a.dateUpdated >= b.dateUpdated ? 1 : -1));
+    const getUnselectedContent = async (username: string) => {
+      return await fetchy(`/api/timecapsule/not_selected/${username}`, "GET");
     };
 
-    const addToTimeCapsule = async (username: string, contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") => {
+    const addToTimeCapsule = async (username: string, contentID: string, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") => {
       const body: BodyT = { username, type, behavior };
       await fetchy(`/api/timecapsule/${contentID}`, "POST", { body });
     };
@@ -34,7 +32,7 @@ export const useTCStore = defineStore(
     return {
       getReleaseDate,
       getSelectContent,
-      getDiariesAndWishes,
+      getUnselectedContent,
       addToTimeCapsule,
       removeFromTimeCapsule,
     };

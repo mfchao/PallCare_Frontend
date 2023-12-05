@@ -379,6 +379,15 @@ class Routes {
     return await timeCapsuleByOwner(user._id);
   }
 
+  @Router.get("/timecapsule/not_selected/:username")
+  async getContentNotInTimeCapsule(username: string) {
+    const user = await User.getUserByUsername(username);
+    const timeCapsuleIDs = new Set((await timeCapsuleByOwner(user._id)).map((delay) => delay.content));
+    const diaries = (await Diary.getEntriesByAuthor(user._id)).filter((diary) => !timeCapsuleIDs.has(diary._id));
+    const wishes = (await Wish.getByAuthor(user._id)).filter((wish) => !timeCapsuleIDs.has(wish._id));
+    return { diaries: await Responses.diaries(diaries), wishes: await Responses.wishes(wishes) };
+  }
+
   /**System function**/
   @Router.delete("timecapsule/:username")
   async releaseTimeCapsule(username: string) {
@@ -546,7 +555,6 @@ class Routes {
     return await Letter.deleteLetter_client(letter);
   }
 
-
   // @Router.patch("/letter/email")
   // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
   //   const user = WebSession.getUser(session);
@@ -557,7 +565,6 @@ class Routes {
   //   // const thereceiver = theletter.to;
   //   return { msg: "No email sent!" };
   // }
-
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
