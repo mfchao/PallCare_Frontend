@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import router from "../../router";
 import { useDiaryStore } from "../../stores/diary";
-import { formatEntryDate } from "../../utils/formatDate";
 
 const { createDiary } = useDiaryStore();
 let content = ref("");
@@ -19,12 +18,13 @@ async function submitForm() {
     <div class="navigation">
       <img @click="router.push({ name: 'Letter' })" src="@/assets/images/back.svg"/>
       <h1>New Letter</h1>
-      
     </div>
+
     <form class="create-form" @submit.prevent="submitForm">
       <div class="letterinputspace">
         <textarea class="letter-content" id="content" v-model="content" placeholder="Write the letter here!" required> </textarea>
       </div>
+
       <div class="setting">
         <div class="field-title">
           <p class="setting-title">Settings</p>
@@ -125,7 +125,7 @@ body {
 textarea.letter-content {
   display: flex;
   width: 260px;
-  height: 216px;
+  height: 226px;
   padding: 10px 11px;
   flex-direction: column;
   align-items: flex-start;
@@ -180,15 +180,7 @@ textarea.letter-content {
   /* line-height: 103.822%; 13.497px */
 }
 
-.delay{
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
 
-.checkbox{
-  width: 40px;
-}
 
 input.contact{
   display: flex;

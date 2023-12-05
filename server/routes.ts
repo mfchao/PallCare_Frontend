@@ -332,11 +332,11 @@ class Routes {
         switch (delay.behavior) {
           case "send":
             const the_letter = await Letter.getLetterById(delay.content);
-            const username = (await User.getUserById(the_letter.from)).username;
+            const username = (await User.getUserById(delay.owner)).username;
             await Letter.sendLetter(the_letter._id);
             const thereceiver = the_letter.to;
             for (const receiver of thereceiver) {
-              if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
+              if ((await Contact.checkContactType(delay.owner, receiver)) === "NonUser") {
                 const receiveremail = await Contact.getemailaddressbyId(receiver);
                 if (receiveremail === null) {
                   continue;

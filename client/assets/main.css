@@ -193,3 +193,9 @@ input:checked + .slider:before {
   border-radius: 15px;
 }
 
+.navigation{
+  display: flex;
+  width: 300px;
+  align-items: center;
+  gap: 23px;
+}

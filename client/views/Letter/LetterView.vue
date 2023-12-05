@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DiaryListComponent from "../../components/Diary/DiaryListComponent.vue";
 import router from "../../router";
 </script>
 <template>
