@@ -19,7 +19,7 @@ async function deleteDiaryEntry() {
 }
 async function addDiaryToCapsule(behavior: "send" | "delete") {
   await addToTimeCapsule(currentUsername.value, props.diary._id, "Diary", behavior);
-  emit("refreshDiaries", props.diary._id);
+  emit("refreshDiaries");
 }
 </script>
 

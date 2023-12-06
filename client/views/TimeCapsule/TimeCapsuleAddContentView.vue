@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import DiaryComponent from "../../components/Diary/DiaryComponent.vue";
+import WishComponent from "../../components/Wish/WishComponent.vue";
 import router from "../../router";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
@@ -41,7 +42,7 @@ onBeforeMount(async () => {
     <h1>Select Wishes to Add to Time Capsule</h1>
     <article v-for="wish in wishes" :key="wish._id">
       <!-- TODO: add WISH component w/ conditional styling -->
-      <button @click="refreshWishes('fake id')"></button>
+      <WishComponent />
     </article>
   </body>
 </template>
