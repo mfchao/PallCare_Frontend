@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { Router, getExpressRouter } from "./framework/router";
 
 import { Contact, Delay, Diary, Email, Friend, Letter, Mood, Post, Preference, Topic, User, WebSession, Wish } from "./app";
+import { DelayDoc } from "./concepts/delay";
 import { DiaryDoc } from "./concepts/diary";
 import { NotAllowedError } from "./concepts/errors";
 import { MoodDoc } from "./concepts/mood";
@@ -253,7 +254,7 @@ class Routes {
   async createDiary(session: WebSessionDoc, content: string, hidden: boolean) {
     const user = WebSession.getUser(session);
     const created = await Diary.create(user, content, hidden);
-    return { msg: created.msg, diary: await Responses.diary(created.diary) };
+    return await Responses.diary(created.diary);
   }
 
   @Router.get("/diary/entries/:username")
@@ -285,15 +286,15 @@ class Routes {
   // ############################################################
   // Delay
   // ############################################################
-  @Router.post("/delay")
-  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete", activation: Date) {
+  @Router.post("/delay/:contentID")
+  async createDelay(session: WebSessionDoc, contentID: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete", activation: Date) {
     const user = WebSession.getUser(session);
-    return await Delay.create(user, content, type, behavior, activation);
+    return await Delay.create(user, contentID, type, behavior, activation);
   }
 
   @Router.get("/delay/:_id")
   async getDelayById(_id: ObjectId) {
-    return await Delay.getDelayByContent(_id);
+    return await Delay.getDelayById(_id);
   }
 
   @Router.get("/delay/content/:_id")
@@ -315,6 +316,13 @@ class Routes {
   @Router.delete("/delay/:_id")
   async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
     return await Delay.delete(_id);
+  }
+
+  @Router.patch("/delay/:_id")
+  async updateDelay(session: WebSessionDoc, _id: ObjectId, update: Partial<DelayDoc>) {
+    const user = WebSession.getUser(session);
+    await Delay.checkRep(user, _id);
+    return await Delay.updateDelay(_id, update);
   }
 
   /**System function**/
@@ -352,13 +360,6 @@ class Routes {
     } else {
       throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
     }
-  }
-
-  @Router.patch("/delay/activation/:_id&time")
-  async updateDelayExpiration(session: WebSessionDoc, _id: ObjectId, activation: Date) {
-    const user = WebSession.getUser(session);
-    await Delay.checkRep(user, _id);
-    return await Delay.updateActivation(_id, activation);
   }
 
   // ############################################################

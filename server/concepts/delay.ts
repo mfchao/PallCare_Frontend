@@ -35,6 +35,9 @@ export default class DelayConcept {
   public readonly delays = new DocCollection<DelayDoc>("delays");
 
   async create(owner: ObjectId, content: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete", activation: Date) {
+    if (await this.delays.readOne({ content })) {
+      throw new NotAllowedError("This piece of content already has a delay!");
+    }
     const _id = await this.delays.createOne({ owner, content, type, behavior, activation });
     return { msg: "Created Delay!", delay: await this.delays.readOne({ _id }) };
   }
@@ -58,7 +61,7 @@ export default class DelayConcept {
   }
 
   async getDelayByContent(content: ObjectId) {
-    const delay = await this.delays.readMany({ content });
+    const delay = await this.delays.readOne({ content });
     if (!delay) {
       throw new NotFoundError("No such delay", content);
     }
@@ -74,10 +77,10 @@ export default class DelayConcept {
     return { msg: "Deleted Delay!" };
   }
 
-  async updateActivation(_id: ObjectId, activation: Date) {
+  async updateDelay(_id: ObjectId, update: Partial<DelayDoc>) {
     await this.getDelayById(_id); // assert there is a delay
-    await this.delays.updateOne({ _id }, { activation: activation });
-    return { msg: "Updated Delay Activation!" };
+    await this.delays.updateOne({ _id }, update);
+    return { msg: "Updated Delay!" };
   }
 
   async isExpired(_id: ObjectId) {
