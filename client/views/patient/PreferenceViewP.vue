@@ -47,14 +47,14 @@ onBeforeMount(() => {
 
 <template>
   <main>
-    <div v-if="userType == 'patient'">
+    <div v-if="userType == 'patient'" class="back-button">
       <img @click="accountType" src="@/assets/images/back.svg"/>
     </div>
     
-    <h1>Let Us Know More About You ...</h1>
-
-    <div v-if="userType == 'patient'">
-      <select v-model="age">
+    <h1>Tell Us More About You ...</h1>
+    
+    <div v-if="userType == 'patient'" class="dropdown-wrapper">
+      <select v-model="age" class="styled-dropdown">
         <option disabled value="">Please select your age</option>
         <option>under 18</option>
         <option>18-25</option>
@@ -67,8 +67,8 @@ onBeforeMount(() => {
         <option>85+</option>
       </select>
     </div>
-    <div v-else-if="userType == 'family'">
-      <select v-model="age">
+    <div v-else-if="userType == 'family'" class="dropdown-wrapper">
+      <select v-model="age" class="styled-dropdown">
         <option disabled value="">Relationship to Patient</option>
         <option>Spouse</option>
         <option>Parent</option>
@@ -79,16 +79,18 @@ onBeforeMount(() => {
       </select>
     </div>
     
-      
-    <select v-model="aid">
-      <option disabled value="">Do you need a visual aid?</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
+      <div class="dropdown-wrapper">
+        <select v-model="aid" class="styled-dropdown">
+          <option disabled value="">Do you need a visual aid?</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+    
 
     <p>These can be changed later in settings</p>
     
-      <img @click="update" src="@/assets/images/next.svg"/>
+      <img  class="next-button" @click="update" src="@/assets/images/next.svg"/>
 
   </main>
 </template>
@@ -96,7 +98,69 @@ onBeforeMount(() => {
 <style scoped>
 h1 {
   text-align: center;
+  margin-bottom: 10px;
 }
+
+p {
+  position: relative;
+  display: block;
+  font-size: 0.9em;
+  color: grey;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  height: 100vh; 
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.next-button {
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
+}
+
+
+.styled-dropdown {
+  border: 2px solid black;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin-bottom: 20px;
+  width: 250px;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.dropdown-wrapper::after {
+  content: "▼";
+  font-size: 12px;
+  position: absolute;
+  right: 15px; 
+  top: 30%;
+  transform: translateY(-30%);
+  pointer-events: none;
+}
+
 </style>
 
 

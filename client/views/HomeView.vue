@@ -96,7 +96,10 @@ async function contacts() {
 }
 
 
-
+main {
+ 
+  height: 100vh; 
+}
 
 
 .mood-custom {
