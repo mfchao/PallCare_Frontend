@@ -8,6 +8,8 @@ export interface PreferenceDoc extends BaseDoc {
   expiry: number; // next date to prompt about updating preferences
   timeCapsule: number; //number of days after login to release time capsule
   fontSize: string; // set the font size across the application
+  age: string;
+  visualAid: boolean;
 }
 
 export default class PreferenceConcept {
@@ -49,7 +51,7 @@ export default class PreferenceConcept {
    */
   async updatePreference(user: ObjectId, update: Partial<PreferenceDoc>) {
     await this.preferences.updateOne({ user }, update);
-    return { msg: "Updated preferences." };
+    return { msg: "Updated preferences.", preferences: await this.preferences.readOne({ user }) };
   }
 
   /**

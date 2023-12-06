@@ -144,7 +144,7 @@ onBeforeMount(() => {
     width: 60px; 
     height: 20px; 
     border: 2px solid black;
-    background-color: beige;
+    background-color: rgba(163, 163, 161, 0.102);
     text-align: center;
     font-size: 0.7em;
     margin-top: 0px;

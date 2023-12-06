@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
 import AccountTypeView from "../views/AccountTypeView.vue";
+import ContactView from "../views/ContactView.vue";
 import { CreateDiaryView, DiaryView, EditDiaryView } from "../views/Diary/_diaryViews";
 import HomeView from "../views/HomeView.vue";
 import { CreateLetterView, EditLetterView, LetterView } from "../views/Letter/_letterView";
@@ -10,10 +11,14 @@ import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import SettingView from "../views/SettingView.vue";
+import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
 import CreateWishView from "../views/Wish/CreateWishView.vue";
 import WishBoardViewVue from "../views/Wish/WishBoardView.vue";
 import PreferenceViewF from "../views/family/PreferenceViewF.vue";
+import PreferenceViewFb from "../views/family/PreferenceViewFb.vue";
 import PreferenceViewP from "../views/patient/PreferenceViewP.vue";
+import PreferenceViewPb from "../views/patient/PreferenceViewPb.vue";
+import PreferenceViewPc from "../views/patient/PreferenceViewPc.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,15 +29,39 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: "/contact",
+      name: "Contact",
+      component: ContactView,
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/preferenceF",
       name: "PreferenceF",
       component: PreferenceViewF,
       meta: { requiresAuth: true },
     },
     {
+      path: "/preferenceF",
+      name: "PreferenceFb",
+      component: PreferenceViewFb,
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/preferenceP",
       name: "PreferenceP",
       component: PreferenceViewP,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/preferencePb",
+      name: "PreferencePb",
+      component: PreferenceViewPb,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/preferencePb",
+      name: "PreferencePc",
+      component: PreferenceViewPc,
       meta: { requiresAuth: true },
     },
     {
@@ -132,6 +161,24 @@ const router = createRouter({
       path: "/setting",
       name: "Settings",
       component: SettingView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule",
+      name: "TimeCapsule",
+      component: TimeCapsuleView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/content",
+      name: "TimeCapsuleContent",
+      component: TimeCapsuleContentView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/add",
+      name: "TimeCapsuleAdd",
+      component: TimeCapsuleAddContentView,
       meta: { requiresAuth: true },
     },
     {

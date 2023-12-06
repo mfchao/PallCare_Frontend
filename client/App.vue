@@ -7,48 +7,40 @@ import { storeToRefs } from "pinia";
 import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 
-
-
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
-const { showNav} = storeToRefs(usePreferenceStore());
-const { logoutUser} = useUserStore();
-
-
-
+const { showNav } = storeToRefs(usePreferenceStore());
+const { logoutUser } = useUserStore();
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
-  if(isLoggedIn.value)  {
-  try {
-    await userStore.updateSession();
-  } catch {
-    // User is not logged in
-  }}else {
-    logout();
+  if (isLoggedIn.value) {
+    try {
+      await userStore.updateSession();
+    } catch {
+      // User is not logged in
+    }
+  } else {
+    await logout();
   }
-
 });
 
 async function logout() {
   await logoutUser();
   void router.push({ name: "Home" });
 }
-
-
-
 </script>
 
 <template>
-  <header >
+  <header>
     <nav v-if="isLoggedIn && !showNav">
       <div class="title">
         <!-- <img src="@/assets/images/logo.svg" /> -->
       </div>
-      
+
       <ul>
         <li v-if="isFamily">
           <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
@@ -61,7 +53,7 @@ async function logout() {
           <RouterLink :to="{ name: 'Diary' }" :class="{ underline: currentRouteName == 'Diary' }"> Diary </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Delay' }" :class="{ underline: currentRouteName == 'Delay' }"> Delay </RouterLink>
+          <RouterLink :to="{ name: 'TimeCapsule' }" :class="{ underline: currentRouteName == 'TimeCapsule' }"> Time Capsule </RouterLink>
         </li>
         <li>
           <RouterLink :to="{ name: 'Wish' }" :class="{ underline: currentRouteName == 'Wish' }"> Wish </RouterLink>
@@ -75,7 +67,7 @@ async function logout() {
       <p>{{ toast.message }}</p>
     </article> -->
   </header>
- 
+
   <RouterView />
 </template>
 

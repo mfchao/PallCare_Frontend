@@ -24,11 +24,31 @@ async function goHome() {
 
 <template>
   <main class="column">
-    <img @click="goHome" src="@/assets/images/back.svg"/>
+    <img @click="goHome" src="@/assets/images/back.svg" class="back-button"/>
 
     <h1>Settings for {{ currentUsername }}</h1>
-    <button class="pure-button pure-button-primary" @click="logout">Logout</button>
-    <button class="button-error pure-button" @click="delete_">Delete User</button>
+    <button  @click="logout">Logout</button>
+    <button class="delete" @click="delete_">Delete User</button>
     <UpdateUserForm />
   </main>
 </template>
+
+<style scoped>
+.delete {
+  background: red
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  height: 100vh; 
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+</style>

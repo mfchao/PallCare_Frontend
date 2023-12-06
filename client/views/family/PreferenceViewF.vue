@@ -4,16 +4,27 @@ import router from "@/router";
 
 import { usePreferenceStore } from "@/stores/preference";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 
 const { setOn, setOff } = usePreferenceStore();
 const { showNav} = storeToRefs(usePreferenceStore());
 
+let username = ref("");
+let passcode1 = ref("");
+let passcode2 = ref("");
+let passcode3 = ref("");
+let passcode4 = ref("");
 
-async function goHome() {
-  setOff();
-  void router.push({ name: "Home" });
+async function verify() {
+  let passcode = passcode1.value + passcode2.value + passcode3.value + passcode4.value;
+
+  void router.push({ name: "PreferenceP" });
+}
+
+async function noPasscode() {
+  
+ //do something
 }
 
 onBeforeMount(() => {
@@ -31,15 +42,32 @@ async function accountType() {
 
 <template>
   <main>
-    <img @click="accountType" src="@/assets/images/back.svg"/>
+    <img class="back-button" @click="accountType" src="@/assets/images/back.svg"/>
 
-    <h1>Preference View Family</h1>
-    <section>
-      <!-- <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>
-      <h1 v-else>Please login!</h1> -->
-        content...
-    </section>
-    <button @click="goHome" > Finish</button>
+    <h1>Link to your patient</h1>
+
+      <p>As a non-patient user, you have to link your account to the patient you are taking care of to activate your account.</p>
+
+      <div class="username">
+        <h2 >Patient Username:</h2>
+        <form >
+            <input v-model="username" placeholder="ex: Amily004" class="custom-input1"/>
+        </form>
+      </div>
+      
+
+        <h2 >Patient Passcode:</h2>
+        <div class="passcode-container">
+
+        <input type="password" v-model="passcode1" maxlength="1" size="1" class="custom-input">
+        <input type="password" v-model="passcode2" maxlength="1" size="1" class="custom-input">
+        <input type="password" v-model="passcode3" maxlength="1" size="1" class="custom-input">
+        <input type="password" v-model="passcode4" maxlength="1" size="1" class="custom-input">          
+      </div>
+      <div class="no-passcode" @click="noPasscode"> No Passcode</div>
+
+
+    <button class="next-button" @click="verify"> Verify</button>
 
   </main>
 </template>
@@ -47,5 +75,89 @@ async function accountType() {
 <style scoped>
 h1 {
   text-align: center;
+}
+
+h2 {
+  text-align: left;
+}
+
+.username {
+  margin-bottom: 20px;
+}
+
+.no-passcode {
+  font-size: 0.9em;
+  color: grey;
+  text-decoration: underline;
+}
+
+.passcode-container {
+  display: flex;
+  justify-content: start;
+  gap: 10px; 
+  margin-bottom: 20px;
+}
+
+.custom-input {
+  border: 2px solid black;
+  border-radius: 10px;
+  background: rgba(163, 163, 161, 0.232);
+  padding: 10px;
+  outline: none;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  margin-right: 10px;
+}
+
+.custom-input1 {
+  border: 2px solid black;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 200px;
+  margin-right: 10px;
+}
+
+
+
+p {
+  position: relative;
+  display: block;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 20px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  height: 100vh; 
+  padding: 20px;
+}
+
+.time-capsule {
+  margin-bottom: 20px;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.next-button {
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
 }
 </style>

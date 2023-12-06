@@ -23,6 +23,10 @@ async function settings() {
   void router.push({ name: "Settings" });
 }
 
+async function contacts() {
+  void router.push({ name: "Contact" });
+}
+
 
 </script>
 
@@ -46,6 +50,8 @@ async function settings() {
           <div>
             <MoodForm/>
           </div>
+
+          <button @click="contacts">Your Contacts</button>
           
         </div>
     
@@ -89,7 +95,10 @@ async function settings() {
 }
 
 
-
+main {
+ 
+  height: 100vh; 
+}
 
 
 .mood-custom {
