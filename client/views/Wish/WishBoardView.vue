@@ -8,7 +8,7 @@ import router from '../../router';
   <body>
     <div class="navigation">
       <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png"/>
-      <text class="pagetitle">Diary</text>
+      <text class="pagetitle">WISH</text>
     </div>
     <div class="pageexplainationdiv">
       <text class="pageexplaination">Wish is a place where you are encouraged to write down your wishes and share it with your loved ones.</text>

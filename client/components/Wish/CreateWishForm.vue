@@ -19,10 +19,6 @@ const createWish = async () => {
   emptyForm();
 };
 
-const setVisibility = (vis: string) => {
-  visibility.value = vis;
-};
-
 const emptyForm = () => {
   content.value = "";
 };
