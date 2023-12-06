@@ -169,14 +169,15 @@ class Routes {
   // wish
   // ############################################################
   @Router.get("/wishes")
-  async getWishes(username: string) {
-    const user = (await User.getUserByUsername(username))._id;
+  async getWishes(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
-  @Router.get("/wishes/:_id")
-  async getWishByAuthor(_id: ObjectId) {
-    return await Responses.wishes(await Wish.getByAuthor(_id));
+  @Router.get("/wishes/:author")
+  async getWishByAuthor(author: string) {
+    const user = (await User.getUserByUsername(author))._id;
+    return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
   @Router.post("/wishes")

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import router from "../../router";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
-
 const content = ref("");
 const visibility = ref("");
 const emit = defineEmits(["refreshWishes"]);
@@ -17,6 +17,7 @@ const createWish = async () => {
   }
   emit("refreshWishes");
   emptyForm();
+  await router.push({ name: "Wish" });
 };
 
 const emptyForm = () => {
@@ -25,54 +26,54 @@ const emptyForm = () => {
 </script>
 
 <template>
-    <text class="entry-date">{{ formatEntryDate(new Date()) }}</text>
-    <form class="create-form" @submit.prevent="createWish()">
-      <div class="inputspace">
-        <textarea class="wish-content" id="content" v-model="content" placeholder="Write Down Your Wish!" required> </textarea>
-      </div>
+  <text class="entry-date">{{ formatEntryDate(new Date()) }}</text>
+  <form class="create-form" @submit.prevent="createWish()">
+    <div class="inputspace">
+      <textarea class="wish-content" id="content" v-model="content" placeholder="Write Down Your Wish!" required> </textarea>
+    </div>
 
     <div class="setting">
-        <div class="field-title">
-            <p class="setting-title">Settings</p>
-            <span class="badge">?</span>
+      <div class="field-title">
+        <p class="setting-title">Settings</p>
+        <span class="badge">?</span>
+      </div>
+      <fieldset class="wish-fields">
+        <div class="left">
+          <!-- Private setting -->
+          <div class="options">
+            <p class="form-subtitle">Private</p>
+            <label class="switch">
+              <input type="radio" id="private" name="visibility" value="private" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="options">
+            <p class="form-subtitle">Contacts Only</p>
+            <label class="switch">
+              <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="options">
+            <p class="form-subtitle">Public</p>
+            <label class="switch">
+              <input type="radio" id="public" name="visibility" value="public" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <!-- Time capsule setting -->
+          <div class="options">
+            <p class="form-subtitle">Add to Time Capsule</p>
+            <label class="switch">
+              <input type="checkbox" />
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <fieldset class="wish-fields">
-            <div class="left">
-                <!-- Private setting -->
-                <div class="options">
-                    <p class="form-subtitle">Private</p>
-                    <label class="switch">
-                        <input type="radio" id="private" name="visibility" value="private" v-model="visibility">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="options">
-                    <p class="form-subtitle">Contacts Only</p>
-                    <label class="switch">
-                        <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="options">
-                    <p class="form-subtitle">Public</p>
-                    <label class="switch">
-                        <input type="radio" id="public" name="visibility" value="public" v-model="visibility">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <!-- Time capsule setting -->
-                <div class="options">
-                    <p class="form-subtitle">Add to Time Capsule</p>
-                    <label class="switch">
-                        <input type="checkbox" >
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
-        </fieldset>
+      </fieldset>
     </div>
     <button type="submit" class="bluebuttoncenterlong">Create Wish</button>
-    </form>
+  </form>
 </template>
 
 <style scoped>
@@ -92,7 +93,7 @@ const emptyForm = () => {
   gap: 12px;
 }
 
-.setting{
+.setting {
   display: flex;
   height: 190px;
   flex-direction: column;
@@ -101,13 +102,13 @@ const emptyForm = () => {
   gap: 0px;
 }
 
-.field-title{
+.field-title {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.setting-title{
+.setting-title {
   color: #000;
   font-family: SF Pro Display;
   font-size: 20px;
@@ -127,7 +128,7 @@ textarea.wish-content {
   gap: 10px;
   flex-shrink: 0;
 }
-.inputspace{
+.inputspace {
   display: flex;
   width: 300px;
   height: 290px;
@@ -137,30 +138,30 @@ textarea.wish-content {
   align-items: center;
   gap: var(--spacing-space-075, 6px);
   border-radius: var(--numbers-spacing-12, 12px);
-  background: #9FB9C7;
+  background: #9fb9c7;
 }
-.left{
+.left {
   gap: 12px;
 }
-.options{
+.options {
   display: flex;
   align-items: center;
   gap: 22px;
 }
 
-.form-subtitle{
+.form-subtitle {
   color: #000;
   font-family: SF Pro Display;
   font-style: normal;
   font-weight: 500;
   height: 1px;
-  line-height: 0
+  line-height: 0;
   /* line-height: 103.822%; 13.497px */
 }
 
 .wish-fields {
   display: flex;
-  width:290px;
+  width: 290px;
   height: 125px;
   padding: 8px 0px 15px 10px;
   align-items: column;
@@ -169,5 +170,4 @@ textarea.wish-content {
   border-radius: var(--numbers-spacing-12, 12px);
   border: 1.5px solid #000;
 }
-
 </style>
