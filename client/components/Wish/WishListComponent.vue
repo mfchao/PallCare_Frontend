@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { onBeforeMount, ref } from 'vue';
+import { defineAsyncComponent, onBeforeMount, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { fetchy } from '../../utils/fetchy';
-import CreateWishForm from './CreateWishForm.vue';
 import EditWishForm from './EditWishForm.vue';
-import WishComponent from './WishComponent.vue';
 
+const WishComponent = defineAsyncComponent(() => import('./WishComponent.vue'));
 const { isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
@@ -38,18 +37,16 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
-    <h2>Create a wish:</h2>
-    <CreateWishForm @refreshWishes="getWishes" />
+  <section class="wishes" v-if="loaded && wishes.length !== 0">
+      <article v-for="wish in wishes" :key="wish._id">
+        <Suspense>
+          <WishComponent v-if="editing !== wish._id" :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
+          <EditWishForm v-else :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
+        </Suspense>
+      </article>
   </section>
-    <section class="wishes" v-if="loaded && wishes.length !== 0">
-        <article v-for="wish in wishes" :key="wish._id">
-        <WishComponent v-if="editing !== wish._id" :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
-        <EditWishForm v-else :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
-        </article>
-    </section>
-    <p v-else-if="loaded">No wishes found</p>
-    <p v-else>Loading...</p>
+  <p v-else-if="loaded">No wishes found</p>
+  <p v-else>Loading...</p>
 </template>
 
 <style scoped>

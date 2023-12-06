@@ -71,7 +71,7 @@ const emptyForm = () => {
             </div>
         </fieldset>
     </div>
-    <button type="submit" class="bluebuttoncenterlong">Create Diary</button>
+    <button type="submit" class="bluebuttoncenterlong">Create Wish</button>
     </form>
 </template>
 

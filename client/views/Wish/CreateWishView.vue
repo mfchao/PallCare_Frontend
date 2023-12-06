@@ -6,7 +6,7 @@ import router from '../../router';
 <template>
   <body>
     <div class="navigation">
-        <img @click="router.push({ name: 'WishBoard' })" src="@/assets/images/back.svg"/>
+        <img @click="router.push({ name: 'Wish' })" src="@/assets/images/back.svg"/>
         <h1>New Wish</h1>
     </div>
     <CreateWishForm/>

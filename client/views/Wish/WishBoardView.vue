@@ -1,7 +1,6 @@
 <script setup lang = "ts">
 import WishListComponent from '../../components/Wish/WishListComponent.vue';
 import router from '../../router';
-
 </script>
 
 <template>
