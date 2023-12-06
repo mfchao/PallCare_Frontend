@@ -58,7 +58,7 @@ async function submitForm() {
                 <input type="text" class="forum-topic"/>
               </div>
             </div>
-            <!-- TIme capsule setting -->
+            <!-- Time capsule setting -->
             <div class="options">
               <p class="form-subtitle">Add to Time Capsule</p>
               <label class="switch">
@@ -74,8 +74,8 @@ async function submitForm() {
     </form>
   </body>
 </template>
-<style scoped>
 
+<style scoped>
 body {
   display: flex;
   flex-direction: row;
@@ -93,7 +93,7 @@ body {
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
-color: #131313;
+  color: #131313;
 }
 
 .create-form {

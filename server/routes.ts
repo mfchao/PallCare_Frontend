@@ -173,8 +173,13 @@ class Routes {
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
+  @Router.get("/wishes/:_id")
+  async getWishByAuthor(_id: ObjectId) {
+    return await Responses.wishes(await Wish.getByAuthor(_id));
+  }
+
   @Router.post("/wishes")
-  async createWish(session: WebSessionDoc, content: string, visibility: "public" | ObjectId[] | "private") {
+  async createWish(session: WebSessionDoc, content: string, visibility: "public" | "contacts" | "private") {
     const user = WebSession.getUser(session);
     const created = await Wish.create(user, content, visibility);
     return { msg: created.msg, wish: await Responses.wish(created.wish) };
@@ -553,7 +558,6 @@ class Routes {
     return await Letter.deleteLetter_client(letter);
   }
 
-
   // @Router.patch("/letter/email")
   // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
   //   const user = WebSession.getUser(session);
@@ -564,7 +568,6 @@ class Routes {
   //   // const thereceiver = theletter.to;
   //   return { msg: "No email sent!" };
   // }
-
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
@@ -602,6 +605,11 @@ class Routes {
     return await Contact.getContactsbyOwner(user);
   }
 
+  @Router.get("/contacts/:owner_id")
+  async getInAppContacts(owner_id: ObjectId) {
+    return await Contact.getInAppContactsbyOwner(owner_id);
+  }
+
   @Router.get("/contact/type")
   async checkContactType(session: WebSessionDoc, contact: ObjectId) {
     const user = WebSession.getUser(session);
@@ -635,6 +643,8 @@ class Routes {
     await Email.send(username, to, content);
     return { msg: "Email sent!" };
   }
+
+  // ############################################################
   // Mood
   // ############################################################
   @Router.post("/moods")
