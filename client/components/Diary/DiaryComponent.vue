@@ -35,7 +35,7 @@ async function addDiaryToCapsule(behavior: "send" | "delete") {
     <div class="bottom">
       <text class="diarycontent">{{ props.diary.content.substring(0, 90) + ".." }}</text>
       <div class="buttons" v-if="props.capsule">
-        <button class="little-black" @click="addDiaryToCapsule('send')">Reveal</button>
+        <button v-if="props.diary.hidden" class="little-black" @click="addDiaryToCapsule('send')">Reveal</button>
         <button class="little-black" @click="addDiaryToCapsule('delete')">Delete</button>
       </div>
       <div class="buttons" v-else-if="props.diary.author == currentUsername">

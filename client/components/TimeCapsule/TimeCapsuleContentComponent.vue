@@ -3,9 +3,11 @@ import { defineEmits, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useDiaryStore } from "../../stores/diary";
 import { useTCStore } from "../../stores/timeCapsule";
+import { useWishStore } from "../../stores/wish";
 
 const { removeFromTimeCapsule } = useTCStore();
 const { getDiaryById } = useDiaryStore();
+const { getWishById } = useWishStore();
 const props = defineProps(["delay", "selected"]);
 const emit = defineEmits(["deleteContent"]);
 const editRoutePath = ref("");
@@ -23,9 +25,12 @@ async function initDiaryComponent() {
   behaviorTag.value = props.delay.behavior === "send" ? "reveal" : "delete";
 }
 
-// async function getWishContent() {
-
-// }
+async function initWishComponent() {
+  const delay = props.delay;
+  editRoutePath.value = `/wish/edit/${delay.content}`;
+  content.value = (await getWishById(delay.content)).content;
+  behaviorTag.value = props.delay.behavior;
+}
 
 // async function getLetterContent() {
 
@@ -39,8 +44,7 @@ onBeforeMount(async () => {
       editRoutePath.value = `/letter/edit/${props.delay.content}`;
       break;
     case "Wish":
-      editRoutePath.value = `/wish/edit/${props.delay.content}`;
-      break;
+      return await initWishComponent();
   }
 
   if (props.delay.type === "Diary" && behaviorTag.value === "send") {

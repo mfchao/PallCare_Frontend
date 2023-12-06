@@ -174,10 +174,15 @@ class Routes {
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
-  @Router.get("/wishes/:author")
-  async getWishByAuthor(author: string) {
-    const user = (await User.getUserByUsername(author))._id;
+  @Router.get("/wishes/author/:author")
+  async getWishByAuthor(username: string) {
+    const user = (await User.getUserByUsername(username))._id;
     return await Responses.wishes(await Wish.getByAuthor(user));
+  }
+
+  @Router.get("/wishes/:_id")
+  async getWishById(_id: ObjectId) {
+    return await Responses.wish(await Wish.getWishById(_id));
   }
 
   @Router.post("/wishes")
@@ -387,9 +392,9 @@ class Routes {
   @Router.get("/timecapsule/not_selected/:username")
   async getContentNotInTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
-    const timeCapsuleIDs = new Set((await timeCapsuleByOwner(user._id)).map((delay) => delay.content));
-    const diaries = (await Diary.getEntriesByAuthor(user._id)).filter((diary) => !timeCapsuleIDs.has(diary._id));
-    const wishes = (await Wish.getByAuthor(user._id)).filter((wish) => !timeCapsuleIDs.has(wish._id));
+    const timeCapsuleIDs = new Set((await timeCapsuleByOwner(user._id)).map((delay) => delay.content.toString()));
+    const diaries = (await Diary.getEntriesByAuthor(user._id)).filter((diary) => !timeCapsuleIDs.has(diary._id.toString()));
+    const wishes = (await Wish.getByAuthor(user._id)).filter((wish) => !timeCapsuleIDs.has(wish._id.toString()));
     return { diaries: await Responses.diaries(diaries), wishes: await Responses.wishes(wishes) };
   }
 

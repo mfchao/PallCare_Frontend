@@ -42,7 +42,9 @@ onBeforeMount(async () => {
     <h1>Select Wishes to Add to Time Capsule</h1>
     <article v-for="wish in wishes" :key="wish._id">
       <!-- TODO: add WISH component w/ conditional styling -->
-      <WishComponent />
+      <Suspense>
+        <WishComponent :wish="wish" :capsule="true" @refreshWishes="refreshWishes(wish._id)" />
+      </Suspense>
     </article>
   </body>
 </template>

@@ -25,6 +25,14 @@ export default class WishConcept {
     return wishes;
   }
 
+  async getWishById(_id: ObjectId) {
+    const wish = await this.wishes.readOne({ _id });
+    if (!wish) {
+      throw new NotAllowedError("Wish not found.");
+    }
+    return wish;
+  }
+
   async getByAuthor(author: ObjectId) {
     return await this.getWishes({ author });
   }
