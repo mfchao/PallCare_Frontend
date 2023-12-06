@@ -10,6 +10,7 @@ import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import SettingView from "../views/SettingView.vue";
+import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
 import CreateWishView from "../views/Wish/CreateWishView.vue";
 import WishBoardViewVue from "../views/Wish/WishBoardView.vue";
 import PreferenceViewF from "../views/family/PreferenceViewF.vue";
@@ -132,6 +133,24 @@ const router = createRouter({
       path: "/setting",
       name: "Settings",
       component: SettingView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule",
+      name: "TimeCapsule",
+      component: TimeCapsuleView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/content",
+      name: "TimeCapsuleContent",
+      component: TimeCapsuleContentView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/add",
+      name: "TimeCapsuleAdd",
+      component: TimeCapsuleAddContentView,
       meta: { requiresAuth: true },
     },
     {
