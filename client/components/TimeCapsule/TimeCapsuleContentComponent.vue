@@ -27,7 +27,8 @@ async function initDiaryComponent() {
 
 async function initWishComponent() {
   const delay = props.delay;
-  editRoutePath.value = `/wish/edit/${delay.content}`;
+  // editRoutePath.value = `/wish/edit/${delay.content}`;
+  editRoutePath.value = "/time_capsule/content";
   content.value = (await getWishById(delay.content)).content;
   behaviorTag.value = props.delay.behavior;
 }
