@@ -44,35 +44,39 @@ export default class Responses {
   /**
    * Convert WishDoc into more readable format for the frontend
    */
-  static wish(wish: WishDoc | null) {
+  static async wish(wish: WishDoc | null) {
     if (!wish) {
       return wish;
     }
-    return { ...wish, author: wish.author.toString() };
+    const author = await User.getUserById(wish.author);
+    return { ...wish, author: author.username };
   }
 
   /**
    * Same as {@link wish} but for an array of WishDoc for improved performance.
    */
-  static wishes(wishes: WishDoc[]) {
-    return wishes.map((wish) => ({ ...wish, author: wish.author.toString() }));
+  static async wishes(wishes: WishDoc[]) {
+    const authors = await User.idsToUsernames(wishes.map((wish) => wish.author));
+    return wishes.map((wish, i) => ({ ...wish, author: authors[i] }));
   }
 
   /**
    * Convert TopicDoc into more readable format for the frontend
    */
-  static topic(topic: TopicDoc | null) {
+  static async topic(topic: TopicDoc | null) {
     if (!topic) {
       return topic;
     }
-    return { ...topic, author: topic.author.toString() };
+    const author = await User.getUserById(topic.author);
+    return { ...topic, author: author.username };
   }
 
   /**
    * Same as {@link topic} but for an array of TopicDoc for improved performance.
    */
-  static topics(topics: TopicDoc[]) {
-    return topics.map((topic) => ({ ...topic, author: topic.author.toString() }));
+  static async topics(topics: TopicDoc[]) {
+    const authors = await User.idsToUsernames(topics.map((topic) => topic.author));
+    return topics.map((topic, i) => ({ ...topic, author: authors[i] }));
   }
 
   /**

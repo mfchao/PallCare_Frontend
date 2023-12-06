@@ -11,6 +11,9 @@ import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import SettingView from "../views/SettingView.vue";
+import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
+import CreateWishView from "../views/Wish/CreateWishView.vue";
+import WishBoardViewVue from "../views/Wish/WishBoardView.vue";
 import PreferenceViewF from "../views/family/PreferenceViewF.vue";
 import PreferenceViewFb from "../views/family/PreferenceViewFb.vue";
 import PreferenceViewP from "../views/patient/PreferenceViewP.vue";
@@ -114,7 +117,13 @@ const router = createRouter({
     {
       path: "/wish",
       name: "Wish",
-      component: HomeView,
+      component: WishBoardViewVue,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/wish/create",
+      name: "CreateWish",
+      component: CreateWishView,
       meta: { requiresAuth: true },
     },
     {
@@ -152,6 +161,24 @@ const router = createRouter({
       path: "/setting",
       name: "Settings",
       component: SettingView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule",
+      name: "TimeCapsule",
+      component: TimeCapsuleView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/content",
+      name: "TimeCapsuleContent",
+      component: TimeCapsuleContentView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/time_capsule/add",
+      name: "TimeCapsuleAdd",
+      component: TimeCapsuleAddContentView,
       meta: { requiresAuth: true },
     },
     {

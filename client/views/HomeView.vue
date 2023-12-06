@@ -11,7 +11,6 @@ const { userMood, hasMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
-
 async function loginUser() {
   void router.push({ name: "Login" });
 }

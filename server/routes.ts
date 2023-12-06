@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { Router, getExpressRouter } from "./framework/router";
 
 import { Contact, Delay, Diary, Email, Friend, Letter, Mood, Post, Preference, Topic, User, WebSession, Wish } from "./app";
+import { DelayDoc } from "./concepts/delay";
 import { DiaryDoc } from "./concepts/diary";
 import { NotAllowedError } from "./concepts/errors";
 import { MoodDoc } from "./concepts/mood";
@@ -168,13 +169,18 @@ class Routes {
   // wish
   // ############################################################
   @Router.get("/wishes")
-  async getWishes(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
+  async getWishes(username: string) {
+    const user = (await User.getUserByUsername(username))._id;
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
+  @Router.get("/wishes/:_id")
+  async getWishByAuthor(_id: ObjectId) {
+    return await Responses.wishes(await Wish.getByAuthor(_id));
+  }
+
   @Router.post("/wishes")
-  async createWish(session: WebSessionDoc, content: string, visibility: "public" | ObjectId[] | "private") {
+  async createWish(session: WebSessionDoc, content: string, visibility: "public" | "contacts" | "private") {
     const user = WebSession.getUser(session);
     const created = await Wish.create(user, content, visibility);
     return { msg: created.msg, wish: await Responses.wish(created.wish) };
@@ -248,7 +254,7 @@ class Routes {
   async createDiary(session: WebSessionDoc, content: string, hidden: boolean) {
     const user = WebSession.getUser(session);
     const created = await Diary.create(user, content, hidden);
-    return { msg: created.msg, diary: await Responses.diary(created.diary) };
+    return await Responses.diary(created.diary);
   }
 
   @Router.get("/diary/entries/:username")
@@ -280,20 +286,21 @@ class Routes {
   // ############################################################
   // Delay
   // ############################################################
-  @Router.post("/delay")
-  async createDelay(session: WebSessionDoc, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+  @Router.post("/delay/:contentID")
+  async createDelay(session: WebSessionDoc, contentID: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete", activation: Date) {
     const user = WebSession.getUser(session);
-    return await Delay.create(user, content, type, behavior, activation);
+    return await Delay.create(user, contentID, type, behavior, activation);
   }
 
   @Router.get("/delay/:_id")
   async getDelayById(_id: ObjectId) {
-    return await Delay.getDelayByContent(_id);
+    return await Delay.getDelayById(_id);
   }
 
-  @Router.get("/delay/content/:_id")
-  async getDelayByContent(content: ObjectId) {
-    return await Delay.getDelayByContent(content);
+  @Router.get("/delay/content/:contentID")
+  async getDelayByContent(contentID: ObjectId) {
+    contentID = new ObjectId(contentID);
+    return await Delay.getDelayByContent(contentID);
   }
 
   @Router.get("/delay/owner")
@@ -307,11 +314,14 @@ class Routes {
     return await Delay.isExpired(_id);
   }
 
-  @Router.delete("delay/:_id")
+  @Router.delete("/delay/:_id")
   async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    await Delay.checkRep(user, _id);
     return await Delay.delete(_id);
+  }
+
+  @Router.patch("/delay/:_id")
+  async updateDelay(session: WebSessionDoc, _id: ObjectId, update: Partial<DelayDoc>) {
+    return await Delay.updateDelay(_id, update);
   }
 
   /**System function**/
@@ -319,65 +329,52 @@ class Routes {
   async executeDelay(_id: ObjectId) {
     const delay = await Delay.getDelayById(_id);
     await Delay.delete(_id); // want to delete Delay upon execution (whether it throws error or not)
-    switch (delay.type) {
-      case "Diary":
-        switch (delay.behavior) {
-          case "hide":
-            return await Diary.update(delay.content, { hidden: true });
-          case "reveal":
-            return await Diary.update(delay.content, { hidden: false });
-          case "delete":
-            return await Diary.delete(delay.content);
-          default:
-            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
-        }
-      case "Letter":
-        switch (delay.behavior) {
-          case "send":
-            const the_letter = await Letter.getLetterById(delay.content);
-            const username = (await User.getUserById(the_letter.from)).username;
-            await Letter.sendLetter(the_letter._id);
-            const thereceiver = the_letter.to;
-            for (const receiver of thereceiver) {
-              if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
-                const receiveremail = await Contact.getemailaddressbyId(receiver);
-                if (receiveremail === null) {
-                  continue;
-                }
-                await Email.send(username, receiveremail, the_letter.content);
-              }
+    if (delay.type === "Diary") {
+      if (delay.behavior === "send") {
+        return await Diary.update(delay.content, { hidden: false });
+      } else if (delay.behavior === "delete") {
+        return await Diary.delete(delay.content);
+      } else {
+        throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Diary.`);
+      }
+    } else if (delay.type === "Letter") {
+      if (delay.behavior === "send") {
+        const the_letter = await Letter.getLetterById(delay.content);
+        const username = (await User.getUserById(the_letter.from)).username;
+        await Letter.sendLetter(the_letter._id);
+        const thereceiver = the_letter.to;
+        for (const receiver of thereceiver) {
+          if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
+            const receiveremail = await Contact.getemailaddressbyId(receiver);
+            if (receiveremail === null) {
+              continue;
             }
-            return { msg: "Letter sent!" };
-          case "delete":
-            return await Letter.deleteLetter_server(delay.content);
-          default:
-            throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+            await Email.send(username, receiveremail, the_letter.content);
+          }
         }
-      default:
-        throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
+        return { msg: "Letter sent!" };
+      } else {
+        throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
+      }
+    } else {
+      throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
     }
-  }
-
-  @Router.patch("/delay/activation/:_id&time")
-  async updateDelayExpiration(session: WebSessionDoc, _id: ObjectId, activation: Date) {
-    const user = WebSession.getUser(session);
-    await Delay.checkRep(user, _id);
-    return await Delay.updateActivation(_id, activation);
   }
 
   // ############################################################
   // Time Capsule: Delay + Diary + Letter
   // ############################################################
-  @Router.post("/delay/timecapsule")
-  async addToTimeCapsule(username: string, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete") {
+  @Router.post("/timecapsule/:contentID")
+  async addToTimeCapsule(username: string, contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") {
     const user = await User.getUserByUsername(username);
+    contentID = new ObjectId(contentID);
     if (user.userType !== "patient") {
       throw new NotAllowedError("Non-patients do not have a Time Capsule");
     }
-    return await Delay.create(user._id, content, type, behavior, new Date(0));
+    return await Delay.create(user._id, contentID, type, behavior, new Date(0));
   }
 
-  @Router.get("delay/timecapsule/:username")
+  @Router.get("/timecapsule/:username")
   async getUserTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
@@ -386,8 +383,17 @@ class Routes {
     return await timeCapsuleByOwner(user._id);
   }
 
+  @Router.get("/timecapsule/not_selected/:username")
+  async getContentNotInTimeCapsule(username: string) {
+    const user = await User.getUserByUsername(username);
+    const timeCapsuleIDs = new Set((await timeCapsuleByOwner(user._id)).map((delay) => delay.content));
+    const diaries = (await Diary.getEntriesByAuthor(user._id)).filter((diary) => !timeCapsuleIDs.has(diary._id));
+    const wishes = (await Wish.getByAuthor(user._id)).filter((wish) => !timeCapsuleIDs.has(wish._id));
+    return { diaries: await Responses.diaries(diaries), wishes: await Responses.wishes(wishes) };
+  }
+
   /**System function**/
-  @Router.delete("delay/timecapsule/:username")
+  @Router.delete("timecapsule/:username")
   async releaseTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
@@ -432,7 +438,7 @@ class Routes {
     if (delay) {
       const delaydate = new Date(delay);
       if (newletter.letter !== null) {
-        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
+        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "send", delaydate);
         return { letter: newletter, delay: letterdelay };
       }
     }
@@ -553,7 +559,6 @@ class Routes {
     return await Letter.deleteLetter_client(letter);
   }
 
-
   // @Router.patch("/letter/email")
   // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
   //   const user = WebSession.getUser(session);
@@ -564,7 +569,6 @@ class Routes {
   //   // const thereceiver = theletter.to;
   //   return { msg: "No email sent!" };
   // }
-
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
@@ -602,6 +606,11 @@ class Routes {
     return await Contact.getContactsbyOwner(user);
   }
 
+  @Router.get("/contacts/:owner_id")
+  async getInAppContacts(owner_id: ObjectId) {
+    return await Contact.getInAppContactsbyOwner(owner_id);
+  }
+
   @Router.get("/contact/type")
   async checkContactType(session: WebSessionDoc, contact: ObjectId) {
     const user = WebSession.getUser(session);
@@ -635,6 +644,8 @@ class Routes {
     await Email.send(username, to, content);
     return { msg: "Email sent!" };
   }
+
+  // ############################################################
   // Mood
   // ############################################################
   @Router.post("/moods")

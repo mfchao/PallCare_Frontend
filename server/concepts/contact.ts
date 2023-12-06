@@ -1,4 +1,3 @@
-
 import { ObjectId } from "mongodb";
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { NotFoundError } from "./errors";
@@ -43,7 +42,7 @@ export default class ContactConcept {
       throw new Error("Email Contact not created!");
     }
     const newcontact = await this.contacts.createOne({ owner, contact, type: "NonUser" });
-    return { msg: "Email Contact successfully created!", contact: await this.emailContacts.readOne({ _id:contact }) };
+    return { msg: "Email Contact successfully created!", contact: await this.emailContacts.readOne({ _id: contact }) };
   }
 
   async checkifemailcontactexists(username: string) {
@@ -53,13 +52,18 @@ export default class ContactConcept {
     }
     return true;
   }
-  
+
   async createPatientPasscode(patient: ObjectId, passcode: string) {
     const _id = await this.patientPasscodes.createOne({ patient, passcode });
   }
 
   async getContactsbyOwner(owner: ObjectId) {
     const contacts = await this.contacts.readMany({ owner });
+    return contacts;
+  }
+
+  async getInAppContactsbyOwner(owner: ObjectId) {
+    const contacts = await this.contacts.readMany({ owner, type: "User" });
     return contacts;
   }
 
@@ -72,7 +76,7 @@ export default class ContactConcept {
     const emailContact = await this.emailContacts.readOne({ _id });
     return emailContact;
   }
-  
+
   async getEmailContactbyUsername(username: string) {
     const emailContact = await this.emailContacts.readOne({ username });
     return emailContact;
