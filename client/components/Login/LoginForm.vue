@@ -8,7 +8,7 @@ import { ref } from "vue";
 const username = ref("");
 const password = ref("");
 const { loginUser, updateSession } = useUserStore();
-const { refreshMood} = useMoodStore();
+const { refreshMood } = useMoodStore();
 
 
 async function login() {
