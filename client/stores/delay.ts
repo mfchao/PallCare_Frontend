@@ -14,7 +14,7 @@ export const useDelayStore = defineStore(
     };
 
     const getDelayByContent = async (contentID: ObjectId) => {
-      return await fetchy(`/api/delay/content/:${contentID}`, "GET");
+      return await fetchy(`/api/delay/content/${contentID}`, "GET");
     };
 
     const deleteDelay = async (_id: ObjectId) => {

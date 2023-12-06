@@ -63,7 +63,7 @@ export default class DelayConcept {
   async getDelayByContent(content: ObjectId) {
     const delay = await this.delays.readOne({ content });
     if (!delay) {
-      throw new NotFoundError("No such delay", content);
+      throw new NotFoundError("No such delay exists", content);
     }
     return delay;
   }

@@ -297,9 +297,10 @@ class Routes {
     return await Delay.getDelayById(_id);
   }
 
-  @Router.get("/delay/content/:_id")
-  async getDelayByContent(content: ObjectId) {
-    return await Delay.getDelayByContent(content);
+  @Router.get("/delay/content/:contentID")
+  async getDelayByContent(contentID: ObjectId) {
+    contentID = new ObjectId(contentID);
+    return await Delay.getDelayByContent(contentID);
   }
 
   @Router.get("/delay/owner")
@@ -320,8 +321,6 @@ class Routes {
 
   @Router.patch("/delay/:_id")
   async updateDelay(session: WebSessionDoc, _id: ObjectId, update: Partial<DelayDoc>) {
-    const user = WebSession.getUser(session);
-    await Delay.checkRep(user, _id);
     return await Delay.updateDelay(_id, update);
   }
 
@@ -368,6 +367,7 @@ class Routes {
   @Router.post("/timecapsule/:contentID")
   async addToTimeCapsule(username: string, contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") {
     const user = await User.getUserByUsername(username);
+    contentID = new ObjectId(contentID);
     if (user.userType !== "patient") {
       throw new NotAllowedError("Non-patients do not have a Time Capsule");
     }

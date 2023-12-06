@@ -7,9 +7,7 @@ export const useDiaryStore = defineStore(
   "diary",
   () => {
     const createDiary = async (content: string, hidden: boolean) => {
-      await fetchy("/api/diary", "POST", {
-        body: { content, hidden },
-      });
+      return await fetchy("/api/diary", "POST", { body: { content, hidden } });
     };
 
     const getAuthorEntries = async (username: string) => {
