@@ -16,6 +16,6 @@ onBeforeMount(async () => {
   <p>Time Capsule</p>
   <p>Earliest Release Date {{ releaseDate }}</p>
   <button @click="router.push({ name: 'PreferenceP' })">Edit Release Time (via Preferences)</button>
-  <button @click="router.push({})">Edit Contents</button> TODO: create view for capsule contents
+  <button @click="router.push({ name: 'TimeCapsuleContent' })">Edit Contents</button>
 </template>
 <style></style>

@@ -20,7 +20,7 @@ export const useTCStore = defineStore(
       return await fetchy(`/api/timecapsule/not_selected/${username}`, "GET");
     };
 
-    const addToTimeCapsule = async (username: string, contentID: string, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") => {
+    const addToTimeCapsule = async (username: string, contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete") => {
       const body: BodyT = { username, type, behavior };
       await fetchy(`/api/timecapsule/${contentID}`, "POST", { body });
     };

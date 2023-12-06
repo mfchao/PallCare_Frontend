@@ -307,10 +307,8 @@ class Routes {
     return await Delay.isExpired(_id);
   }
 
-  @Router.delete("delay/:_id")
+  @Router.delete("/delay/:_id")
   async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    await Delay.checkRep(user, _id);
     return await Delay.delete(_id);
   }
 
@@ -370,7 +368,7 @@ class Routes {
     return await Delay.create(user._id, contentID, type, behavior, new Date(0));
   }
 
-  @Router.get("timecapsule/:username")
+  @Router.get("/timecapsule/:username")
   async getUserTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {

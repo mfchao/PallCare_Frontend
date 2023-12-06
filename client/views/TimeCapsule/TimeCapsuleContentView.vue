@@ -24,7 +24,7 @@ onBeforeMount(async () => {
 <template>
   <button @click="router.push({ name: 'TimeCapsule' })">back</button>
   <h1>Capsule Content</h1>
-  <button @click="router.push({ name: 'CreateLetter' })" @refreshContent="getTimeCapsule">Create a new letter to store in Time Capsule</button>
+  <button @click="router.push({ name: 'TimeCapsuleAdd' })" @refreshContent="getTimeCapsule">Add new Content to Time Capsule</button>
   <article v-for="delay in delays" :key="delay._id">
     <TimeCapsuleContentComponent :delay="delay" @deleteContent="getTimeCapsule" />
   </article>
