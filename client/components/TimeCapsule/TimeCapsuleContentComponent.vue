@@ -2,12 +2,14 @@
 import { defineEmits, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useDiaryStore } from "../../stores/diary";
+import { useLetterStore } from "../../stores/letter";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useWishStore } from "../../stores/wish";
 
 const { removeFromTimeCapsule } = useTCStore();
 const { getDiaryById } = useDiaryStore();
 const { getWishById } = useWishStore();
+const { getLetterById } = useLetterStore();
 const props = defineProps(["delay", "selected"]);
 const emit = defineEmits(["deleteContent"]);
 const editRoutePath = ref("");
@@ -20,36 +22,49 @@ async function deleteContent() {
 }
 async function initDiaryComponent() {
   const delay = props.delay;
+  try {
+    content.value = (await getDiaryById(delay.content)).content;
+  } catch {
+    await deleteContent();
+  }
   editRoutePath.value = `/diary/edit/${delay.content}`;
-  content.value = (await getDiaryById(delay.content)).content;
   behaviorTag.value = props.delay.behavior === "send" ? "reveal" : "delete";
 }
 
 async function initWishComponent() {
   const delay = props.delay;
+  try {
+    content.value = (await getWishById(delay.content)).content;
+  } catch {
+    await deleteContent();
+  }
   // editRoutePath.value = `/wish/edit/${delay.content}`;
   editRoutePath.value = "/time_capsule/content";
-  content.value = (await getWishById(delay.content)).content;
   behaviorTag.value = props.delay.behavior;
 }
 
-// async function getLetterContent() {
-
-// }
+async function initLetterComponent() {
+  const delay = props.delay;
+  try {
+    content.value = (await getLetterById(delay.content)).content;
+  } catch {
+    await deleteContent();
+  }
+  editRoutePath.value = `/letter/edit/${props.delay.content}`;
+  behaviorTag.value = props.delay.behavior;
+}
 
 onBeforeMount(async () => {
   switch (props.delay.type) {
     case "Diary":
-      return await initDiaryComponent();
-    case "Letter":
-      editRoutePath.value = `/letter/edit/${props.delay.content}`;
+      await initDiaryComponent();
       break;
     case "Wish":
-      return await initWishComponent();
-  }
-
-  if (props.delay.type === "Diary" && behaviorTag.value === "send") {
-    behaviorTag.value = "reveal";
+      await initWishComponent();
+      break;
+    case "Letter":
+      await initLetterComponent();
+      break;
   }
 });
 </script>

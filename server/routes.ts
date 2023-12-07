@@ -453,7 +453,7 @@ class Routes {
   // ############################################################
   //CHECK//
   @Router.post("/letter")
-  async createLetter(session: WebSessionDoc, to:string[], content: string, responseEnabled: boolean, delay?: string) {
+  async createLetter(session: WebSessionDoc, to: string[], content: string, responseEnabled: boolean, delay?: string) {
     const userids = [];
     for (const name of to) {
       try {
@@ -470,7 +470,7 @@ class Routes {
     const user = WebSession.getUser(session);
     const newletter = await Letter.createLetter(user, userids, content, responseEnabled);
     if (delay) {
-      const delaydate = new Date(delay);
+      const delaydate = new Date(delay !== "0" ? delay : 0);
       if (newletter.letter !== null) {
         const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "send", delaydate);
         return { letter: newletter, delay: letterdelay };
@@ -516,13 +516,14 @@ class Routes {
     await Letter.updateLetterContent(_id, content);
     await Letter.updateLetterResponseEnabled(_id, responseEnabled);
     if (delay) {
-      const thedelay = (await Delay.getDelayByContent(_id));
+      const thedelay = await Delay.getDelayByContent(_id);
       if (thedelay !== null) {
         const delaydate = new Date(delay);
-        await Delay.updateDelay(thedelay[0]._id, {activation: delaydate})
+        await Delay.updateDelay(thedelay[0]._id, { activation: delaydate });
         return { msg: "Letter updated!", delay: thedelay };
       }
-    }return { msg: "Letter updated with no delay!" };
+    }
+    return { msg: "Letter updated with no delay!" };
   }
 
   //TODO//
@@ -601,7 +602,6 @@ class Routes {
     }
     return await Letter.deleteLetter_client(_id);
   }
-
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")
