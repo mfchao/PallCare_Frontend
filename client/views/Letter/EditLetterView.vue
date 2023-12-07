@@ -21,10 +21,8 @@ onBeforeMount(async () => {
   content.value = letter.content;
   responseEnabled.value = letter.responseEnabled;
   delay_date.value = ((await getDelayByContentId(props._id))[0].activation).toString().substring(0,10)
-  console.log(letter.to)
-  let receivers = await getReceiversUsername(letter.to)
-  //transfer receivers to string and delete the [] at the beginning and end
-  let receiversstring = receivers.toString()
+
+  let receiversstring = (await getReceiversUsername(letter.to)).toString()
   selectedcontact.value = receiversstring
   contacts = await getLetterContactNames();
 });

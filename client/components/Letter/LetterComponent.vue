@@ -14,7 +14,6 @@ const props = defineProps(["letter"]);
 const { currentUsernam, getUsers } = storeToRefs(useUserStore());
 const emit = defineEmits(["refreshLetters"]);
 let user;
-
 let recv = ref("")
 
 onBeforeMount(async () => {

@@ -448,18 +448,6 @@ class Routes {
   // ############################################################
   //CHECK//
   @Router.post("/letter")
-  // async createLetter(session: WebSessionDoc, to: ObjectId[], content: string, responseEnabled: boolean, delay?: string) {
-  //   const user = WebSession.getUser(session);
-  //   const newletter = await Letter.createLetter(user, to, content, responseEnabled);
-  //   if (delay) {
-  //     const delaydate = new Date(delay);
-  //     if (newletter.letter !== null) {
-  //       const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
-  //       return { letter: newletter, delay: letterdelay };
-  //     }
-  //   }
-  //   return newletter;
-  // }
   async createLetter(session: WebSessionDoc, to:string[], content: string, responseEnabled: boolean, delay?: string) {
     const userids = [];
     for (const name of to) {
@@ -473,11 +461,6 @@ class Routes {
       }
     }
     const user = WebSession.getUser(session);
-    // const recv = []
-    // for (let recvr in to){
-    //   recv.push(ObjectId.createFromHexString(recvr))
-    // }
-    // const to = [ObjectId.createFromHexString("6565499a67e1529696b41eec")]
     const newletter = await Letter.createLetter(user, userids, content, responseEnabled);
     if (delay) {
       const delaydate = new Date(delay);
@@ -517,32 +500,6 @@ class Routes {
 
   //CHECK//
   @Router.patch("/letter/:_id")
-  // async updateLetterContent(session: WebSessionDoc, _id: ObjectId, to:string[], content: string, responseEnabled: boolean, delay: string) {
-  //   const user = WebSession.getUser(session);
-  //   const theletter = await Letter.getLetterById(_id);
-  //   if (theletter.from.toString() !== user.toString()) {
-  //     throw new Error("You are not the author of this letter!");
-  //   }
-  //   await Letter.updateLetterContent(_id, content);
-  //   await Letter.updateLetterResponseEnabled(_id, responseEnabled);
-  //   const userids = [];
-  //   for (const name of to) {
-  //     try{
-  //       const user = await User.getUserByUsername(name);
-  //       userids.push(user._id);
-  //     } catch (error) {
-  //       const user = await Contact.getEmailContactbyUsername(name);
-  //       if (user === null) {continue}
-  //       userids.push(user._id);
-  //     }
-  //   }
-  //   await Letter.updateLetterReceiver(_id, userids);
-  //   const thedelay = (await Delay.getDelayByContent(_id))[0];
-  //   if (thedelay !== null) {
-  //     const delaydate = new Date(delay);
-  //     await Delay.updateActivation(thedelay._id, delaydate);
-  //   }
-  // }
   async updateLetterContent(session: WebSessionDoc, _id: ObjectId, content: string, responseEnabled: boolean, delay?: string) {
     const user = WebSession.getUser(session);
     const theletter = await Letter.getLetterById(_id);
@@ -551,24 +508,11 @@ class Routes {
     }
     await Letter.updateLetterContent(_id, content);
     await Letter.updateLetterResponseEnabled(_id, responseEnabled);
-    
-    // const userids = [];
-    // for (const name of to) {
-    //   try{
-    //     const user = await User.getUserByUsername(name);
-    //     userids.push(user._id);
-    //   } catch (error) {
-    //     const user = await Contact.getEmailContactbyUsername(name);
-    //     if (user === null) {continue}
-    //     userids.push(user._id);
-    //   }
-    // }
-    // await Letter.updateLetterReceiver(_id, userids);
     if (delay) {
     const thedelay = (await Delay.getDelayByContent(_id));
     if (thedelay !== null) {
       const delaydate = new Date(delay);
-      await Delay.updateActivation(thedelay[0]._id, delaydate);
+      await Delay.updateDelay(thedelay[0]._id, {activation: delaydate})
       return { msg: "Letter updated!", delay: thedelay };
     }
     return { msg: "Letter updated!" };}
@@ -652,16 +596,6 @@ class Routes {
     return await Letter.deleteLetter_client(_id);
   }
 
-  // @Router.patch("/letter/email")
-  // async sendLetterEmail(session: WebSessionDoc, letter: ObjectId) {
-  //   const user = WebSession.getUser(session);
-  //   const theletter = await Letter.getLetterById(letter);
-  //   if (theletter.from.toString() !== user.toString()) {
-  //     throw new Error("You are not the author of this letter!");
-  //   }
-  //   // const thereceiver = theletter.to;
-  //   return { msg: "No email sent!" };
-  // }
 
   // #############Letter Response#####################
   @Router.post("/letterrespond")

@@ -6,7 +6,6 @@ import { useLetterStore } from "../../stores/letter";
 
 const { getLetterContactNames,getLetterById, updateLetter, getDelayByContentId, getReceiversUsername } = useLetterStore();
 const props = defineProps(["_id"]);
-let to = Array<string>()
 let recv = ref("")
 let content = ref("");
 let responseEnabled = ref<boolean>(false);
@@ -16,9 +15,7 @@ onBeforeMount(async () => {
   const letter = await getLetterById(props._id)
   content.value = letter.content;
   responseEnabled.value = letter.responseEnabled;
-  console.log(letter.to)
   let receivers = await getReceiversUsername(letter.to)
-  //transfer receivers to string and delete the [] at the beginning and end
   let receiversstring = receivers.toString()
   recv.value = receiversstring
 });

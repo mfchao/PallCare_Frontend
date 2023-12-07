@@ -21,6 +21,10 @@ export const useContactStore = defineStore(
       return await fetchy(`/api/contact`, "GET");
     };
 
+    const getAllEmailContacts = async () => {
+      
+    }
+
     return {
       createEmailContact,
       createUserContact,
