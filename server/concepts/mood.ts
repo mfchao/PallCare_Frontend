@@ -7,6 +7,8 @@ export interface MoodDoc extends BaseDoc {
   viewers?: ObjectId[];
   mood: string;
   notify: boolean;
+  previousMoods?: string[];
+  updates?: Date[];
 }
 
 export default class MoodConcept {
@@ -20,7 +22,7 @@ export default class MoodConcept {
       return { msg: "Mood updated successfully!", mood: await this.moods.readOne({ owner }) };
     } else {
       if (mood && owner) {
-        const _id = await this.moods.createOne({ owner, mood, notify, viewers });
+        const _id = await this.moods.createOne({ owner, mood, notify, viewers, previousMoods: [], updates: [new Date()] });
         return { msg: "User created successfully!", mood: await this.moods.readOne({ _id }) };
       } else {
         throw new NotAllowedError("owner and mood must be non-empty!");
@@ -29,7 +31,12 @@ export default class MoodConcept {
   }
 
   async update(_id: ObjectId, update: Partial<MoodDoc>) {
-    await this.moods.updateOne({ _id }, update);
+    const mood = await this.moods.readOne({ _id });
+    if (mood) {
+      const updatedPreviousMoods = mood.previousMoods ? [...mood.previousMoods, mood.mood] : [mood.mood];
+      const updates = mood.updates ? [...mood.updates, new Date()] : [new Date()];
+      await this.moods.updateOne({ _id }, { ...update, previousMoods: updatedPreviousMoods, updates: updates });
+    }
   }
 
   async isOwner(user: ObjectId) {
@@ -47,6 +54,14 @@ export default class MoodConcept {
       sort: { dateUpdated: -1 },
     });
     return moods;
+  }
+
+  async getPreviousMoods(owner: ObjectId) {
+    const mood = await this.moods.readOne({ owner });
+    if (!mood) {
+      throw new NotFoundError(`Mood for ${owner} does not exist!`);
+    }
+    return mood || [];
   }
 
   async getByOwner(owner: ObjectId) {

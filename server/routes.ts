@@ -732,7 +732,7 @@ class Routes {
   }
 
   @Router.post("/contact/passcode/verified")
-  async verifyPatientPasscode(patientname:string, passcode: string) {
+  async verifyPatientPasscode(patientname: string, passcode: string) {
     const patient = await User.getUserByUsername(patientname);
     return await Contact.verifyPatientPasscode(patient._id, passcode);
   }
@@ -791,6 +791,13 @@ class Routes {
       moods = await Mood.getMoods({});
     }
     return moods;
+  }
+
+  @Router.get("/moods/:owner/previous")
+  async getPreviousMoods(owner: string) {
+    const _id = (await User.getUserByUsername(owner))._id;
+    const previousMoods = await Mood.getPreviousMoods(_id);
+    return previousMoods;
   }
 
   @Router.delete("/moods")

@@ -1,22 +1,32 @@
 <script setup lang="ts">
 import router from "@/router";
 import { useMoodStore } from "@/stores/mood";
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { onBeforeMount, ref } from "vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
+import ViewPatientMood from "../components/Mood/ViewPatientMood.vue";
+import { formatDate } from "../utils/formatDate";
 
-
-
+const isLoading = ref(true);
 const { userMood, hasMood } = storeToRefs(useMoodStore());
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn, isFamily } = storeToRefs(useUserStore());
+const { getUserType } = useUserStore();
 
+const { refreshMood } = useMoodStore();
+const { patientUsername } = storeToRefs(usePreferenceStore());
+
+let currentDate = formatDate(new Date());
 
 async function loginUser() {
   void router.push({ name: "Login" });
+  
 }
 
 async function registerUser() {
   void router.push({ name: "Register" });
+  
 }
 
 async function settings() {
@@ -26,6 +36,20 @@ async function settings() {
 async function contacts() {
   void router.push({ name: "Contact" });
 }
+
+onBeforeMount(async () => {
+  isLoading.value = true;
+  await getUserType(currentUsername.value);
+  if(isFamily) {
+    void refreshMood(patientUsername.value);
+  } else {
+    void refreshMood(currentUsername.value);
+  }
+
+  isLoading.value = false;
+
+  
+});
 
 
 </script>
@@ -37,21 +61,30 @@ async function contacts() {
         <div v-if="isLoggedIn">
           <div class="flex-container">
             <div>
-              <p id="date" class="text-left">Date</p>
+              <p id="date" class="text-left date">{{currentDate}}</p>
               <h1 class="text-left">Hi {{ currentUsername }} !</h1>
             </div>
             <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
             <div class="profile-container">
               <img class="profile-pic" src="@/assets/images/profile.svg"/>
-              <div v-if="hasMood" class="mood-emoji">{{ userMood }}</div>
+              <div v-if="hasMood && !isFamily" class="mood-emoji">{{ userMood }}</div>
             </div>
           </div>
           
-          <div>
+          <div v-if="!isFamily && !isLoading">
             <MoodForm/>
           </div>
+          <div v-else-if="!isLoading">
+            <ViewPatientMood/>
+          </div>
+          <div v-else>
+            <p>Loading Moods...</p>
+          </div>
 
-          <button @click="contacts">Your Contacts</button>
+          <div v-if="!isFamily">
+            <button @click="contacts">Your Contacts</button>
+          </div>
+          
           
         </div>
     
@@ -98,6 +131,12 @@ async function contacts() {
 main {
  
   height: 100vh; 
+}
+
+.date {
+  font-size: 0.9em;
+  letter-spacing: 0.02em;
+  color:rgb(81, 81, 81);
 }
 
 

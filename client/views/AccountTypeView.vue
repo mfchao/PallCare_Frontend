@@ -36,7 +36,7 @@ async function preferences() {
   }
 
   await updateUser({ userType: userType.value });
-  void getUserType();
+  // await getUserType();
 
   if (family.value) {
       void router.push({ name: "PreferenceF" });
