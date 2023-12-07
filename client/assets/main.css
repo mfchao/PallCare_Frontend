@@ -77,8 +77,8 @@ button {
   transition: .3s ease;
   display: flex;
   width: 200px;
-  height: 65px;
-  padding: 20px;
+  height: 55px;
+  padding: 15px;
   border: none;
   justify-content: center;
   align-items: center;
@@ -92,7 +92,7 @@ button.bluebutton {
 
 }
 
-button.bluebuttoncenterlong{
+button.bluebuttoncenterlong {
   background: #9FB9C7;
   color: #131313;
   text-align: center;
@@ -102,7 +102,7 @@ button.bluebuttoncenterlong{
   line-height: normal;
   width: 300px;
   height: 65px;
-  
+
 }
 
 h1 {
@@ -184,17 +184,21 @@ main {
   -webkit-transition: .4s;
   transition: .4s;
 }
-input:checked + .slider {
+
+input:checked+.slider {
   background-color: #EDB4C7;
 }
-input:focus + .slider {
+
+input:focus+.slider {
   box-shadow: 0 0 1px #EDB4C7;
 }
-input:checked + .slider:before {
+
+input:checked+.slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(20px);
 }
+
 .slider.round {
   border-radius: 34px;
 }
@@ -204,7 +208,7 @@ input:checked + .slider:before {
 }
 
 /* for question mark? badget that navigates to the "Explaination page" */
-.badge{
+.badge {
   background-color: #131313;
   font-family: SF Pro Display;
   font-style: normal;

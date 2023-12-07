@@ -11,7 +11,6 @@ const { userMood, hasMood } = storeToRefs(useMoodStore());
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 
-
 async function loginUser() {
   void router.push({ name: "Login" });
 }
@@ -22,6 +21,10 @@ async function registerUser() {
 
 async function settings() {
   void router.push({ name: "Settings" });
+}
+
+async function contacts() {
+  void router.push({ name: "Contact" });
 }
 
 
@@ -47,6 +50,8 @@ async function settings() {
           <div>
             <MoodForm/>
           </div>
+
+          <button @click="contacts">Your Contacts</button>
           
         </div>
     
@@ -90,7 +95,10 @@ async function settings() {
 }
 
 
-
+main {
+ 
+  height: 100vh; 
+}
 
 
 .mood-custom {

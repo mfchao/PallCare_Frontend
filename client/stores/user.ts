@@ -32,6 +32,17 @@ export const useUserStore = defineStore(
       });
     };
 
+    const isContact = async (patient_id: string) => {
+      const patient_contacts = await fetchy(`/api/contacts/${patient_id}`, "GET");
+      const patient_contacts_ids = patient_contacts.map((contact: any) => contact.contact.toString());
+      return patient_contacts_ids.includes(currentUsername.value);
+    };
+
+    const isAuthor = async (patient_id: string) => {
+      const user_id = await fetchy(`/api/users/${currentUsername.value}`, "GET");
+      return user_id.toString() === patient_id.toString();
+    };
+
     const updateSession = async () => {
       try {
         const { username } = await fetchy("/api/session", "GET", { alert: false });
@@ -77,6 +88,8 @@ export const useUserStore = defineStore(
       logoutUser,
       updateUser,
       deleteUser,
+      isContact,
+      isAuthor,
     };
   },
   { persist: true },

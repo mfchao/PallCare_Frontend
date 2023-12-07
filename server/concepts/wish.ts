@@ -7,13 +7,13 @@ export interface WishDoc extends BaseDoc {
   author: ObjectId;
   content: string;
   fulfilled: boolean;
-  visibility: "public" | ObjectId[] | "private";
+  visibility: "public" | "contacts" | "private";
 }
 
 export default class WishConcept {
   public readonly wishes = new DocCollection<WishDoc>("wishes");
 
-  async create(author: ObjectId, content: string, visibility: "public" | ObjectId[] | "private") {
+  async create(author: ObjectId, content: string, visibility: "public" | "contacts" | "private") {
     const _id = await this.wishes.createOne({ author, content, visibility, fulfilled: false });
     return { msg: "Wish successfully created!", wish: await this.wishes.readOne({ _id }) };
   }
@@ -23,6 +23,14 @@ export default class WishConcept {
       sort: { dateUpdated: -1 },
     });
     return wishes;
+  }
+
+  async getWishById(_id: ObjectId) {
+    const wish = await this.wishes.readOne({ _id });
+    if (!wish) {
+      throw new NotAllowedError("Wish not found.");
+    }
+    return wish;
   }
 
   async getByAuthor(author: ObjectId) {

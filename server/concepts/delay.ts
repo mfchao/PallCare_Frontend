@@ -22,8 +22,8 @@ import { NotAllowedError, NotFoundError } from "./errors";
 export interface DelayDoc extends BaseDoc {
   owner: ObjectId;
   content: ObjectId;
-  type: "Diary" | "Letter";
-  behavior: "send" | "delete" | "reveal" | "hide";
+  type: "Diary" | "Letter" | "Wish";
+  behavior: "send" | "delete";
   activation: Date;
 }
 //test
@@ -37,7 +37,10 @@ export async function compareIdbyString(a: ObjectId, b: ObjectId) {
 export default class DelayConcept {
   public readonly delays = new DocCollection<DelayDoc>("delays");
 
-  async create(owner: ObjectId, content: ObjectId, type: "Diary" | "Letter", behavior: "send" | "delete" | "reveal" | "hide", activation: Date) {
+  async create(owner: ObjectId, content: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete", activation: Date) {
+    if (await this.delays.readOne({ content })) {
+      throw new NotAllowedError("This piece of content already has a delay!");
+    }
     const _id = await this.delays.createOne({ owner, content, type, behavior, activation });
     return { msg: "Created Delay!", delay: await this.delays.readOne({ _id }) };
   }
@@ -84,7 +87,7 @@ export default class DelayConcept {
   }
 
   async getDelaysByOwner(owner: ObjectId) {
-    return await this.delays.readMany({ owner });
+    return await this.delays.readMany({ owner }, { sort: { dateUpdated: -1 } });
   }
 
   async delete(_id: ObjectId) {
@@ -92,10 +95,10 @@ export default class DelayConcept {
     return { msg: "Deleted Delay!" };
   }
 
-  async updateActivation(_id: ObjectId, activation: Date) {
+  async updateDelay(_id: ObjectId, update: Partial<DelayDoc>) {
     await this.getDelayById(_id); // assert there is a delay
-    await this.delays.updateOne({ _id }, { activation: activation });
-    return { msg: "Updated Delay Activation!" };
+    await this.delays.updateOne({ _id }, update);
+    return { msg: "Updated Delay!" };
   }
 
   async isExpired(_id: ObjectId) {

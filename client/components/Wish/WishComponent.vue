@@ -1,46 +1,76 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { defineEmits } from "vue";
-import router from "../../router";
-import { useDiaryStore } from "../../stores/diary";
+import { computed } from "vue";
 import { useTCStore } from "../../stores/timeCapsule";
-import { useUserStore } from "../../stores/user";
+import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
-const { deleteDiary } = useDiaryStore();
 const { addToTimeCapsule } = useTCStore();
-const props = defineProps(["diary", "capsule"]);
+const props = defineProps(["wish", "capsule"]);
+const emit = defineEmits(["editWish", "refreshWishes"]);
 const { currentUsername } = storeToRefs(useUserStore());
-const emit = defineEmits(["refreshDiaries"]);
+const { isContact, isAuthor } = useUserStore();
 
-async function deleteDiaryEntry() {
-  await deleteDiary(props.diary._id);
-  emit("refreshDiaries");
-}
-async function addDiaryToCapsule(behavior: "send" | "delete") {
-  await addToTimeCapsule(currentUsername.value, props.diary._id, "Diary", behavior);
-  emit("refreshDiaries");
+const canView = computed(() => {
+  if (props.wish.visibility === "public") {
+    return true;
+  } else if (props.wish.visibility === "contacts") {
+    return isContact(props.wish.author);
+  } else {
+    return isAuthor(props.wish.author);
+  }
+});
+
+const canEdit = computed(() => {
+  return isAuthor(props.wish.author);
+});
+
+const deleteWish = async () => {
+  try {
+    await fetchy(`/api/wishes/${props.wish._id}`, "DELETE");
+  } catch {
+    return;
+  }
+  emit("refreshWishes");
+};
+
+async function addWishToCapsule(behavior: "send" | "delete") {
+  await addToTimeCapsule(currentUsername.value, props.wish._id, "Wish", behavior);
+  emit("refreshWishes");
 }
 </script>
 
 <template>
+  <!-- <p class="author">{{ props.wish.author }}</p> -->
+  <!-- <p>{{ props.wish.content }}</p>
+    <div class="base">
+        <menu v-if="canEdit">
+            <li><button class="btn-small pure-button" @click="emit('editWish', props.wish._id)">Edit</button></li>
+            <li><button class="button-error btn-small pure-button" @click="deleteWish">Delete</button></li>
+        </menu>
+        <article class="timestamp" v-if="canView">
+            <p v-if="props.wish.dateCreated !== props.wish.dateUpdated">Edited on: {{ formatDate(props.wish.dateUpdated) }}</p>
+            <p v-else>Created on: {{ formatDate(props.wish.dateCreated) }}</p>
+        </article>
+    </div> -->
+
   <div class="card">
     <div class="top">
-      <span v-if="props.diary.hidden == true" class="ribbon">PRIVATE</span>
+      <span v-if="props.wish.visibility == 'private'" class="ribbon">PRIVATE</span>
+      <span v-else-if="props.wish.visibility == 'contacts'" class="ribbon2">CONTACTS</span>
       <span v-else class="ribbon2">PUBLIC</span>
-      <!-- <text class="date" v-if="props.diary.dateCreated !== props.diary.dateUpdated">Edited on: {{ formatEntryDate(props.diary.dateUpdated) }}</text>
-      <text class="date" v-else>Created on: {{ formatEntryDate(props.diary.dateCreated) }}</text> -->
-      <text class="date">{{ formatEntryDate(props.diary.dateCreated) }}</text>
+      <text class="date">{{ formatEntryDate(props.wish.dateCreated) }}</text>
     </div>
     <div class="bottom">
-      <text class="diarycontent">{{ props.diary.content.substring(0, 90) + ".." }}</text>
+      <text v-if="canView" class="wishcontent">{{ props.wish.content.substring(0, 90) + ".." }}</text>
       <div class="buttons" v-if="props.capsule">
-        <button v-if="props.diary.hidden" class="little-black" @click="addDiaryToCapsule('send')">Reveal</button>
-        <button class="little-black" @click="addDiaryToCapsule('delete')">Delete</button>
+        <button v-if="props.wish.visibility == 'private'" class="little-black" @click="addWishToCapsule('send')">Send</button>
+        <button class="little-black" @click="addWishToCapsule('delete')">Delete</button>
       </div>
-      <div class="buttons" v-else-if="props.diary.author == currentUsername">
-        <button class="little-black" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button>
-        <button class="little-gray" @click="deleteDiaryEntry">Delete</button>
+      <div class="buttons" v-else-if="canEdit">
+        <button class="little-black" @click="emit('editWish', props.wish._id)">Edit</button>
+        <button class="little-gray" @click="deleteWish">Delete</button>
       </div>
     </div>
   </div>
@@ -85,7 +115,7 @@ p {
   font-weight: 400;
   line-height: 82.938%;
 }
-.diarycontent {
+.wishcontent {
   display: flex;
   width: 190px;
   height: 45px;
@@ -105,6 +135,7 @@ p {
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
+
   flex-shrink: 0;
 }
 menu {
