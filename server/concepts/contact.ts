@@ -55,6 +55,15 @@ export default class ContactConcept {
 
   async createPatientPasscode(patient: ObjectId, passcode: string) {
     const _id = await this.patientPasscodes.createOne({ patient, passcode });
+    return await this.patientPasscodes.readOne({ _id });
+  }
+
+  async verifyPatientPasscode(patient: ObjectId, passcode: string) {
+    const patientPasscode = await this.patientPasscodes.readOne({ patient });
+    if (!patientPasscode) {
+      throw new NotFoundError("No passcode associated with this patient.");
+    }
+    return passcode === patientPasscode.passcode;
   }
 
   async getContactsbyOwner(owner: ObjectId) {
@@ -62,14 +71,31 @@ export default class ContactConcept {
     return contacts;
   }
 
+  async getContactsbyContact(owner: ObjectId, contact: ObjectId) {
+    // const contacts = await this.contacts.readMany({ contact });
+    // return contacts[0];
+    const allContacts = await this.getContactsbyOwner(owner);
+    const result = [];
+    for (const c of allContacts) {
+      if (await compareIdbyString(c.contact, contact)) {
+        result.push(c);
+      }
+    }
+    return result;
+  }
   async getInAppContactsbyOwner(owner: ObjectId) {
     const contacts = await this.contacts.readMany({ owner, type: "User" });
     return contacts;
   }
 
-  async getContactsbyContact(contact: ObjectId) {
-    const contacts = await this.contacts.readMany({ contact });
-    return contacts[0];
+  // async getContactbyContact(contact: ObjectId) {
+  //   const contacts = await this.contacts.readMany({ contact });
+  //   return contacts[0];
+  // }
+
+  async getEmailContactsbyOwner(owner: ObjectId) {
+    const contacts = await this.contacts.readMany({ owner, type: "NonUser" });
+    return contacts;
   }
 
   async getEmailContactbyId(_id: ObjectId) {
@@ -93,10 +119,7 @@ export default class ContactConcept {
   }
 
   async getemailaddressbyId(_id: ObjectId) {
-    const contact = await this.getEmailContactbyId(_id);
-    if (!contact) {
-      return null;
-    }
-    return contact.email;
+    const contact = await this.emailContacts.readOne({ _id });
+    return contact?.email
   }
 }

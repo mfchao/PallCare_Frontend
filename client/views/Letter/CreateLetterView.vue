@@ -1,22 +1,54 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import router from "../../router";
-import { useDiaryStore } from "../../stores/diary";
+import { useLetterStore } from "../../stores/letter";
 
-const { createDiary } = useDiaryStore();
+const { createLetter, getLetterContactNames } = useLetterStore();
+//to is a list of string
+const props = defineProps(["capsule"]);
+let to = Array<string>();
+let recv = ref("");
 let content = ref("");
-let revealed = ref<boolean>(false);
+let responseEnabled = ref<boolean>(false);
+let delay = ref("");
+let delay_date = ref("");
+let contacts = ref<string[]>([]);
 
-async function submitForm() {
-  await createDiary(content.value, revealed.value);
-  await router.push({ name: "Diary" });
+onBeforeMount(async () => {
+  contacts.value = await getLetterContactNames();
+});
+
+async function defualtfunction(selectedcontact: any) {
+  let newrecv = "";
+  if (to.includes(selectedcontact)) {
+    to.splice(to.indexOf(selectedcontact), 1);
+    for (let i = 0; i < to.length; i++) {
+      newrecv = newrecv.concat(to[i] + "; ");
+    }
+  } else {
+    to.push(selectedcontact);
+    newrecv = recv.value.concat(selectedcontact + "; ");
+  }
+  recv.value = newrecv;
 }
-
+async function submitForm() {
+  console.log(delay_date);
+  try {
+    if (props.capsule) {
+      await createLetter(to, content.value, false, "0");
+    } else {
+      await createLetter(to, content.value, responseEnabled.value, delay_date.value);
+    }
+  } catch (e) {
+    await router.push({ name: "Letter" });
+  }
+  await router.push({ name: props.capsule ? "TimeCapsuleContent" : "Letter" });
+}
 </script>
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Letter' })" src="@/assets/images/back.svg"/>
+      <img @click="router.push({ name: props.capsule ? 'TimeCapsuleAdd' : 'Letter' })" src="@/assets/images/back.svg" />
       <h1>New Letter</h1>
     </div>
 
@@ -32,32 +64,46 @@ async function submitForm() {
         </div>
         <fieldset class="letter-fields">
           <div class="left">
-            <div class="delay">
+            <!-- Response -->
+            <div v-if="!props.capsule" class="delay">
+              <p class="form-subtitle">Allow Reply</p>
+              <label class="switch">
+                <input type="checkbox" v-model="responseEnabled" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <!-- Delay -->
+            <div v-if="!props.capsule" class="delay">
               <p class="form-subtitle">Delay</p>
               <label class="switch">
-                <input type="checkbox" v-model="delay">
+                <input type="checkbox" id="delay" v-model="delay" />
                 <span class="slider round"></span>
               </label>
             </div>
 
-            <div class="delaytime">
-              <p class="form-subtitle">Delay Date</p>
-              <input class="input-bar" type="date" v-model.trim="delaydate" id="delay_date" placeholder="" required />
+            <div v-if="delay">
+              <p class="form-subtitle">Delay date</p>
+              <input type="date" id="delay_date" v-model.trim="delay_date" placeholder="" required />
             </div>
-
+            <!-- 
             <div class="delay">
               <p class="form-subtitle">Time Capsule</p>
               <label class="switch">
                 <input type="checkbox" v-model="timecapsule">
                 <span class="slider round"></span>
               </label>
-            </div>
+            </div> -->
           </div>
 
           <div class="right">
-            <div class="delaytime">
+            <div class="dropdown">
               <p class="form-subtitle">Receiver</p>
-              <input type="text" class="contact" v-model.trim="receiver" id="receiver" placeholder="Enter receiver's name" required />
+              <div class="dropdown-content">
+                <option v-for="contact in contacts" :key="contact">
+                  <p @click="defualtfunction(contact)">{{ contact }}</p>
+                </option>
+              </div>
+              <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ recv }}</text>
             </div>
           </div>
         </fieldset>
@@ -67,8 +113,6 @@ async function submitForm() {
   </body>
 </template>
 <style scoped>
-
-
 body {
   display: flex;
   flex-direction: row;
@@ -76,10 +120,10 @@ body {
   padding: 60px 18px 120px 18px;
   justify-content: space-between;
   flex-direction: column;
-  background:#F0E7D8;
+  background: #f0e7d8;
 }
 
-.setting{
+.setting {
   display: flex;
   height: 190px;
   flex-direction: column;
@@ -87,13 +131,13 @@ body {
   padding: 5px 0px 0px 10px;
   gap: 0px;
 }
-.field-title{
+.field-title {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.setting-title{
+.setting-title {
   color: #000;
   font-family: SF Pro Display;
   font-size: 20px;
@@ -102,14 +146,14 @@ body {
   line-height: 0px;
   /* line-height: 103.822%; 20.764px */
 }
-.navigation{
+.navigation {
   display: flex;
   width: 300px;
   align-items: center;
   gap: 23px;
 }
 
-.letterinputspace{
+.letterinputspace {
   display: flex;
   width: 300px;
   height: 300px;
@@ -119,7 +163,7 @@ body {
   align-items: center;
   gap: var(--spacing-space-075, 6px);
   border-radius: var(--numbers-spacing-12, 12px);
-  background: #9FB9C7;
+  background: #9fb9c7;
 }
 
 textarea.letter-content {
@@ -142,7 +186,7 @@ textarea.letter-content {
 
 .letter-fields {
   display: flex;
-  width:290px;
+  width: 290px;
   height: 120px;
   padding: 10px 0px 10px 10px;
   align-items: column;
@@ -151,11 +195,10 @@ textarea.letter-content {
   border-radius: var(--numbers-spacing-12, 12px);
   border: 1.5px solid #000;
 }
-.left{
-  
+.left {
   gap: 12px;
 }
-.right{
+.right {
   /* gap: 12px; */
   display: flex;
   width: 1px;
@@ -164,25 +207,42 @@ textarea.letter-content {
   gap: 1px;
   flex-shrink: 0;
 }
-.delay{
+.delay {
   display: flex;
   align-items: center;
   gap: 22px;
 }
 
-.form-subtitle{
+.form-subtitle {
   color: #000;
   font-family: SF Pro Display;
   font-style: normal;
   font-weight: 500;
   height: 1px;
-  line-height: 0
+  line-height: 0;
   /* line-height: 103.822%; 13.497px */
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
 
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
 
-input.contact{
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+input.contact {
   display: flex;
   width: 92px;
   height: 80px;
@@ -194,5 +254,4 @@ input.contact{
   font-size: 12px;
   align-items: flex-start;
 }
-
 </style>

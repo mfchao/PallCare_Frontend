@@ -7,7 +7,7 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
 
-const { setOn, setOff } = usePreferenceStore();
+const { setOn, setOff, verifyPatientPasscode, boundwithpatient } = usePreferenceStore();
 const { showNav} = storeToRefs(usePreferenceStore());
 
 let username = ref("");
@@ -15,11 +15,19 @@ let passcode1 = ref("");
 let passcode2 = ref("");
 let passcode3 = ref("");
 let passcode4 = ref("");
+let showerror = ref(false);
 
 async function verify() {
   let passcode = passcode1.value + passcode2.value + passcode3.value + passcode4.value;
-
-  void router.push({ name: "PreferenceP" });
+  let verified = await verifyPatientPasscode(username.value, passcode);
+  if (verified){
+    //add contact to the patientuser
+    await boundwithpatient(username.value);
+    router.push({ name: "Home" });
+  }else{
+    showerror.value = true;
+  }
+  // void router.push({ name: "PreferenceP" });
 }
 
 async function noPasscode() {
@@ -65,7 +73,7 @@ async function accountType() {
         <input type="password" v-model="passcode4" maxlength="1" size="1" class="custom-input">          
       </div>
       <div class="no-passcode" @click="noPasscode"> No Passcode</div>
-
+      <p v-if="showerror" style="color:red">Wrong passcode</p>
 
     <button class="next-button" @click="verify"> Verify</button>
 

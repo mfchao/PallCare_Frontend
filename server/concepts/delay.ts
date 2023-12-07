@@ -30,6 +30,9 @@ export interface DelayDoc extends BaseDoc {
 // export function testBehavior(content: any, other: string) {
 //   console.log(content, other );
 // }
+export async function compareIdbyString(a: ObjectId, b: ObjectId) {
+  return a.toString() === b.toString();
+}
 
 export default class DelayConcept {
   public readonly delays = new DocCollection<DelayDoc>("delays");
@@ -61,11 +64,26 @@ export default class DelayConcept {
   }
 
   async getDelayByContent(content: ObjectId) {
-    const delay = await this.delays.readOne({ content });
-    if (!delay) {
-      throw new NotFoundError("No such delay exists", content);
+    // loop through all delays and find the one with the matching content
+    const delays = await this.delays.readMany({});
+    const result = []
+    for (const delay of delays) {
+      //compare by string
+      if (await compareIdbyString(delay.content, content)) {
+        result.push(delay);
+      }
     }
-    return delay;
+    return result;
+  }
+
+  async deletedelayByContent(content: ObjectId, behavior: "send" | "delete" | "reveal" | "hide") {
+    const delays = await this.getDelayByContent(content);
+    for (const delay of delays) {
+      if (delay.behavior === behavior) {
+        await this.delays.deleteOne({ _id: delay._id });
+      }
+    }
+    return { msg: "Deleted Delay!" };
   }
 
   async getDelaysByOwner(owner: ObjectId) {

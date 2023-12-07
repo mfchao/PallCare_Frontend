@@ -35,6 +35,29 @@ a.button {
   justify-content: center;
 }
 
+.pageexplaination{
+  width: 300px;
+  height: 46px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #131313;
+  padding-top: 10px;
+  font-family: SF Pro Display;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 106.5%;
+}
+.pageexplainationdiv{
+  display: flex;
+  width: 300px;
+  height: 52px;
+  align-items: flex-start;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 
 
 
@@ -202,4 +225,20 @@ input:checked+.slider:before {
   width: 300px;
   align-items: center;
   gap: 23px;
+}
+
+.pagetitle{
+  display: flex;
+  width: 240px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #131313;
+  font-family: New York;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 496;
+  line-height: normal;
+  text-transform: uppercase;
 }

@@ -219,6 +219,26 @@ export default class LetterConcept<T> {
     return { msg: "Letter is removed!" };
   }
 
+  async updateLetterResponseEnabled(_id: ObjectId, responseEnabled: boolean) {
+    const letters = await this.getLetterById(_id)
+    if (letters.send === true) {
+      throw new NotAllowedError(`Letter ${_id} has been sent, you cannot change the responseEnabled.`);
+    }
+    await this.letters.updateOne({ _id }, { responseEnabled });
+    return { msg: "Letter responseEnabled is updated!" };
+  }
+
+  async updateLetterReceiver(_id: ObjectId, to: ObjectId[]) {
+    const letters = await this.getLetterById(_id)
+    if (letters.send === true) {
+      throw new NotAllowedError(`Letter ${_id} has been sent, you cannot change the receiver.`);
+    }
+    const oldTo = letters.to;
+    const newTo = to;
+    await this.letters.updateOne({ _id }, { to: newTo });
+    return { msg: "Letter receiver is updated!" };
+  }
+
   //DELETE____________________________________________________________________________
   async deleteLetter_client(_id: ObjectId) {
     // for client operation, the client can only delete the letter that has not been sent

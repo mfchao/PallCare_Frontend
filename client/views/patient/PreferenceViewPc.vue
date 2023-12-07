@@ -6,7 +6,7 @@ import { usePreferenceStore } from "@/stores/preference";
 import { ref } from "vue";
 
 
-const { setOff } = usePreferenceStore();
+const { setOff, createPatientPasscode } = usePreferenceStore();
 
 const { 
     //createPasscode
@@ -30,7 +30,7 @@ async function back() {
 
 async function update() {
     let passcode = passcode1.value + passcode2.value + passcode3.value + passcode4.value;
-//   await createPasscode({ passcode });
+    await createPatientPasscode(passcode);
 }
 
 </script>

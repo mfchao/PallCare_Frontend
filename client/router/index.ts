@@ -6,7 +6,7 @@ import AccountTypeView from "../views/AccountTypeView.vue";
 import ContactView from "../views/ContactView.vue";
 import { CreateDiaryView, DiaryView, EditDiaryView } from "../views/Diary/_diaryViews";
 import HomeView from "../views/HomeView.vue";
-import { CreateLetterView, EditLetterView, LetterView } from "../views/Letter/_letterView";
+import { CreateLetterView, EditLetterView, LetterView, ResponseLetterView } from "../views/Letter/_letterView";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import RegisterView from "../views/RegisterView.vue";
@@ -90,15 +90,23 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/letter/create",
+      path: "/letter/create/:capsule?",
       name: "CreateLetter",
       component: CreateLetterView,
+      props: (route) => ({ capsule: route.params.capsule }),
       meta: { requiresAuth: true },
     },
     {
       path: "/letter/edit/:_id",
       name: "EditLetter",
       component: EditLetterView,
+      props: (route) => ({ _id: route.params._id }),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letter/response/:_id",
+      name: "ResponseLetter",
+      component: ResponseLetterView,
       props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },
