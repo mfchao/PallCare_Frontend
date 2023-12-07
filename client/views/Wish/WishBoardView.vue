@@ -1,12 +1,25 @@
 <script setup lang = "ts">
+import { useNavigationStore } from "@/stores/navigation";
+import { onBeforeMount } from "vue";
 import WishListComponent from '../../components/Wish/WishListComponent.vue';
 import router from '../../router';
+
+const { setNavOff, setNavOn } = useNavigationStore();
+
+function back()  {
+  setNavOn();
+  router.push({ name: 'Home' })
+}
+
+onBeforeMount(async()=> {
+  setNavOn();
+})
 </script>
 
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png"/>
+      <img @click="back" src="@/assets/images/home.png"/>
       <text class="pagetitle">WISH</text>
     </div>
     <div class="pageexplainationdiv">
