@@ -59,7 +59,20 @@ async function logout() {
           <RouterLink :to="{ name: 'Wish' }" :class="{ underline: currentRouteName == 'Wish' }"> Wish </RouterLink>
         </li>
         <li>
+<<<<<<< Updated upstream
           <RouterLink :to="{ name: 'Letter' }" :class="{ underline: currentRouteName == 'Letter' }"> Letter </RouterLink>
+=======
+          <RouterLink :to="{ name: 'Wish' }" > 
+            <img v-if="currentRouteName == 'Wish'" src="@/assets/images/wishON.svg" class="navImage"/>
+            <img v-if="currentRouteName != 'Wish'" src="@/assets/images/wishOFF.svg" class="navImage"/>
+           </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Letter' }" > 
+            <img v-if="currentRouteName == 'Letter'" src="@/assets/images/letterON.svg" class="navImage2"/>
+            <img v-if="currentRouteName != 'Letter'" src="@/assets/images/letterOFF.svg" class="navImage2"/>
+           </RouterLink>
+>>>>>>> Stashed changes
         </li>
       </ul>
     </nav>
@@ -116,4 +129,15 @@ ul {
 .underline {
   text-decoration: underline;
 }
+<<<<<<< Updated upstream
+=======
+
+.navImage {
+  height: 1.5em;
+}
+
+.navImage2 {
+  height: 1.2em;
+}
+>>>>>>> Stashed changes
 </style>
