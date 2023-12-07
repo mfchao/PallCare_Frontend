@@ -63,9 +63,17 @@ export default class ContactConcept {
     return contacts;
   }
 
-  async getContactsbyContact(contact: ObjectId) {
-    const contacts = await this.contacts.readMany({ contact });
-    return contacts[0];
+  async getContactsbyContact(owner: ObjectId, contact: ObjectId) {
+    // const contacts = await this.contacts.readMany({ contact });
+    // return contacts[0];
+    const allContacts = await this.getContactsbyOwner(owner);
+    const result = [];
+    for (const c of allContacts) {
+      if (await compareIdbyString(c.contact, contact)) {
+        result.push(c);
+      }
+    }
+    return result;
   }
 
   async getEmailContactbyId(_id: ObjectId) {

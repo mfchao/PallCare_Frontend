@@ -1,15 +1,44 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import router from "../../router";
-import { useDiaryStore } from "../../stores/diary";
+import { useLetterStore } from "../../stores/letter";
 
-const { createDiary } = useDiaryStore();
+
+const { createLetter,getLetterContactNames } = useLetterStore();
+//to is a list of string
+let to = Array<string>()
+let recv = ref("")
 let content = ref("");
-let revealed = ref<boolean>(false);
+let responseEnabled = ref<boolean>(false);
+let delay = ref("");
+let delay_date = ref("");
 
+let contacts = <Array<object>>[]
+
+
+onBeforeMount(async () => {
+  contacts = await getLetterContactNames();
+});
+
+async function defualtfunction(selectedcontact:any){
+  let newrecv = ""
+  if (to.includes(selectedcontact)){
+    to.splice(to.indexOf(selectedcontact),1)
+    for (let i = 0; i < to.length; i++){
+      newrecv = newrecv.concat(to[i]+"; ")
+    }
+  } else {
+    to.push(selectedcontact)
+    newrecv = recv.value.concat(selectedcontact+"; ")}
+  recv.value = newrecv
+}
 async function submitForm() {
-  await createDiary(content.value, revealed.value);
-  await router.push({ name: "Diary" });
+  console.log(delay_date)
+  try {
+    await createLetter(to, content.value, responseEnabled.value, delay_date.value);}
+  catch (e) 
+  {await router.push({ name: "Letter" });}
+  await router.push({ name: "Letter" });
 }
 
 </script>
@@ -32,32 +61,46 @@ async function submitForm() {
         </div>
         <fieldset class="letter-fields">
           <div class="left">
+            <!-- Response -->
+            <div class="delay">
+              <p class="form-subtitle">Allow Reply</p>
+              <label class="switch">
+                <input type="checkbox" v-model="responseEnabled">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <!-- Delay -->
             <div class="delay">
               <p class="form-subtitle">Delay</p>
               <label class="switch">
-                <input type="checkbox" v-model="delay">
+                <input type="checkbox" id="delay" v-model="delay">
                 <span class="slider round"></span>
               </label>
             </div>
 
-            <div class="delaytime">
-              <p class="form-subtitle">Delay Date</p>
-              <input class="input-bar" type="date" v-model.trim="delaydate" id="delay_date" placeholder="" required />
+            <div v-if="delay">
+              <p class="form-subtitle">Delay date</p>
+              <input type="date" id="delay_date" v-model.trim="delay_date" placeholder="" required />
             </div>
-
+<!-- 
             <div class="delay">
               <p class="form-subtitle">Time Capsule</p>
               <label class="switch">
                 <input type="checkbox" v-model="timecapsule">
                 <span class="slider round"></span>
               </label>
-            </div>
+            </div> -->
           </div>
 
-          <div class="right">
-            <div class="delaytime">
+          <div class="right">    
+            <div class="dropdown">
               <p class="form-subtitle">Receiver</p>
-              <input type="text" class="contact" v-model.trim="receiver" id="receiver" placeholder="Enter receiver's name" required />
+              <div class="dropdown-content">
+                <p v-for="contact in contacts">
+                    <p @click="defualtfunction(contact)">{{contact}}</p>
+                </p>
+              </div>
+              <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ recv }}</text>
             </div>
           </div>
         </fieldset>
@@ -180,6 +223,24 @@ textarea.letter-content {
   /* line-height: 103.822%; 13.497px */
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
 
 input.contact{

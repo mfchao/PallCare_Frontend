@@ -10,104 +10,33 @@ let to = Array<string>()
 let recv = ref("")
 let content = ref("");
 let responseEnabled = ref<boolean>(false);
-let delay = ref(true);
-let delay_date = ref("");
-let selectedcontact = ref("")
-let contacts = <Array<object>>[]
 
 
 onBeforeMount(async () => {
   const letter = await getLetterById(props._id)
   content.value = letter.content;
   responseEnabled.value = letter.responseEnabled;
-  delay_date.value = ((await getDelayByContentId(props._id))[0].activation).toString().substring(0,10)
   console.log(letter.to)
   let receivers = await getReceiversUsername(letter.to)
   //transfer receivers to string and delete the [] at the beginning and end
   let receiversstring = receivers.toString()
-  selectedcontact.value = receiversstring
-  contacts = await getLetterContactNames();
+  recv.value = receiversstring
 });
 
-async function defualtfunction(selectedcontact:any){
-  let newrecv = ""
-  if (to.includes(selectedcontact)){
-    to.splice(to.indexOf(selectedcontact),1)
-    for (let i = 0; i < to.length; i++){
-      newrecv = newrecv.concat(to[i]+"; ")
-    }
-  } else {
-    to.push(selectedcontact)
-    newrecv = recv.value.concat(selectedcontact+"; ")}
-  recv.value = newrecv
-}
-async function submitForm() {
-  // await updateLetter(props._id, { to:to, content: content.value, responseEnabled: responseEnabled.value, delay: delay_date.value});
-  if (!delay.value){
-    delay_date.value = ""
-  }
-  try {await updateLetter(props._id, content.value, responseEnabled.value, delay_date.value)}
-  catch (e) {await router.push({ name: "Letter" });}
-  await router.push({ name: "Letter" });
-}
 
 </script>
 <template>
   <body>
     <div class="navigation">
       <img @click="router.push({ name: 'Letter' })" src="@/assets/images/back.svg"/>
-      <h1>Edit Letter</h1>
+      <h1></h1>
     </div>
 
-    <form class="create-form" @submit.prevent="submitForm">
+    <form class="create-form">
+      <text>Letter to: {{ recv }}</text>
       <div class="letterinputspace">
-        <textarea class="letter-content" id="content" v-model="content" placeholder="Write the letter here!" required> </textarea>
+        <text class="letter-content">{{ content }}</text>
       </div>
-
-      <div class="setting">
-        <div class="field-title">
-          <p class="setting-title">Settings</p>
-          <span class="badge">?</span>
-        </div>
-        <fieldset class="letter-fields">
-          <div class="left">
-            <!-- Response -->
-            <div class="delay">
-              <p class="form-subtitle">Allow Reply</p>
-              <label class="switch">
-                <input type="checkbox" v-model="responseEnabled">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <!-- Delay -->
-            <div class="delay">
-              <p class="form-subtitle">Delay</p>
-              <label class="switch">
-                <input type="checkbox" id="delay" v-model="delay">
-                <span class="slider round"></span>
-              </label>
-            </div>
-
-            <div v-if="delay">
-              <p class="form-subtitle">Delay date</p>
-              <input type="date" id="delay_date" v-model.trim="delay_date" placeholder="" required />
-            </div>
-          </div>
-
-          <div class="right">    
-            <div class="dropdown">
-              <p class="form-subtitle">Receiver</p>
-              <!-- <div class="dropdown-content">
-                <p v-for="contact in contacts">
-                    <p @click="defualtfunction(contact)">{{contact}}</p>
-                </p>
-              </div> -->
-              <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ selectedcontact }}</text>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-      <button type="submit" class="bluebuttoncenterlong">Create Letter</button>
     </form>
   </body>
 </template>
@@ -152,16 +81,16 @@ body {
   width: 300px;
   align-items: center;
   gap: 23px;
+  padding-bottom: 10px;
 }
 
 .letterinputspace{
   display: flex;
-  width: 300px;
+  width: 290px;
   height: 300px;
-  padding-top: 10px;
-  /* padding-bottom: 0px; */
+  padding: 20px 10px 10px 10px;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   gap: var(--spacing-space-075, 6px);
   border-radius: var(--numbers-spacing-12, 12px);
   background: #9FB9C7;
@@ -169,9 +98,10 @@ body {
 
 textarea.letter-content {
   display: flex;
-  width: 260px;
+  padding-left: 10px;
+  width: 250px;
   height: 226px;
-  padding: 10px 11px;
+  padding: 20px 11px;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;

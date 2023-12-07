@@ -292,8 +292,8 @@ class Routes {
   }
 
   @Router.get("/delay/content/:_id")
-  async getDelayByContent(content: ObjectId) {
-    return await Delay.getDelayByContent(content);
+  async getDelayByContent(_id: ObjectId) {
+    return await Delay.getDelayByContent(_id);
   }
 
   @Router.get("/delay/owner")
@@ -312,6 +312,11 @@ class Routes {
     const user = WebSession.getUser(session);
     await Delay.checkRep(user, _id);
     return await Delay.delete(_id);
+  }
+
+  @Router.delete("delay/content/:_id")
+  async deleteDelayByContent(_id: ObjectId, behavior: "send" | "delete" | "reveal" | "hide" = "send") {
+    return await Delay.deletedelayByContent(_id, behavior);
   }
 
   /**System function**/
@@ -426,13 +431,41 @@ class Routes {
   // ############################################################
   //CHECK//
   @Router.post("/letter")
-  async createLetter(session: WebSessionDoc, to: ObjectId[], content: string, responseEnabled: boolean, delay?: string) {
+  // async createLetter(session: WebSessionDoc, to: ObjectId[], content: string, responseEnabled: boolean, delay?: string) {
+  //   const user = WebSession.getUser(session);
+  //   const newletter = await Letter.createLetter(user, to, content, responseEnabled);
+  //   if (delay) {
+  //     const delaydate = new Date(delay);
+  //     if (newletter.letter !== null) {
+  //       const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
+  //       return { letter: newletter, delay: letterdelay };
+  //     }
+  //   }
+  //   return newletter;
+  // }
+  async createLetter(session: WebSessionDoc, to:string[], content: string, responseEnabled: boolean, delay?: string) {
+    const userids = [];
+    for (const name of to) {
+      try{
+        const user = await User.getUserByUsername(name);
+        userids.push(user._id);
+      } catch (error) {
+        const user = await Contact.getEmailContactbyUsername(name);
+        if (user === null) {continue}
+        userids.push(user._id);
+      }
+    }
     const user = WebSession.getUser(session);
-    const newletter = await Letter.createLetter(user, to, content, responseEnabled);
+    // const recv = []
+    // for (let recvr in to){
+    //   recv.push(ObjectId.createFromHexString(recvr))
+    // }
+    // const to = [ObjectId.createFromHexString("6565499a67e1529696b41eec")]
+    const newletter = await Letter.createLetter(user, userids, content, responseEnabled);
     if (delay) {
       const delaydate = new Date(delay);
       if (newletter.letter !== null) {
-        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "reveal", delaydate);
+        const letterdelay = await Delay.create(user, newletter.letter._id, "Letter", "send", delaydate);
         return { letter: newletter, delay: letterdelay };
       }
     }
@@ -453,9 +486,9 @@ class Routes {
   }
 
   //CHECK//
-  @Router.get("/letter/id")
-  async getLetterbyId(id: ObjectId) {
-    return await Letter.getLetterById(id);
+  @Router.get("/letter/:_id")
+  async getLetterbyId(_id: ObjectId) {
+    return await Letter.getLetterById(_id);
   }
 
   //CHECK//
@@ -466,14 +499,63 @@ class Routes {
   }
 
   //CHECK//
-  @Router.patch("/letter/content")
-  async updateLetterContent(session: WebSessionDoc, letter: ObjectId, content: string) {
+  @Router.patch("/letter/:_id")
+  // async updateLetterContent(session: WebSessionDoc, _id: ObjectId, to:string[], content: string, responseEnabled: boolean, delay: string) {
+  //   const user = WebSession.getUser(session);
+  //   const theletter = await Letter.getLetterById(_id);
+  //   if (theletter.from.toString() !== user.toString()) {
+  //     throw new Error("You are not the author of this letter!");
+  //   }
+  //   await Letter.updateLetterContent(_id, content);
+  //   await Letter.updateLetterResponseEnabled(_id, responseEnabled);
+  //   const userids = [];
+  //   for (const name of to) {
+  //     try{
+  //       const user = await User.getUserByUsername(name);
+  //       userids.push(user._id);
+  //     } catch (error) {
+  //       const user = await Contact.getEmailContactbyUsername(name);
+  //       if (user === null) {continue}
+  //       userids.push(user._id);
+  //     }
+  //   }
+  //   await Letter.updateLetterReceiver(_id, userids);
+  //   const thedelay = (await Delay.getDelayByContent(_id))[0];
+  //   if (thedelay !== null) {
+  //     const delaydate = new Date(delay);
+  //     await Delay.updateActivation(thedelay._id, delaydate);
+  //   }
+  // }
+  async updateLetterContent(session: WebSessionDoc, _id: ObjectId, content: string, responseEnabled: boolean, delay?: string) {
     const user = WebSession.getUser(session);
-    const theletter = await Letter.getLetterById(letter);
+    const theletter = await Letter.getLetterById(_id);
     if (theletter.from.toString() !== user.toString()) {
       throw new Error("You are not the author of this letter!");
     }
-    return await Letter.updateLetterContent(letter, content);
+    await Letter.updateLetterContent(_id, content);
+    await Letter.updateLetterResponseEnabled(_id, responseEnabled);
+    
+    // const userids = [];
+    // for (const name of to) {
+    //   try{
+    //     const user = await User.getUserByUsername(name);
+    //     userids.push(user._id);
+    //   } catch (error) {
+    //     const user = await Contact.getEmailContactbyUsername(name);
+    //     if (user === null) {continue}
+    //     userids.push(user._id);
+    //   }
+    // }
+    // await Letter.updateLetterReceiver(_id, userids);
+    if (delay) {
+    const thedelay = (await Delay.getDelayByContent(_id));
+    if (thedelay !== null) {
+      const delaydate = new Date(delay);
+      await Delay.updateActivation(thedelay[0]._id, delaydate);
+      return { msg: "Letter updated!", delay: thedelay };
+    }
+    return { msg: "Letter updated!" };}
+    return { msg: "Letter updated with no delay!" };
   }
 
   //TODO//
@@ -499,15 +581,15 @@ class Routes {
   }
 
   //CHECK//
-  @Router.patch("/letter")
-  async sendLetter(session: WebSessionDoc, letter: ObjectId) {
+  @Router.patch("/letter/send/:_id")
+  async sendLetter(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    const theletter = await Letter.getLetterById(letter);
+    const theletter = await Letter.getLetterById(_id);
     const username = (await User.getUserById(user)).username;
     if (theletter.from.toString() !== user.toString()) {
       throw new Error("You are not the author of this letter!");
     }
-    await Letter.sendLetter(letter);
+    await Letter.sendLetter(_id);
     const thereceiver = theletter.to;
     for (const receiver of thereceiver) {
       if ((await Contact.checkContactType(user, receiver)) === "NonUser") {
@@ -538,19 +620,19 @@ class Routes {
     return await Letter.unshowLetter(letter);
   }
 
-  @Router.delete("/letter")
-  async deleteLetterServer(letter: ObjectId) {
-    return await Letter.deleteLetter_server(letter);
+  @Router.delete("/letter/:_id")
+  async deleteLetterServer(_id: ObjectId) {
+    return await Letter.deleteLetter_server(_id);
   }
 
-  @Router.delete("/letter/client")
-  async deleteLetterClient(session: WebSessionDoc, letter: ObjectId) {
+  @Router.delete("/letter/client/:_id")
+  async deleteLetterClient(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    const theletter = await Letter.getLetterById(letter);
+    const theletter = await Letter.getLetterById(_id);
     if (theletter.from.toString() !== user.toString()) {
       throw new Error("You are not the author of this letter!");
     }
-    return await Letter.deleteLetter_client(letter);
+    return await Letter.deleteLetter_client(_id);
   }
 
 
@@ -606,6 +688,65 @@ class Routes {
   async checkContactType(session: WebSessionDoc, contact: ObjectId) {
     const user = WebSession.getUser(session);
     return await Contact.checkContactType(user, contact);
+  }
+
+  @Router.get("/contact/usernames")
+  async getAllContactUsername(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    const contacts = await Contact.getContactsbyOwner(user);
+    const usernames = [];
+    for (const contact of contacts) {
+      if (contact.type === "NonUser") {
+        const emailuser = await Contact.getEmailContactbyId(contact.contact);
+        if (emailuser === null) {
+          continue;
+        }
+        usernames.push(emailuser.username);
+        continue;
+      } else if (contact.type === "User") {
+        try {
+          const username = (await User.getUserById(contact.contact)).username;
+          usernames.push(username);
+        } catch (error) {
+          continue;
+        }
+      }
+    }
+    return usernames;
+  }
+
+  @Router.post("/contact/receiver")
+  async getallUseridwithContactName(contactname: string[]) {
+    const userids = [];
+    for (const name of contactname) {
+      try{
+        const user = await User.getUserByUsername(name);
+        userids.push(user._id);
+      } catch (error) {
+        const user = await Contact.getEmailContactbyUsername(name);
+        if (user === null) {continue}
+        userids.push(user._id);
+      }
+    }
+    return userids;
+  }
+
+  @Router.get("/contact/receiver/:_id")
+  async getContactNamebyId(session: WebSessionDoc,_id: ObjectId) {
+    const user = WebSession.getUser(session);
+    const contact = (await Contact.getContactsbyContact(user, _id))[0];
+    if (contact === null) {
+      throw new Error("Contact not found!");
+    } else{
+      if (contact.type === "User") {
+        return (await User.getUserById(_id)).username;
+      }
+      const emailcontact = await Contact.getEmailContactbyId(_id);
+      if (emailcontact === null) {
+        throw new Error("Email contact not found!");
+      }
+      return emailcontact.username;
+    }
   }
 
   // ##################### email #######################################
