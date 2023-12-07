@@ -305,7 +305,8 @@ class Routes {
 
   @Router.get("/delay/content/:_id")
   async getDelayByContents(_id: ObjectId) {
-    return await Delay.getDelayByContent(_id);}
+    return await Delay.getDelayByContent(_id);
+  }
 
   @Router.get("/delay/content/:contentID")
   async getDelayByContent(contentID: ObjectId) {
@@ -328,7 +329,6 @@ class Routes {
   async deleteDelay(session: WebSessionDoc, _id: ObjectId) {
     return await Delay.delete(_id);
   }
-
 
   @Router.delete("delay/content/:_id")
   async deleteDelayByContent(_id: ObjectId, behavior: "send" | "delete" | "reveal" | "hide" = "send") {
@@ -451,12 +451,14 @@ class Routes {
   async createLetter(session: WebSessionDoc, to:string[], content: string, responseEnabled: boolean, delay?: string) {
     const userids = [];
     for (const name of to) {
-      try{
+      try {
         const user = await User.getUserByUsername(name);
         userids.push(user._id);
       } catch (error) {
         const user = await Contact.getEmailContactbyUsername(name);
-        if (user === null) {continue}
+        if (user === null) {
+          continue;
+        }
         userids.push(user._id);
       }
     }
@@ -515,9 +517,8 @@ class Routes {
       await Delay.updateDelay(thedelay[0]._id, {activation: delaydate})
       return { msg: "Letter updated!", delay: thedelay };
     }
-    return { msg: "Letter updated!" };}
     return { msg: "Letter updated with no delay!" };
-  }
+  }}
 
   //TODO//
   @Router.delete("/letter/receiver")
@@ -673,12 +674,14 @@ class Routes {
   async getallUseridwithContactName(contactname: string[]) {
     const userids = [];
     for (const name of contactname) {
-      try{
+      try {
         const user = await User.getUserByUsername(name);
         userids.push(user._id);
       } catch (error) {
         const user = await Contact.getEmailContactbyUsername(name);
-        if (user === null) {continue}
+        if (user === null) {
+          continue;
+        }
         userids.push(user._id);
       }
     }
@@ -686,12 +689,12 @@ class Routes {
   }
 
   @Router.get("/contact/receiver/:_id")
-  async getContactNamebyId(session: WebSessionDoc,_id: ObjectId) {
+  async getContactNamebyId(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
     const contact = (await Contact.getContactsbyContact(user, _id))[0];
     if (contact === null) {
       throw new Error("Contact not found!");
-    } else{
+    } else {
       if (contact.type === "User") {
         return (await User.getUserById(_id)).username;
       }
