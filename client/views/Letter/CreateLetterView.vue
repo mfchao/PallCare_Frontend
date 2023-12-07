@@ -99,9 +99,9 @@ async function submitForm() {
             <div class="dropdown">
               <p class="form-subtitle">Receiver</p>
               <div class="dropdown-content">
-                <option v-for="contact in contacts" :key="contact">
+                <p v-for="contact in contacts" :key="contact">
                   <p @click="defualtfunction(contact)">{{ contact }}</p>
-                </option>
+                </p>
               </div>
               <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ recv }}</text>
             </div>
