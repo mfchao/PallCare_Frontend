@@ -33,7 +33,7 @@ onBeforeMount(async () => {
   <body>
     <button @click="router.push({ name: 'TimeCapsuleContent' })">back</button>
     <h1>Add Contents</h1>
-    <button @click="router.push({ name: 'CreateLetter' })">Create a new letter to store in Time Capsule</button>
+    <button @click="router.push({ path: `/letter/create/${true}` })">Create a new letter to store in Time Capsule</button>
     <h1>Select Diaries to Add to Time Capsule</h1>
     <article v-for="diary in diaries" :key="diary._id">
       <!-- TODO: add DIARY component w/ conditional styling -->

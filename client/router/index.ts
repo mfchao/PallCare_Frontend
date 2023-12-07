@@ -90,9 +90,10 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/letter/create",
+      path: "/letter/create/:capsule?",
       name: "CreateLetter",
       component: CreateLetterView,
+      props: (route) => ({ capsule: route.params.capsule }),
       meta: { requiresAuth: true },
     },
     {

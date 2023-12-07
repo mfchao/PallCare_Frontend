@@ -2,9 +2,9 @@
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { useDiaryStore } from "../../stores/diary";
+import { useLetterStore } from "../../stores/letter";
 import { useUserStore } from "../../stores/user";
 import LetterComponent from "./LetterComponent.vue";
-import { useLetterStore } from "../../stores/letter";
 
 const { currentUsername } = storeToRefs(useUserStore());
 const { getAuthorEntries } = useDiaryStore();
@@ -14,19 +14,19 @@ let letterList = ref<Array<Record<string, string>>>([]);
 
 async function getEntries() {
   let allLetters = await getAuthorLetters();
-  let showletters = []
-  for (let i = 0; i < allLetters.length; i++){
-    if (allLetters[i].show == true){
-      showletters.push(allLetters[i])
+  let showletters = [];
+  for (let i = 0; i < allLetters.length; i++) {
+    if (allLetters[i].show == true) {
+      showletters.push(allLetters[i]);
     }
   }
-  letterList.value = showletters
+  letterList.value = showletters;
   // diaryList.value = await getAuthorEntries(currentUsername.value);
 }
 
 onBeforeMount(async () => {
   await getEntries();
-  console.log(letterList.value)
+  console.log(letterList.value);
   loaded.value = true;
 });
 </script>
@@ -34,10 +34,10 @@ onBeforeMount(async () => {
 <template>
   <section v-if="loaded && letterList.length !== 0">
     <article v-for="letter in letterList" :key="letter._id">
-      <LetterComponent  :letter="letter" @refreshLetters="getEntries" />
+      <LetterComponent :letter="letter" @refreshLetters="getEntries" />
     </article>
   </section>
-  <p v-else-if="loaded">No diaries found</p>
+  <p v-else-if="loaded">No letters found</p>
   <p v-else>Loading...</p>
 </template>
 
