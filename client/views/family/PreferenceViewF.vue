@@ -2,13 +2,14 @@
 
 import router from "@/router";
 
+
+import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
+const { setNavOff, setNavOn } = useNavigationStore();
 
-const { setOn, setOff, verifyPatientPasscode, boundwithpatient } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const { verifyPatientPasscode, boundwithpatient } = usePreferenceStore();
 
 let username = ref("");
 let passcode1 = ref("");
@@ -23,6 +24,7 @@ async function verify() {
   if (verified){
     //add contact to the patientuser
     await boundwithpatient(username.value);
+    setNavOn();
     router.push({ name: "Home" });
   }else{
     showerror.value = true;
@@ -36,7 +38,7 @@ async function noPasscode() {
 }
 
 onBeforeMount(() => {
-  setOn();
+  setNavOff();
 });
 
 async function accountType() {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import router from "@/router";
+import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -8,9 +9,13 @@ import { onBeforeMount, ref } from "vue";
 
 
 
-const { setOn, setOff, updatePreferences } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const {  updatePreferences } = usePreferenceStore();
+const { setNavOff } = useNavigationStore();
 const { userType} = storeToRefs(useUserStore());
+const { getUserType } = useUserStore();
+const { currentUsername } = storeToRefs(useUserStore());
+
+
 
 
 let age = ref("");
@@ -39,8 +44,9 @@ async function update() {
 
 }
 
-onBeforeMount(() => {
-  setOn();
+onBeforeMount(async () => {
+  await getUserType(currentUsername.value);
+  setNavOff();
 });
 
 </script>
@@ -98,7 +104,7 @@ onBeforeMount(() => {
 <style scoped>
 h1 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 60px;
 }
 
 p {
