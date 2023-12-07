@@ -44,8 +44,10 @@ async function submitForm() {
   if (!delay.value){
     delay_date.value = ""
   }
-  try {await updateLetter(props._id, content.value, responseEnabled.value, delay_date.value)}
-  catch (e) {await router.push({ name: "Letter" });}
+  try {
+    await updateLetter(props._id, content.value, responseEnabled.value, delay_date.value)
+  } catch (e) 
+  {await router.push({ name: "Letter" });}
   await router.push({ name: "Letter" });
 }
 

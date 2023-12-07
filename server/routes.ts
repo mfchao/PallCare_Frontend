@@ -511,14 +511,14 @@ class Routes {
     await Letter.updateLetterContent(_id, content);
     await Letter.updateLetterResponseEnabled(_id, responseEnabled);
     if (delay) {
-    const thedelay = (await Delay.getDelayByContent(_id));
-    if (thedelay !== null) {
-      const delaydate = new Date(delay);
-      await Delay.updateDelay(thedelay[0]._id, {activation: delaydate})
-      return { msg: "Letter updated!", delay: thedelay };
-    }
-    return { msg: "Letter updated with no delay!" };
-  }}
+      const thedelay = (await Delay.getDelayByContent(_id));
+      if (thedelay !== null) {
+        const delaydate = new Date(delay);
+        await Delay.updateDelay(thedelay[0]._id, {activation: delaydate})
+        return { msg: "Letter updated!", delay: thedelay };
+      }
+    }return { msg: "Letter updated with no delay!" };
+  }
 
   //TODO//
   @Router.delete("/letter/receiver")
