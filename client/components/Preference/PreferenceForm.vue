@@ -114,6 +114,11 @@ h1 {
     top: 20px;
     left: 20px;
   }
+
+  .next-button {
+    margin: auto
+ }
+  
   
  
   
@@ -141,8 +146,8 @@ h1 {
   .dropdown-wrapper::after {
     content: "▼";
     font-size: 12px;
-    position: absolute;
-    right: 15px; 
+    position: relative;
+    right: 30px; 
     top: 30%;
     transform: translateY(-30%);
     pointer-events: none;

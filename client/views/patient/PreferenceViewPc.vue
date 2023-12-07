@@ -64,10 +64,11 @@ async function update() {
   }
 
   h2 {
-    text-align: left;
+    text-align: center;
   }
 .password {
   display: flex;
+  justify-content: center;
 }
   .custom-input {
     border: 2px solid black;
@@ -92,6 +93,7 @@ async function update() {
     margin-right: auto;
     margin-left: auto;
     margin-bottom: 20px;
+    text-align: left;
   }
   
   main {

@@ -58,12 +58,14 @@ onBeforeMount(async () => {
       <img @click="accountType" src="@/assets/images/back.svg"/>
     </div>
     
-    <h1>Tell Us More About You ...</h1>
-    
-    <PreferenceForm/>
-    
+    <div>
+      <h1>Tell Us More About You ...</h1>
 
-    <p>These can be changed later in settings</p>
+      <PreferenceForm/>
+  
+      <p>These can be changed later in settings</p>
+      
+    </div>
     
 
   </main>
@@ -89,7 +91,8 @@ main {
   flex-direction: column;
   justify-content: center;
   position: relative;
-  height: 100vh; 
+  text-align: center;
+  height: 100vh;
 }
 
 .back-button {
@@ -104,36 +107,6 @@ main {
   right: 20px;
 }
 
-
-.styled-dropdown {
-  border: 2px solid black;
-  border-radius: 10px;
-  background: transparent;
-  padding: 10px;
-  outline: none;
-  appearance: none; 
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  margin-bottom: 20px;
-  width: 250px;
-}
-
-.dropdown-wrapper {
-  position: relative;
-  display: block;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.dropdown-wrapper::after {
-  content: "▼";
-  font-size: 12px;
-  position: absolute;
-  right: 15px; 
-  top: 30%;
-  transform: translateY(-30%);
-  pointer-events: none;
-}
 
 </style>
 
