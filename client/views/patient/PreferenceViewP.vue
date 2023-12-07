@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import PreferenceForm from "@/components/Preference/PreferenceForm.vue";
 import router from "@/router";
 import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
@@ -59,44 +60,11 @@ onBeforeMount(async () => {
     
     <h1>Tell Us More About You ...</h1>
     
-    <div v-if="userType == 'patient'" class="dropdown-wrapper">
-      <select v-model="age" class="styled-dropdown">
-        <option disabled value="">Please select your age</option>
-        <option>under 18</option>
-        <option>18-25</option>
-        <option>26-35</option>
-        <option>36-45</option>
-        <option>46-55</option>
-        <option>56-65</option>
-        <option>66-75</option>
-        <option>76-85</option>
-        <option>85+</option>
-      </select>
-    </div>
-    <div v-else-if="userType == 'family'" class="dropdown-wrapper">
-      <select v-model="age" class="styled-dropdown">
-        <option disabled value="">Relationship to Patient</option>
-        <option>Spouse</option>
-        <option>Parent</option>
-        <option>Child</option>
-        <option>Partner</option>
-        <option>Friend</option>
-        <option>Other</option>
-      </select>
-    </div>
-    
-      <div class="dropdown-wrapper">
-        <select v-model="aid" class="styled-dropdown">
-          <option disabled value="">Do you need a visual aid?</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-      </div>
+    <PreferenceForm/>
     
 
     <p>These can be changed later in settings</p>
     
-      <img  class="next-button" @click="update" src="@/assets/images/next.svg"/>
 
   </main>
 </template>

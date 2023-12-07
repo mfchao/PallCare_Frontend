@@ -22,19 +22,18 @@ async function updatePassword() {
 
 <template>
   <div class="section">
-  <h2>Update user details</h2>
-  <form @submit.prevent="updateUsername" class="pure-form">
+  <form @submit.prevent="updateUsername" >
     <fieldset>
       <legend>Change your username</legend>
-      <input type="text" placeholder="New username" v-model="username" required />
+      <input class="custom-input" type="text" placeholder="New username" v-model="username" required />
       <button type="submit" >Update username</button>
     </fieldset>
   </form>
 
-  <form @submit.prevent="updatePassword" class="pure-form">
+  <form @submit.prevent="updatePassword" >
     <fieldset>
       <legend>Change your password</legend>
-      <input type="password" placeholder="New password" v-model="password" required />
+      <input class="custom-input" type="password" placeholder="New password" v-model="password" required />
       <button type="submit" >Update password</button>
     </fieldset>
   </form>
@@ -43,6 +42,10 @@ async function updatePassword() {
 
 
 <style>
+fieldset {
+  border: none;
+}
+
 h2 {
   text-align: center;
   letter-spacing: 0.06em;
@@ -50,8 +53,17 @@ h2 {
   text-transform: uppercase;
 }
 
-.section {
-margin-top: 30px;
+.custom-input {
+  border: 2px solid black;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 150px;
+  margin-bottom: 20px;
 }
 
 form {
@@ -67,24 +79,7 @@ legend {
   font-size: 0.9em;
 }
 
-input {
-  font-size: 14px;
-  border-radius: 6px;
-  line-height: 1.5;
-  padding: 5px 10px;
-  transition: box-shadow 100ms ease-in, border 100ms ease-in, background-color 100ms ease-in;
-  color: rgb(14, 14, 16);
-  background:  rgba(255, 255, 255, 0.5);
-  display: block;
-  height: 36px;
-  -webkit-backdrop-filter: blur(8px);  /* Safari 9+ */
-  backdrop-filter: blur(8px); /* Chrome and Opera */
-  outline: none;
-  outline-width: 0;
-  border: none;
-  border-width: 0;
-  box-shadow: none;
-}
+
 
 button {
   height: 40px;
