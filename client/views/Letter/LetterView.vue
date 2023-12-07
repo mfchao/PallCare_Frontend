@@ -60,6 +60,12 @@ body {
   font-weight: 600;
   line-height: 103.822%;
 }
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .blank {
   display: flex;

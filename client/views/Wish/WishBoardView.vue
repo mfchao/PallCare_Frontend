@@ -46,6 +46,12 @@ body {
   background:#F0E7D8;
   gap: 15px;
 }
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .pagetitle{
   display: flex;

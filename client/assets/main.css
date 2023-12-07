@@ -35,7 +35,7 @@ a.button {
   justify-content: center;
 }
 
-.pageexplaination{
+.pageexplaination {
   width: 300px;
   height: 46px;
   flex-direction: column;
@@ -49,7 +49,8 @@ a.button {
   font-weight: 500;
   line-height: 106.5%;
 }
-.pageexplainationdiv{
+
+.pageexplainationdiv {
   display: flex;
   width: 300px;
   height: 52px;
@@ -220,14 +221,17 @@ input:checked+.slider:before {
   border-radius: 15px;
 }
 
-.navigation{
+
+.navigation {
   display: flex;
-  width: 300px;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 23px;
 }
 
-.pagetitle{
+
+
+.pagetitle {
   display: flex;
   width: 240px;
   height: 45px;

@@ -36,6 +36,14 @@ body {
   background:#F0E7D8;
   gap: 15px;
 }
+
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .pagetitle{
   display: flex;
   width: 240px;
@@ -51,12 +59,7 @@ body {
   line-height: normal;
   text-transform: uppercase;
 }
-.navigation{
-  display: flex;
-  width: 300px;
-  align-items: center;
-  gap: 23px;
-}
+
 .pageexplaination{
   width: 300px;
   height: 46px;
