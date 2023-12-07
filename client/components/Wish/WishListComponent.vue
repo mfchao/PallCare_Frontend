@@ -16,7 +16,7 @@ async function getWishes(author?: string) {
   let wishResults;
   try {
     if (author) {
-      wishResults = await fetchy('/api/wishes', 'GET', { query: { author } });
+      wishResults = await fetchy(`/api/wishes/${author}`, 'GET');
     } else {
       wishResults = await fetchy('/api/wishes', 'GET');
     }
