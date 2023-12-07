@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import router from "@/router";
 import { useMoodStore } from "@/stores/mood";
+import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -16,6 +17,8 @@ const { getUserType } = useUserStore();
 
 const { refreshMood } = useMoodStore();
 const { patientUsername } = storeToRefs(usePreferenceStore());
+const { setNavOff, setNavOn } = useNavigationStore();
+
 
 let currentDate = formatDate(new Date());
 
@@ -38,6 +41,7 @@ async function contacts() {
 }
 
 onBeforeMount(async () => {
+
   isLoading.value = true;
   await getUserType(currentUsername.value);
   if(isFamily) {
@@ -45,6 +49,8 @@ onBeforeMount(async () => {
   } else {
     void refreshMood(currentUsername.value);
   }
+
+  setNavOn();
 
   isLoading.value = false;
 
@@ -160,6 +166,7 @@ main {
 
 .text-left {
   text-align: left;
+  width: auto;
 }
 
 .profile-container {

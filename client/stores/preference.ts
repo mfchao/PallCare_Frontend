@@ -1,23 +1,11 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 import { BodyT, fetchy } from "@/utils/fetchy";
 
 export const usePreferenceStore = defineStore(
   "preference",
   () => {
-    let isPreferenceViewOn = ref(false);
-
-    const showNav = computed(() => isPreferenceViewOn.value !== false);
-
-    const setOff = () => {
-      isPreferenceViewOn.value = false;
-    };
-
-    const setOn = () => {
-      isPreferenceViewOn.value = true;
-    };
-
     const patientUsername = ref("");
 
     const updatePreferences = async (patch: BodyT) => {
@@ -38,10 +26,6 @@ export const usePreferenceStore = defineStore(
     };
 
     return {
-      isPreferenceViewOn,
-      showNav,
-      setOff,
-      setOn,
       patientUsername,
       updatePreferences,
       createPatientPasscode,

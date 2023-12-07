@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import router from "@/router";
 import { usePreferenceStore } from "@/stores/preference";
-import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 
 
-const { setOn, setOff, updatePreferences } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const { updatePreferences } = usePreferenceStore();
 
 const days = ref(null)
 

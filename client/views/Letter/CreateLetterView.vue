@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import { useNavigationStore } from "@/stores/navigation";
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
+
+
+const { setNavOff, setNavOn } = useNavigationStore();
+
+function back()  {
+  setNavOn();
+  router.push({ name: props.capsule ? 'TimeCapsuleAdd' : 'Letter' })
+}
+
+
 
 const { createLetter, getLetterContactNames } = useLetterStore();
 //to is a list of string
@@ -15,6 +26,7 @@ let delay_date = ref("");
 let contacts = ref<string[]>([]);
 
 onBeforeMount(async () => {
+  setNavOff();
   contacts.value = await getLetterContactNames();
 });
 
@@ -48,7 +60,7 @@ async function submitForm() {
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: props.capsule ? 'TimeCapsuleAdd' : 'Letter' })" src="@/assets/images/back.svg" />
+      <img @click="back" src="@/assets/images/back.svg" />
       <h1>New Letter</h1>
     </div>
 
