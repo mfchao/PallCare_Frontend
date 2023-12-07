@@ -2,19 +2,28 @@
 import router from "@/router";
 import { useMoodStore } from "@/stores/mood";
 import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { usePreferenceStore } from "../../stores/preference";
 
 import { ref } from "vue";
+const isLoading = ref(true);
 
 const username = ref("");
 const password = ref("");
-const { loginUser, updateSession } = useUserStore();
+const { loginUser, updateSession,getUserType } = useUserStore();
 const { refreshMood } = useMoodStore();
+const { isFamily } = storeToRefs(useUserStore());
+const { patientUsername } = storeToRefs(usePreferenceStore());
+
 
 
 async function login() {
   await loginUser(username.value, password.value);
   void updateSession();
-  void refreshMood(username.value);
+
+  await getUserType(username.value);
+
+  
   void router.push({ name: "Home" });
 }
 </script>

@@ -7,8 +7,12 @@ export const useMoodStore = defineStore(
   "mood",
   () => {
     const userMood = ref("");
+    const previousMoods = ref([]);
+    const datesUpdated = ref<any[]>([]);
 
     const hasMood = computed(() => userMood.value !== "");
+
+    const hasPreviousMoods = computed(() => previousMoods.value.length !== 0);
 
     const resetStore = () => {
       userMood.value = "";
@@ -26,9 +30,20 @@ export const useMoodStore = defineStore(
       try {
         mood = await fetchy(`/api/moods/${_id}`, "GET", { alert: false });
         userMood.value = mood[0].mood;
+        previousMoods.value = mood[0].previousMoods;
+        datesUpdated.value = mood[0].updates;
       } catch {
         userMood.value = "";
+        previousMoods.value = [];
+        datesUpdated.value = [];
       }
+    };
+
+    const getPreviousMoods = async (username: string) => {
+      let moods;
+      moods = await fetchy(`/api/moods/${username}/previous`, "GET");
+      previousMoods.value = moods.previousMoods;
+      datesUpdated.value = moods.updates;
     };
 
     const getMoods = async () => {
@@ -42,9 +57,13 @@ export const useMoodStore = defineStore(
 
     return {
       userMood,
+      previousMoods,
+      hasPreviousMoods,
+      datesUpdated,
       hasMood,
       createMood,
       refreshMood,
+      getPreviousMoods,
       getMoods,
       deleteMood,
     };

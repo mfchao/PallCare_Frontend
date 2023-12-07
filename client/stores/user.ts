@@ -52,8 +52,8 @@ export const useUserStore = defineStore(
       }
     };
 
-    const getUserType = async () => {
-      const { userType: fetchedUserType } = await fetchy(`/api/users/${currentUsername.value}`, "GET");
+    const getUserType = async (username: string) => {
+      const { userType: fetchedUserType } = await fetchy(`/api/users/${username}`, "GET");
       userType.value = fetchedUserType;
     };
 
