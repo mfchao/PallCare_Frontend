@@ -633,6 +633,13 @@ class Routes {
     return await Contact.createAppUserContact(user, contact);
   }
 
+  @Router.post("/contact/bound")
+  async boundUsertoPatient(session: WebSessionDoc, patientname: string) {
+    const user = WebSession.getUser(session);
+    const patientuser = await User.getUserByUsername(patientname);
+    return await Contact.createAppUserContact(patientuser._id, user, "User");
+  }
+
   @Router.get("/contact")
   async getContacts(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
@@ -716,6 +723,18 @@ class Routes {
   async getEmailContacts(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     return await Contact.getEmailContactsbyOwner(user);
+  }
+
+  @Router.post("/contact/passcode")
+  async createPatientPasscode(session: WebSessionDoc, passcode: string) {
+    const user = WebSession.getUser(session);
+    return await Contact.createPatientPasscode(user, passcode);
+  }
+
+  @Router.post("/contact/passcode/verified")
+  async verifyPatientPasscode(patientname:string, passcode: string) {
+    const patient = await User.getUserByUsername(patientname);
+    return await Contact.verifyPatientPasscode(patient._id, passcode);
   }
 
   // ##################### email #######################################

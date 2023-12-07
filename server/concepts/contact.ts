@@ -55,6 +55,15 @@ export default class ContactConcept {
 
   async createPatientPasscode(patient: ObjectId, passcode: string) {
     const _id = await this.patientPasscodes.createOne({ patient, passcode });
+    return await this.patientPasscodes.readOne({ _id });
+  }
+
+  async verifyPatientPasscode(patient: ObjectId, passcode: string) {
+    const patientPasscode = await this.patientPasscodes.readOne({ patient });
+    if (!patientPasscode) {
+      throw new NotFoundError("No passcode associated with this patient.");
+    }
+    return passcode === patientPasscode.passcode;
   }
 
   async getContactsbyOwner(owner: ObjectId) {
