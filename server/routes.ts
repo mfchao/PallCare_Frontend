@@ -79,6 +79,11 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
+  @Router.get("/user/username/:_id")
+  async getUsernameById(_id: ObjectId) {
+    return (await User.getUserById(_id)).username;
+  }
+
   // ############################################################
   // post
   // ############################################################
@@ -362,7 +367,7 @@ class Routes {
         for (const receiver of thereceiver) {
           if ((await Contact.checkContactType(the_letter.from, receiver)) === "NonUser") {
             const receiveremail = await Contact.getemailaddressbyId(receiver);
-            if (receiveremail === null) {
+            if (receiveremail === undefined) {
               continue;
             }
             await Email.send(username, receiveremail, the_letter.content);
@@ -556,7 +561,7 @@ class Routes {
     for (const receiver of thereceiver) {
       if ((await Contact.checkContactType(user, receiver)) === "NonUser") {
         const receiveremail = await Contact.getemailaddressbyId(receiver);
-        if (receiveremail === null) {
+        if (receiveremail === undefined) {
           continue;
         }
         await Email.send(username, receiveremail, theletter.content);
@@ -634,9 +639,10 @@ class Routes {
     return await Contact.getContactsbyOwner(user);
   }
 
-  @Router.get("/contacts/:owner_id")
-  async getInAppContacts(owner_id: ObjectId) {
-    return await Contact.getInAppContactsbyOwner(owner_id);
+  @Router.get("/contact/inapp")
+  async getInAppContacts(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Contact.getInAppContactsbyOwner(user);
   }
 
   @Router.get("/contact/type")
@@ -706,6 +712,12 @@ class Routes {
     }
   }
 
+  @Router.get("/contact/email")
+  async getEmailContacts(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Contact.getEmailContactsbyOwner(user);
+  }
+
   // ##################### email #######################################
   @Router.post("/contact/email")
   async createEmailContact(session: WebSessionDoc, username: string, email: string) {
@@ -713,7 +725,7 @@ class Routes {
     return await Contact.createEmailContact(user, username, email);
   }
 
-  @Router.get("/email")
+  @Router.get("/email/:_id")
   async getEmailaddressbyid(_id: ObjectId) {
     return await Contact.getemailaddressbyId(_id);
   }

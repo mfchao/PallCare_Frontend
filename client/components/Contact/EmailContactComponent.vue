@@ -1,18 +1,20 @@
 <script setup lang="ts">
+import { onBeforeMount } from "vue";
 import { useContactStore } from "../../stores/contact";
-
 const { getContacts} = useContactStore();
 
 const props = defineProps(["emailUser"]);
+const emit = defineEmits(["refreshContacts"]);
 </script>
 
 <template>
-    <main>
         <div class="user">
             <img src="@/assets/images/user.svg"/>
-            <p>{{props.emailUser.email}}</p>
+            <div class="info">
+                <text>{{props.emailUser.contactname}}</text>
+                <text>{{props.emailUser.contactemailaddress}}</text>
+            </div>
         </div>
-    </main>
 </template>
 
 <style scoped>
@@ -23,10 +25,18 @@ h1 {
 .user {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    /* justify-content: start; */
     gap: 10px;
     margin-bottom: 10px;
   }
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    /* margin-bottom: 10px; */
+  }
+
 
     
 </style>

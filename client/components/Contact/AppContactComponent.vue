@@ -7,13 +7,10 @@ const props = defineProps(["appUser"]);
 </script>
 
 <template>
-    <main>
         <div class="user">
             <img src="@/assets/images/profile.svg"/>
-            <p>{{props.appUser.contact}}</p>
+            <p>{{props.appUser}}</p>
         </div>
-
-    </main>
 </template>
 
 <style scoped>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { default as AppContactComponent, default as EmailContactComponent } from "@/components/Contact/AppContactComponent.vue";
+import { default as AppContactComponent } from "@/components/Contact/AppContactComponent.vue";
+import EmailContactComponent from "@/components/Contact/EmailContactComponent.vue";
 import router from "@/router";
 import { useContactStore } from "@/stores/contact";
 import { computed, onBeforeMount, ref } from "vue";
 
-
-const { createEmailContact, createUserContact, getContacts } = useContactStore();
+const { createEmailContact, createUserContact, getContacts, getAllEmailContacts, getAllAppContactsUsername } = useContactStore();
 
 const loaded = ref(false);
 let showAppText = ref(false);
@@ -18,13 +18,14 @@ let showAddEmailContacts = ref(false);
 
 let appUser = ref('');
 let emailUser = ref('');
+let emailUserName = ref('');
 
 let appUsers = ref<Array<Record<string, string>>>([]);
 let emailUsers = ref<Array<Record<string, string>>>([]);
 
 
 let showAllAppUsers = ref(false);
-let showAllEmailUsers = ref(false);
+let showAllEmailUsers = ref(true);
 
 
 let displayedAppUsers = computed(() => {
@@ -35,6 +36,8 @@ let displayedAppUsers = computed(() => {
 let displayedEmailUsers = computed(() => {
   return showAllEmailUsers.value ? emailUsers.value : emailUsers.value.slice(0, 1);
 });
+
+
 
 
 async function back() {
@@ -64,15 +67,23 @@ function submitAddApp()  {
     appUser.value ='';
 }
 
-function submitAddEmail()  {
-    // await createEmailContact()
-
-    showAddEmailContacts.value = false;
+async function submitAddEmail()  {
+    await createEmailContact( emailUserName.value, emailUser.value,)
+    // showAddEmailContacts.value = false;
     emailUser.value ='';
+    emailUserName.value ='';
+    showAddEmailContacts.value = false;
+    getEmailContacts()
+}
+
+async function getEmailContacts(){
+  emailUsers.value = await getAllEmailContacts()
+  appUsers.value = await getAllAppContactsUsername()
 }
 
 onBeforeMount(async () => {
 //   await getContacts();
+  getEmailContacts()
   loaded.value = true;
 });
 
@@ -131,12 +142,11 @@ onBeforeMount(async () => {
             <h2>Email Contacts</h2>
             <span @click="showEmailText = !showEmailText" class="badge">?</span>
             <p v-if="showEmailText" class="question">These are contacts that are contacted via email only.</p>
-
         </div>
         
         <div v-if="loaded && emailUsers.length !== 0">
-            <article v-for="emailUser in displayedEmailUsers" :key="emailUser._id">
-                <EmailContactComponent :emailUser="emailUser"/>
+            <article v-for="emailUser in emailUsers" :key="emailUser._id">
+              <EmailContactComponent :emailUser="emailUser"/>
             </article>
         </div>
         <p v-else-if="loaded">No Email Users Yet</p>
@@ -151,11 +161,13 @@ onBeforeMount(async () => {
             <img src="@/assets/images/user.svg"/>
             <p>Email address</p>
         </div> -->
+
         <div v-if="showAddEmailContacts" class="modal">
             <div class="modal-content">
                 <form @submit.prevent="submitAddEmail">
                     <label for="content">Add Email Contact:</label>
-                    <textarea id="content" v-model="emailUser" placeholder="Contact Email" required> </textarea>
+                    <input id="content" v-model="emailUser" placeholder="Contact Email" required/>
+                    <input id="emailusername" v-model="emailUserName" placeholder="Contact Name" required/>
                     <div class="buttons">
                       <button type="submit" class="" >Submit</button>
                       <button class="" @click="cancel" >Cancel</button>

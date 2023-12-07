@@ -84,6 +84,11 @@ export default class ContactConcept {
   //   return contacts[0];
   // }
 
+  async getEmailContactsbyOwner(owner: ObjectId) {
+    const contacts = await this.contacts.readMany({ owner, type: "NonUser" });
+    return contacts;
+  }
+
   async getEmailContactbyId(_id: ObjectId) {
     const emailContact = await this.emailContacts.readOne({ _id });
     return emailContact;
@@ -105,10 +110,7 @@ export default class ContactConcept {
   }
 
   async getemailaddressbyId(_id: ObjectId) {
-    const contact = await this.getEmailContactbyId(_id);
-    if (!contact) {
-      return null;
-    }
-    return contact.email;
+    const contact = await this.emailContacts.readOne({ _id });
+    return contact?.email
   }
 }

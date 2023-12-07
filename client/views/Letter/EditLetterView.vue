@@ -107,7 +107,7 @@ async function submitForm() {
           </div>
         </fieldset>
       </div>
-      <button type="submit" class="bluebuttoncenterlong">Create Letter</button>
+      <button type="submit" class="bluebuttoncenterlong">Edit Letter</button>
     </form>
   </body>
 </template>
