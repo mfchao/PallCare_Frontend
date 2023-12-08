@@ -12,8 +12,7 @@ const { currentUsername } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
 const { updatePreferences } = usePreferenceStore();
 
-const days = ref(null)
-
+const days = ref<number>(14);
 
 async function updateTimeCapsule() {
   await updatePreferences({ timeCapsule: days.value });
@@ -36,41 +35,38 @@ async function goHome() {
 
 <template>
   <main class="column">
-    <img @click="goHome" src="@/assets/images/back.svg" class="back-button"/>
+    <img @click="goHome" src="@/assets/images/back.svg" class="back-button" />
 
     <h1 class="title">Settings for {{ currentUsername }}</h1>
 
     <div class="buttons">
-      <button  @click="logout">Logout</button>
+      <button @click="logout">Logout</button>
       <button class="delete" @click="delete_">Delete User</button>
     </div>
-    
+
     <div>
       <UpdateUserForm />
     </div>
     <div>
-      <form @submit.prevent="updateTimeCapsule" >
+      <form @submit.prevent="updateTimeCapsule">
         <fieldset>
           <legend>Update Time Capsule</legend>
-          <input class="custom-input" type="password" placeholder="Number of Days" v-model="days" required />
-          <button type="submit" >Update Days</button>
+          <input class="custom-input" placeholder="Number of Days" v-model="days" required />
+          <button type="submit">Update Days</button>
         </fieldset>
       </form>
     </div>
 
     <div class="preferences">
       <p>Update User Preferences:</p>
-      <PreferenceForm/>
+      <PreferenceForm />
     </div>
-
-   
-    
   </main>
 </template>
 
 <style scoped>
 .delete {
-  background: red
+  background: red;
 }
 
 .preferences {
@@ -86,7 +82,7 @@ button {
   background: transparent;
   padding: 10px;
   outline: none;
-  appearance: none; 
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 150px;
@@ -115,7 +111,6 @@ main {
 
 .title {
   margin-bottom: 20px;
-
 }
 
 h1 {

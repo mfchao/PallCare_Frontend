@@ -50,6 +50,7 @@ export default class PreferenceConcept {
    * @returns modifies 'this.preferences'
    */
   async updatePreference(user: ObjectId, update: Partial<PreferenceDoc>) {
+    update.timeCapsule = Number(update.timeCapsule);
     await this.preferences.updateOne({ user }, update);
     return { msg: "Updated preferences.", preferences: await this.preferences.readOne({ user }) };
   }
