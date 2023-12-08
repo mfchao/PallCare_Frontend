@@ -2,7 +2,6 @@
 import { useRenderLoop } from '@tresjs/core';
 import { CapsuleGeometry, Mesh, MeshToonMaterial } from 'three';
 import { ref, shallowRef } from "vue";
-// import { TresCanvas } from '@tresjs/core'
 
 
 // // const scene = new Scene()
