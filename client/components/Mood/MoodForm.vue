@@ -28,13 +28,13 @@ async function create() {
         await createMood(selectedMood.value, notify.value);
         customEmoji.value  ='';
   }
-  await refreshMood(currentUsername.value);
+  void refreshMood(currentUsername.value);
   await getPreviousMoods(currentUsername.value);
 }
 
 async function clear() {
   await deleteMood();
-  await refreshMood(currentUsername.value);
+  void refreshMood(currentUsername.value);
   selectedMood.value = '';
   customEmoji.value = ''; 
 
@@ -43,7 +43,7 @@ async function clear() {
 async function submitCustomMood(event: Event) {
   event.preventDefault(); 
   await createMood(customEmoji.value, notify.value);
-  await refreshMood(currentUsername.value);
+  void refreshMood(currentUsername.value);
   await getPreviousMoods(currentUsername.value);
 }
 
@@ -53,7 +53,7 @@ const stressed =  String.fromCodePoint(0x1F616);
 const sad =  String.fromCodePoint(0x1F614); 
 
 onBeforeMount(() => {
-    refreshMood(currentUsername.value);
+    void refreshMood(currentUsername.value);
     isLoading.value = false;
 
     if(hasMood) {

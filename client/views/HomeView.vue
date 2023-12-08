@@ -55,10 +55,10 @@ onBeforeMount(async () => {
 
   isLoading.value = true;
   await getUserType(currentUsername.value);
-  if(isFamily) {
+  if(isFamily && patientUsername.value) {
     setNavOff();
     void refreshMood(patientUsername.value);
-  } else {
+  } else if (currentUsername.value){
     void refreshMood(currentUsername.value);
   }
 

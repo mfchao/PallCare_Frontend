@@ -17,7 +17,7 @@ const isLoading = ref(true);
 
 
 onBeforeMount(async () => {
-    refreshMood(patientUsername.value);
+    void refreshMood(patientUsername.value);
     await getPreviousMoods(patientUsername.value);
     isLoading.value = false;
 });
