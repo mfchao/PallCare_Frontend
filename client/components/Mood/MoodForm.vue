@@ -16,9 +16,18 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 const customEmoji = ref('');
 const selectedMood = ref('');
 
-async function create(mood:string) {
+function selectMood(mood:string) {
   selectedMood.value = mood;
-  await createMood(mood, notify.value);
+}
+
+async function create() {
+    if (customEmoji.value) {
+        await createMood(customEmoji.value, notify.value);
+        customEmoji.value  ='';
+    } else if (selectedMood.value) {
+        await createMood(selectedMood.value, notify.value);
+        customEmoji.value  ='';
+  }
   await refreshMood(currentUsername.value);
   await getPreviousMoods(currentUsername.value);
 }
@@ -33,7 +42,9 @@ async function clear() {
 
 async function submitCustomMood(event: Event) {
   event.preventDefault(); 
-  await create(customEmoji.value);
+  await createMood(customEmoji.value, notify.value);
+  await refreshMood(currentUsername.value);
+  await getPreviousMoods(currentUsername.value);
 }
 
 const happy =  String.fromCodePoint(0x1F603);
@@ -58,28 +69,30 @@ onBeforeMount(() => {
         <h2>How are you feeling today?</h2>
     </div>
     <div class="moods" >
-        <div class="mood"  @click="create(`${happy}`)">
+        <div class="mood"  @click="selectMood(`${happy}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${happy}` }">{{happy}}</p>
         </div>
-        <div class="mood" @click="create(`${chill}`)">
+        <div class="mood" @click="selectMood(`${chill}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${chill}` }">{{chill}}</p>
         </div>
-        <div class="mood" @click="create(`${stressed}`)">
+        <div class="mood" @click="selectMood(`${stressed}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${stressed}` }">{{stressed}}</p>
         </div>
-        <div class="mood" @click="create(`${sad}`)">
+        <div class="mood" @click="selectMood(`${sad}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${sad}` }">{{sad}}</p>
         </div>
         <div>
             <div class="other-container">
                 <p class="other">Other:</p>
-                <form @submit="submitCustomMood">
+                <form @click="selectMood(`${customEmoji}`)">
                     <input class="custom-input" v-model="customEmoji" placeholder="Enter Emoji" />
                 </form>
             </div>
-            
         </div>
+
     </div>
+    <button @click="create">Submit Mood</button>
+
     <hr class="separator">
 
     <h2>Mood Tracker</h2>

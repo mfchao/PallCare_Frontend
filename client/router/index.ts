@@ -18,8 +18,11 @@ import SettingView from "../views/SettingView.vue";
 import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
 import CreateWishView from "../views/Wish/CreateWishView.vue";
 import WishBoardViewVue from "../views/Wish/WishBoardView.vue";
+import DiaryViewF from "../views/family/DiaryViewF.vue";
+import LetterViewF from "../views/family/LetterViewF.vue";
 import PreferenceViewF from "../views/family/PreferenceViewF.vue";
 import PreferenceViewFb from "../views/family/PreferenceViewFb.vue";
+import WishViewF from "../views/family/WishViewF.vue";
 import PreferenceViewP from "../views/patient/PreferenceViewP.vue";
 import PreferenceViewPb from "../views/patient/PreferenceViewPb.vue";
 import PreferenceViewPc from "../views/patient/PreferenceViewPc.vue";
@@ -66,6 +69,24 @@ const router = createRouter({
       path: "/preferencePb",
       name: "PreferencePc",
       component: PreferenceViewPc,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/diaryF",
+      name: "DiaryF",
+      component: DiaryViewF,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letterF",
+      name: "LetterF",
+      component: LetterViewF,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/wishF",
+      name: "WishF",
+      component: WishViewF,
       meta: { requiresAuth: true },
     },
     {

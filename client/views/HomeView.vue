@@ -24,7 +24,6 @@ let currentDate = formatDate(new Date());
 
 async function loginUser() {
   void router.push({ name: "Login" });
-  
 }
 
 async function registerUser() {
@@ -40,17 +39,31 @@ async function contacts() {
   void router.push({ name: "Contact" });
 }
 
+async function diary() {
+  void router.push({ name: "DiaryF" });
+}
+
+async function wish() {
+  void router.push({ name: "WishF" });
+}
+
+async function letter() {
+  void router.push({ name: "LetterF" });
+}
+
 onBeforeMount(async () => {
 
   isLoading.value = true;
   await getUserType(currentUsername.value);
   if(isFamily) {
+    setNavOff();
     void refreshMood(patientUsername.value);
   } else {
+    setNavOn();
     void refreshMood(currentUsername.value);
   }
 
-  setNavOn();
+  
 
   isLoading.value = false;
 
@@ -80,9 +93,25 @@ onBeforeMount(async () => {
           <div v-if="!isFamily && !isLoading">
             <MoodForm/>
           </div>
-          <div v-else-if="!isLoading">
+
+          <div v-else-if="!isLoading" class="container">
+            <div class="header">
+              <img class="profile-pic-patient" src="@/assets/images/profile.svg"/>
+              <h1 class="username">{{patientUsername}}</h1>
+            </div>
+            
             <ViewPatientMood/>
+            <hr class="separator">
+            
+            <div class="icon-container">
+              <img src="@/assets/images/diaryON.svg" class="navImage" @click="diary"/>
+              <img src="@/assets/images/wishON.svg" class="navImage" @click="wish"/>
+              <img src="@/assets/images/letterON.svg" class="navImage2" @click="letter"/>
+            </div>
           </div>
+
+   
+
           <div v-else>
             <p>Loading Moods...</p>
           </div>
@@ -132,7 +161,49 @@ onBeforeMount(async () => {
   right: 0.4em;
   font-size: 20px;
 }
+.separator {
+  border-top: 1px solid rgba(0, 0, 0, 0.287); 
+  margin: 20px 0; 
+}
+.container {
+  border: 2px solid black;
+  padding: 10px; 
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  max-width: 500px;
+}
+.header {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-left: 5px;
+}
 
+.username {
+  width:auto;
+  margin-left: 10px;
+}
+
+.profile-pic {
+  width: 100px;
+  height: auto;
+  margin-right: 20px; 
+}
+
+.icon-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.navImage{
+  height: 1.5em;
+}
+
+.navImage2{
+  height: 1.2em;
+}
 
 main {
  
