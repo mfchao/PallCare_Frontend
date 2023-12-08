@@ -1,19 +1,28 @@
 <script setup lang="ts">
+import { usePreferenceStore } from "@/stores/preference";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import { useDiaryStore } from "../../stores/diary";
 import { useLetterStore } from "../../stores/letter";
 import { useUserStore } from "../../stores/user";
 import LetterComponent from "./LetterComponent.vue";
 
+
 const { currentUsername } = storeToRefs(useUserStore());
-const { getAuthorEntries } = useDiaryStore();
-const { getAuthorLetters } = useLetterStore();
+const { patientUsername } = storeToRefs(usePreferenceStore());
+
+const { getAuthorLetters, getAuthorEntries } = useLetterStore();
 const loaded = ref(false);
 let letterList = ref<Array<Record<string, string>>>([]);
 
 async function getEntries() {
-  let allLetters = await getAuthorLetters();
+  let allLetters
+  if (patientUsername) {
+    allLetters = await getAuthorEntries(patientUsername.value)
+  }
+  else {
+    allLetters = await getAuthorLetters();
+  }
+  
   let showletters = [];
   for (let i = 0; i < allLetters.length; i++) {
     if (allLetters[i].show == true) {

@@ -25,12 +25,17 @@ export const usePreferenceStore = defineStore(
       return await fetchy(`/api/contact/bound`, "POST", { body: { patientname } });
     };
 
+    const resetStore = () => {
+      patientUsername.value = "";
+    };
+
     return {
       patientUsername,
       updatePreferences,
       createPatientPasscode,
       verifyPatientPasscode,
       boundwithpatient,
+      resetStore,
     };
   },
   { persist: true },

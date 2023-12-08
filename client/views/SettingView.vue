@@ -10,7 +10,7 @@ import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
-const { updatePreferences } = usePreferenceStore();
+const { updatePreferences, resetStore } = usePreferenceStore();
 
 const days = ref<number>();
 
@@ -19,11 +19,13 @@ async function updateTimeCapsule() {
 }
 
 async function logout() {
+  resetStore();
   await logoutUser();
   void router.push({ name: "Home" });
 }
 
 async function delete_() {
+  resetStore();
   await deleteUser();
   void router.push({ name: "Home" });
 }

@@ -1,18 +1,28 @@
 <script setup lang="ts">
+import { usePreferenceStore } from "@/stores/preference";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { useDiaryStore } from "../../stores/diary";
 import { useUserStore } from "../../stores/user";
 import DiaryComponent from "./DiaryComponent.vue";
 
+
 const { currentUsername } = storeToRefs(useUserStore());
 const { getAuthorEntries } = useDiaryStore();
 const loaded = ref(false);
 let diaryList = ref<Array<Record<string, string>>>([]);
 
+const { patientUsername } = storeToRefs(usePreferenceStore());
+
+
 async function getEntries() {
-  diaryList.value = await getAuthorEntries(currentUsername.value);
+  if (patientUsername.value) {
+    diaryList.value = await getAuthorEntries(patientUsername.value);
+  } else {
+    diaryList.value = await getAuthorEntries(currentUsername.value);
 }
+  }
+  
 
 onBeforeMount(async () => {
   await getEntries();
