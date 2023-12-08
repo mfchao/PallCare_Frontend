@@ -15,7 +15,7 @@ onBeforeMount(async () => {
       
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png"/>
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
       <text class="pagetitle">Time Capsule</text>
     </div>
     <div class="pageexplainationdiv">
