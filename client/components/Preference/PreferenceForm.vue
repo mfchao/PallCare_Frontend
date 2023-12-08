@@ -5,7 +5,8 @@ import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
 
 
@@ -15,7 +16,8 @@ const { userType} = storeToRefs(useUserStore());
 const { getUserType } = useUserStore();
 const { currentUsername } = storeToRefs(useUserStore());
 
-
+const currentRoute = useRoute();
+const currentRouteName = computed(() => currentRoute.name);
 
 
 let age = ref("");
@@ -81,7 +83,14 @@ async function update() {
           </select>
         </div>
 
-        <button class="next-button" @click="update" src="@/assets/images/next.svg">Update</button>
+        <div v-if="currentRouteName == 'Settings'">
+          <button  @click="update" src="@/assets/images/next.svg">Update</button>
+        </div>
+        <div v-else>
+          <img class="next-button"  @click="update" src="@/assets/images/next.svg"/>  
+        </div>
+        
+
 
 </template>
 
@@ -151,5 +160,10 @@ h1 {
     top: 30%;
     transform: translateY(-30%);
     pointer-events: none;
+  }
+  .next-button {
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
   }
 </style>

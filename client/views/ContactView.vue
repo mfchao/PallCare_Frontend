@@ -275,7 +275,10 @@ onBeforeMount(async () => {
     }
 
     main {
-        height: 100vh;
+      min-height: 100vh; 
+      padding-top: 5%;
+      padding-left: 5%;
+      padding-right: 5%;
     }
       
     

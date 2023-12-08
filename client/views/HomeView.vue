@@ -59,12 +59,10 @@ onBeforeMount(async () => {
     setNavOff();
     void refreshMood(patientUsername.value);
   } else {
-    setNavOn();
     void refreshMood(currentUsername.value);
   }
 
-  
-
+  setNavOn();
   isLoading.value = false;
 
   
@@ -77,7 +75,7 @@ onBeforeMount(async () => {
     <main>
   
 <!-- home page -->
-        <div v-if="isLoggedIn">
+        <div v-if="isLoggedIn" class="home-container">
           <div class="flex-container">
             <div>
               <p id="date" class="text-left date">{{currentDate}}</p>
@@ -161,6 +159,10 @@ onBeforeMount(async () => {
   right: 0.4em;
   font-size: 20px;
 }
+
+.home-container{
+  margin: 0px;
+}
 .separator {
   border-top: 1px solid rgba(0, 0, 0, 0.287); 
   margin: 20px 0; 
@@ -206,8 +208,10 @@ onBeforeMount(async () => {
 }
 
 main {
- 
-  height: 100vh; 
+  min-height: 100vh; 
+  padding-top: 5%;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 .date {
@@ -233,6 +237,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0;
 }
 
 .text-left {

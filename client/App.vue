@@ -36,18 +36,9 @@ async function logout() {
 
 <template>
   <header>
-    <nav v-if="isLoggedIn && showNav">
-      <!-- <div class="title"> -->
-        <!-- <img src="@/assets/images/logo.svg" /> -->
-      <!-- </div> -->
-
+    <nav v-if="isLoggedIn && showNav && !isFamily">
+ 
       <ul>
-        <!-- <li v-if="isFamily">
-          <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
-        </li>
-        <li v-else>
-          <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
-        </li> -->
         <li>
         <RouterLink :to="{ name: 'Forum' }" > 
           <img v-if="currentRouteName == 'Forum'" src="@/assets/images/forumON.svg" class="navImage"/>
@@ -146,9 +137,11 @@ a {
 
 .navImage{
   height: 1.5em;
+  z-index: 100;
 }
 
 .navImage2{
   height: 1.2em;
+  z-index: 100;
 }
 </style>

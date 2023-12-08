@@ -82,7 +82,9 @@ async function next() {
     flex-direction: column;
     justify-content: center;
     position: relative;
-    height: 100vh; 
+    height: 100vh;
+    padding-left: 5%; 
+    padding-right: 4%; 
   }
 
   .time-capsule {

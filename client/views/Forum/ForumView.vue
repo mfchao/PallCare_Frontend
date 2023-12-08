@@ -50,11 +50,11 @@ body {
   text-transform: uppercase;
 }
 
-.navigation{
+.navigation {
   display: flex;
-  width: 300px;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 23px;
 }
 
 .creatediv{
