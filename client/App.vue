@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from "@/router";
-import { usePreferenceStore } from "@/stores/preference";
+import { useNavigationStore } from "@/stores/navigation";
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -12,7 +12,7 @@ const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
 const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
-const { showNav } = storeToRefs(usePreferenceStore());
+const { showNav } = storeToRefs(useNavigationStore());
 const { logoutUser } = useUserStore();
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -36,30 +36,48 @@ async function logout() {
 
 <template>
   <header>
-    <nav v-if="isLoggedIn && !showNav">
-      <div class="title">
+    <nav v-if="isLoggedIn && showNav">
+      <!-- <div class="title"> -->
         <!-- <img src="@/assets/images/logo.svg" /> -->
-      </div>
+      <!-- </div> -->
 
       <ul>
-        <li v-if="isFamily">
+        <!-- <li v-if="isFamily">
           <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
         </li>
         <li v-else>
           <RouterLink :to="{ name: 'Forum' }" :class="{ underline: currentRouteName == 'Forum' }"> Forum </RouterLink>
-        </li>
-
+        </li> -->
         <li>
-          <RouterLink :to="{ name: 'Diary' }" :class="{ underline: currentRouteName == 'Diary' }"> Diary </RouterLink>
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'TimeCapsule' }" :class="{ underline: currentRouteName == 'TimeCapsule' }"> Time Capsule </RouterLink>
-        </li>
-        <li>
-          <RouterLink :to="{ name: 'Wish' }" :class="{ underline: currentRouteName == 'Wish' }"> Wish </RouterLink>
+        <RouterLink :to="{ name: 'Forum' }" > 
+          <img v-if="currentRouteName == 'Forum'" src="@/assets/images/forumON.svg" class="navImage"/>
+          <img v-if="currentRouteName != 'Forum'" src="@/assets/images/forumOFF.svg" class="navImage"/>
+         </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Letter' }" :class="{ underline: currentRouteName == 'Letter' }"> Letter </RouterLink>
+          <RouterLink :to="{ name: 'Diary' }" > 
+            <img v-if="currentRouteName == 'Diary'" src="@/assets/images/diaryON.svg" class="navImage"/>
+            <img v-if="currentRouteName != 'Diary'" src="@/assets/images/diaryOFF.svg" class="navImage"/>
+           </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'TimeCapsule' }" > 
+            <img v-if="currentRouteName == 'TimeCapsule'" src="@/assets/images/capsuleON.svg" class="navImage"/>
+            <img v-if="currentRouteName != 'TimeCapsule'" src="@/assets/images/capsuleOFF.svg" class="navImage"/>
+           </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Wish' }" > 
+            <img v-if="currentRouteName == 'Wish'" src="@/assets/images/wishON.svg" class="navImage"/>
+            <img v-if="currentRouteName != 'Wish'" src="@/assets/images/wishOFF.svg" class="navImage"/>
+           </RouterLink>
+        </li>
+       
+        <li>
+          <RouterLink :to="{ name: 'Letter' }" > 
+            <img v-if="currentRouteName == 'Letter'" src="@/assets/images/letterON.svg" class="navImage2"/>
+            <img v-if="currentRouteName != 'Letter'" src="@/assets/images/letterOFF.svg" class="navImage2"/>
+           </RouterLink>
         </li>
       </ul>
     </nav>
@@ -75,13 +93,30 @@ async function logout() {
 @import "./assets/toast.css";
 
 nav {
-  padding: 0.5em;
-  background-color: lightgray;
+  display: flex;
+  justify-content: center;
   align-items: center;
   position: fixed;
-  bottom: 0;
-  width: 100vw;
+  bottom: 0px;
+  width: 320px auto;
+  margin-left: 3%;
+  margin-bottom: 15px;
+  background-color: rgba(0, 0, 0, 0.092);
+  border-radius: 33px;
 }
+
+ul {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  width: 350px;
+  list-style-type: none;
+  margin: 0; 
+  padding: 10px;
+}
+
+
 
 h1 {
   font-size: 2em;
@@ -104,16 +139,16 @@ a {
   text-decoration: none;
 }
 
-ul {
-  list-style-type: none;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 1em;
-}
 
 .underline {
   text-decoration: underline;
+}
+
+.navImage{
+  height: 1.5em;
+}
+
+.navImage2{
+  height: 1.2em;
 }
 </style>

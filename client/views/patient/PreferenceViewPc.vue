@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import router from "@/router";
 import { useContactStore } from "@/stores/contact";
+import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 
 import { ref } from "vue";
 
 
-const { setOff, createPatientPasscode } = usePreferenceStore();
+const { createPatientPasscode } = usePreferenceStore();
+const { setNavOn } = useNavigationStore();
 
 const { 
     //createPasscode
@@ -20,7 +22,7 @@ let passcode4 = ref("");
 
 async function goHome() {
     update();
-    setOff();
+    setNavOn();
     void router.push({ name: "Home" });
 }
 
@@ -62,9 +64,12 @@ async function update() {
   }
 
   h2 {
-    text-align: left;
+    text-align: center;
   }
-
+.password {
+  display: flex;
+  justify-content: center;
+}
   .custom-input {
     border: 2px solid black;
     border-radius: 10px;
@@ -88,6 +93,7 @@ async function update() {
     margin-right: auto;
     margin-left: auto;
     margin-bottom: 20px;
+    text-align: left;
   }
   
   main {

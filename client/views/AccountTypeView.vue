@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import router from "@/router";
-import { usePreferenceStore } from "@/stores/preference";
+import { useNavigationStore } from "@/stores/navigation";
 import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
 
@@ -15,8 +14,8 @@ const { getUserType, isFamily } = useUserStore();
 
 
 const { updateUser } = useUserStore();
-const { setOn } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const { setNavOff } = useNavigationStore();
+
 
 function selectFamily() {
     family.value = true;
@@ -36,7 +35,7 @@ async function preferences() {
   }
 
   await updateUser({ userType: userType.value });
-  void getUserType();
+  // await getUserType();
 
   if (family.value) {
       void router.push({ name: "PreferenceF" });
@@ -46,8 +45,9 @@ async function preferences() {
 }
 
 
+
 onBeforeMount(() => {
-  setOn();
+  setNavOff();
 });
 
 
@@ -82,7 +82,6 @@ main.centered {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; 
 }
 
 h1 {

@@ -2,13 +2,14 @@
 
 import router from "@/router";
 
+
+import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
+const { setNavOff, setNavOn } = useNavigationStore();
 
-const { setOn, setOff, verifyPatientPasscode, boundwithpatient } = usePreferenceStore();
-const { showNav} = storeToRefs(usePreferenceStore());
+const { verifyPatientPasscode, boundwithpatient } = usePreferenceStore();
 
 let username = ref("");
 let passcode1 = ref("");
@@ -23,6 +24,7 @@ async function verify() {
   if (verified){
     //add contact to the patientuser
     await boundwithpatient(username.value);
+    setNavOn();
     router.push({ name: "Home" });
   }else{
     showerror.value = true;
@@ -36,7 +38,7 @@ async function noPasscode() {
 }
 
 onBeforeMount(() => {
-  setOn();
+  setNavOff();
 });
 
 async function accountType() {
@@ -52,9 +54,12 @@ async function accountType() {
   <main>
     <img class="back-button" @click="accountType" src="@/assets/images/back.svg"/>
 
-    <h1>Link to your patient</h1>
-
+    <div>
+      <h1>Link to your patient</h1>
+      <br>
       <p>As a non-patient user, you have to link your account to the patient you are taking care of to activate your account.</p>
+    </div>
+    
 
       <div class="username">
         <h2 >Patient Username:</h2>
@@ -82,7 +87,7 @@ async function accountType() {
 
 <style scoped>
 h1 {
-  text-align: center;
+  text-align: left;
 }
 
 h2 {
@@ -142,6 +147,7 @@ p {
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 20px;
+  text-align: left;
 }
 
 main {
@@ -151,6 +157,7 @@ main {
   position: relative;
   height: 100vh; 
   padding: 20px;
+  padding-left: 5%;
 }
 
 .time-capsule {

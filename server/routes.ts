@@ -803,6 +803,13 @@ class Routes {
     return moods;
   }
 
+  @Router.get("/moods/:owner/previous")
+  async getPreviousMoods(owner: string) {
+    const _id = (await User.getUserByUsername(owner))._id;
+    const previousMoods = await Mood.getPreviousMoods(_id);
+    return previousMoods;
+  }
+
   @Router.delete("/moods")
   async deleteMood(session: WebSessionDoc) {
     const user = WebSession.getUser(session);

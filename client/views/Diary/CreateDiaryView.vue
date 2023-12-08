@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { useNavigationStore } from "@/stores/navigation";
+import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useDiaryStore } from "../../stores/diary";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
 import { formatEntryDate } from "../../utils/formatDate";
+
+const { setNavOff, setNavOn } = useNavigationStore();
 
 const { currentUsername } = useUserStore();
 const { createDiary } = useDiaryStore();
@@ -26,11 +29,20 @@ async function submitForm() {
   }
   await router.push({ name: "Diary" });
 }
+
+function back()  {
+  setNavOn();
+  router.push({ name: 'Diary' })
+}
+
+onBeforeMount(async()=> {
+  setNavOff();
+})
 </script>
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Diary' })" src="@/assets/images/back.svg" />
+      <img @click="back" src="@/assets/images/back.svg" />
       <h1>New Diary</h1>
     </div>
 

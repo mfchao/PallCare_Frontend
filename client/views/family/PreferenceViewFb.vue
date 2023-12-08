@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import router from "@/router";
-import { usePreferenceStore } from "@/stores/preference";
 
 
-const { setOff } = usePreferenceStore();
 
 
 async function goHome() {
-    setOff();
+
     void router.push({ name: "Home" });
 }
 

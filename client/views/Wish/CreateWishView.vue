@@ -1,12 +1,25 @@
 <script setup lang="ts">
+import { useNavigationStore } from "@/stores/navigation";
+import { onBeforeMount } from "vue";
 import CreateWishForm from "../../components/Wish/CreateWishForm.vue";
 import router from "../../router";
+
+const { setNavOff, setNavOn } = useNavigationStore();
+
+function back()  {
+  setNavOn();
+  router.push({ name: 'Wish' })
+}
+
+onBeforeMount(async()=> {
+  setNavOff();
+})
 </script>
 
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Wish' })" src="@/assets/images/back.svg" />
+      <img @click="back" src="@/assets/images/back.svg" />
       <h1>New Wish</h1>
     </div>
     <CreateWishForm />
