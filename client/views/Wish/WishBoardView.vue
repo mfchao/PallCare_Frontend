@@ -19,7 +19,7 @@ onBeforeMount(async()=> {
 <template>
   <body>
     <div class="navigation">
-      <img @click="back" src="@/assets/images/home.png"/>
+      <img @click="back" src="@/assets/images/Home.png"/>
       <text class="pagetitle">WISH</text>
     </div>
     <div class="pageexplainationdiv">

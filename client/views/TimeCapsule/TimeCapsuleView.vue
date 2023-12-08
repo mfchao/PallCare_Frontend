@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
-import TimeCapsuleBGComponent from "../../components/TimeCapsule/TimeCapsuleBGComponent.vue";
 import router from "../../router";
 import { useTCStore } from "../../stores/timeCapsule";
 import { formatEntryDate } from "../../utils/formatDate";
@@ -15,7 +14,7 @@ onBeforeMount(async () => {
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png" />
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png" />
       <text class="pagetitle">Time Capsule</text>
     </div>
     <div class="pageexplainationdiv">
@@ -25,9 +24,9 @@ onBeforeMount(async () => {
       <div class="release-date">
         <text class="date">Earliest Release Date {{ releaseDate }}</text>
       </div>
-      <TimeCapsuleBGComponent />
+      <!-- <TimeCapsuleBGComponent /> -->
     </div>
-    <button class="bluebuttoncenterlong" @click="router.push({ name: 'Settings' })">Edit Release Time</button>
+    <button class="bluebuttoncenterlong" @click="router.push({ name: 'PreferencePb' })">Edit Release Time</button>
     <button class="blackbuttoncenterlong" @click="router.push({ name: 'TimeCapsuleContent' })">Edit Contents</button>
   </body>
 </template>
