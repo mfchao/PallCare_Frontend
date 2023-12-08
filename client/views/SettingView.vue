@@ -12,10 +12,10 @@ const { currentUsername } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
 const { updatePreferences } = usePreferenceStore();
 
-const days = ref<number>(14);
+const days = ref<number>();
 
 async function updateTimeCapsule() {
-  await updatePreferences({ timeCapsule: days.value });
+  await updatePreferences({ timeCapsule: days.value! });
 }
 
 async function logout() {
