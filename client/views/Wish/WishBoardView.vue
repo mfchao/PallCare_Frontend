@@ -76,33 +76,6 @@ body {
   gap: 23px;
 }
 
-.pageexplaination{
-  width: 300px;
-  height: 45px;
-  color: #131313;
-  font-family: SF Pro Display;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-.pageexplainationdiv{
-  display: flex;
-  width: 300px;
-  height: 45px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #131313;
-  padding-top: 10px;
-  font-family: SF Pro Display;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
 .creatediv{
   display: flex;
   width: 290px;
