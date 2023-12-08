@@ -42,19 +42,6 @@ async function addWishToCapsule(behavior: "send" | "delete") {
 </script>
 
 <template>
-  <!-- <p class="author">{{ props.wish.author }}</p> -->
-  <!-- <p>{{ props.wish.content }}</p>
-    <div class="base">
-        <menu v-if="canEdit">
-            <li><button class="btn-small pure-button" @click="emit('editWish', props.wish._id)">Edit</button></li>
-            <li><button class="button-error btn-small pure-button" @click="deleteWish">Delete</button></li>
-        </menu>
-        <article class="timestamp" v-if="canView">
-            <p v-if="props.wish.dateCreated !== props.wish.dateUpdated">Edited on: {{ formatDate(props.wish.dateUpdated) }}</p>
-            <p v-else>Created on: {{ formatDate(props.wish.dateCreated) }}</p>
-        </article>
-    </div> -->
-
   <div class="card">
     <div class="top">
       <span v-if="props.wish.visibility == 'private'" class="ribbon">PRIVATE</span>
@@ -135,7 +122,6 @@ p {
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-
   flex-shrink: 0;
 }
 menu {

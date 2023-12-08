@@ -5,6 +5,10 @@ import { useUserStore } from "@/stores/user";
 import AccountTypeView from "../views/AccountTypeView.vue";
 import ContactView from "../views/ContactView.vue";
 import { CreateDiaryView, DiaryView, EditDiaryView } from "../views/Diary/_diaryViews";
+import CreateTopicView from "../views/Forum/CreateTopicView.vue";
+import EditTopicView from "../views/Forum/EditTopicView.vue";
+import ForumView from "../views/Forum/ForumView.vue";
+import TopicView from "../views/Forum/TopicView.vue";
 import HomeView from "../views/HomeView.vue";
 import { CreateLetterView, EditLetterView, LetterView, ResponseLetterView } from "../views/Letter/_letterView";
 import LoginView from "../views/LoginView.vue";
@@ -113,7 +117,26 @@ const router = createRouter({
     {
       path: "/forum",
       name: "Forum",
-      component: HomeView,
+      component: ForumView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/forum/topic",
+      name: "Topic",
+      component: TopicView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/forum/create",
+      name: "CreateTopic",
+      component: CreateTopicView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/forum/edit/:_id",
+      name: "EditTopic",
+      component: EditTopicView,
+      props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },
     {

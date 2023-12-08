@@ -99,6 +99,11 @@ class Routes {
     return Responses.posts(posts);
   }
 
+  @Router.get("/posts/:_id")
+  async getPostById(_id: ObjectId) {
+    return await Responses.post(await Post.getById(_id));
+  }
+
   @Router.post("/posts")
   async createPost(session: WebSessionDoc, content: string, options?: PostOptions) {
     const user = WebSession.getUser(session);
@@ -221,7 +226,12 @@ class Routes {
     const pageSize = pagesize || 10;
     const totoalCount = await Topic.topics.count({});
     const pageCount = Math.ceil(totoalCount / pageSize);
-    return { topics: await Topic.getNextTopics(currentPage, pageSize), page: currentPage, pageSize: pageSize, totalPage: pageCount, totalCount: totoalCount };
+    return { topics: await Responses.topics(await Topic.getNextTopics(currentPage, pageSize)), page: currentPage, pageSize: pageSize, totalPage: pageCount, totalCount: totoalCount };
+  }
+
+  @Router.get("/topics/:_id")
+  async getTopicById(_id: ObjectId) {
+    return await Responses.topic(await Topic.getById(_id));
   }
 
   @Router.post("/topics")
@@ -732,7 +742,7 @@ class Routes {
   }
 
   @Router.post("/contact/passcode/verified")
-  async verifyPatientPasscode(patientname:string, passcode: string) {
+  async verifyPatientPasscode(patientname: string, passcode: string) {
     const patient = await User.getUserByUsername(patientname);
     return await Contact.verifyPatientPasscode(patient._id, passcode);
   }

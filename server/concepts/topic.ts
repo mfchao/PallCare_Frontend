@@ -7,14 +7,14 @@ export interface TopicDoc extends BaseDoc {
   author: ObjectId;
   title: string;
   content: string;
-  posts: Array<ObjectId>;
+  responses: Array<ObjectId>;
 }
 
 export default class TopicConcept {
   public readonly topics = new DocCollection<TopicDoc>("topics");
 
   async create(author: ObjectId, title: string, content: string) {
-    const _id = await this.topics.createOne({ author, title, content, posts: [] });
+    const _id = await this.topics.createOne({ author, title, content, responses: [] });
     return { msg: "Topic successfully created!", topic: await this.topics.readOne({ _id }) };
   }
 
@@ -49,6 +49,10 @@ export default class TopicConcept {
     return await this.getTopics({ author });
   }
 
+  async getById(_id: ObjectId) {
+    return await this.topics.readOne({ _id });
+  }
+
   async update(_id: ObjectId, update: Partial<TopicDoc>) {
     this.sanitizeUpdate(update);
     await this.topics.updateOne({ _id }, update);
@@ -60,8 +64,8 @@ export default class TopicConcept {
     if (!topic) {
       throw new NotFoundError(`Topic ${_id} does not exist!`);
     }
-    topic.posts.push(post);
-    await this.topics.updateOne({ _id }, { posts: topic.posts });
+    topic.responses.push(post);
+    await this.topics.updateOne({ _id }, { responses: topic.responses });
     return { msg: "Post successfully added!" };
   }
 
@@ -75,8 +79,8 @@ export default class TopicConcept {
     if (!topic) {
       throw new NotFoundError(`Topic ${_id} does not exist!`);
     }
-    topic.posts = topic.posts.filter((p) => p.toString() !== post.toString());
-    await this.topics.updateOne({ _id }, { posts: topic.posts });
+    topic.responses = topic.responses.filter((p) => p.toString() !== post.toString());
+    await this.topics.updateOne({ _id }, { responses: topic.responses });
     return { msg: "Post successfully deleted!" };
   }
 
