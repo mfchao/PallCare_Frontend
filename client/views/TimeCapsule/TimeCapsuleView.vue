@@ -29,7 +29,7 @@ onBeforeMount(async () => {
     <TimeCapsuleBGComponent />
     
   </div>
-  <button class="bluebuttoncenterlong" @click="router.push({ name: 'PreferenceP' })">Edit Release Time</button>
+  <button class="bluebuttoncenterlong" @click="router.push({ name: 'PreferencePb' })">Edit Release Time</button>
   <button class="blackbuttoncenterlong" @click="router.push({ name: 'TimeCapsuleContent' })">Edit Contents</button>
 </body>
 </template>

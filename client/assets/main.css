@@ -236,8 +236,9 @@ input:checked+.slider:before {
 .navigation{
   display: flex;
   width: 300px;
-  align-items: center;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 23px;
 }
 

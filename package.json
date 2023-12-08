@@ -58,7 +58,9 @@
     "purecss": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "@tresjs/core": "^3.5.1",
+    "three": "^0.159.0"
   },
   "prettier": {
     "trailingComma": "all",
