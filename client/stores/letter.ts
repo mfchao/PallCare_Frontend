@@ -58,6 +58,10 @@ export const useLetterStore = defineStore(
       return await fetchy(`/api/diary/${_id}`, "GET");
     };
 
+    const getLetterReceivedbyUser = async (_id: ObjectId) => {
+      return await fetchy(`/api/letter/received/${_id}`, "GET");
+    }
+
     const updateLetter = async (_id: ObjectId, content: string, responseEnabled: boolean, delay: string) => {
       if (delay !== "") {
         return await fetchy(`/api/letter/${_id}`, "PATCH", { body: { content, responseEnabled, delay } });
@@ -95,6 +99,7 @@ export const useLetterStore = defineStore(
       updateLetter,
       getDelayByContentId,
       getReceiversUsername,
+      getLetterReceivedbyUser,
       getAuthorEntries,
       getDiaryById,
       deleteDiary,

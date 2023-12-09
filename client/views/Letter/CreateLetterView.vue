@@ -44,7 +44,6 @@ async function defualtfunction(selectedcontact: any) {
   recv.value = newrecv;
 }
 async function submitForm() {
-  console.log(delay_date);
   try {
     if (props.capsule) {
       await createLetter(to, content.value, false, "0");

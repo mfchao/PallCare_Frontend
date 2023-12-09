@@ -497,9 +497,9 @@ class Routes {
   }
 
   //CHECK//
-  @Router.get("/letter/receiver")
-  async getLetterbyReceiver(user: ObjectId) {
-    return await Letter.getLetterByReceiver(user);
+  @Router.get("/letter/received/:_id")
+  async getLetterbyReceiver(_id: ObjectId) {
+    return await Letter.getLetterByReceiver(_id);
   }
 
   //CHECK//
