@@ -143,7 +143,7 @@ onBeforeMount(async () => {
             </div>
         </div>
 
-        <button @click="showAddApp">Invite User to App</button>
+        <button class="blue" @click="showAddApp">Invite User to App</button>
     </div>
 
     <div class="section">
@@ -184,7 +184,7 @@ onBeforeMount(async () => {
                   </form>
             </div>
         </div>
-        <button @click="showAddEmail">Add Email Contact</button>
+        <button class="pink" @click="showAddEmail">Add Email Contact</button>
     </div>
   
     </main>
@@ -221,6 +221,14 @@ onBeforeMount(async () => {
     margin-bottom: 10px;
   }
 
+  .blue{
+    background-color: #9FB9C7;
+    color: #131313
+  }
+  .pink{
+    background-color: #EDB4C7;
+    color: #131313
+  }
   .user {
     display: flex;
     flex-direction: row;

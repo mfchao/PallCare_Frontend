@@ -29,7 +29,13 @@ onBeforeMount(async () => {
   setNavOff();
   contacts.value = await getLetterContactNames();
 });
-
+function checkifselected(selectedcontact: any) {
+  if (to.includes(selectedcontact)) {
+    return " ✓";
+  } else {
+    return;
+  }
+}
 async function defualtfunction(selectedcontact: any) {
   let newrecv = "";
   if (to.includes(selectedcontact)) {
@@ -60,7 +66,7 @@ async function submitForm() {
   <body>
     <div class="navigation">
       <img @click="back" src="@/assets/images/back.svg" />
-      <h1>New Letter</h1>
+      <text class="pagetitle">New Letter</text>
     </div>
 
     <form class="create-form" @submit.prevent="submitForm">
@@ -108,12 +114,16 @@ async function submitForm() {
 
           <div class="right">
             <div class="dropdown">
-              <p class="form-subtitle">Receiver</p>
+              <div class="rec">
+                <text class="receiver">Receiver</text>
+               </div>
+              
               <div class="dropdown-content">
                 <p v-for="contact in contacts" :key="contact">
-                  <p @click="defualtfunction(contact)">{{ contact }}</p>
+                  <p @click="defualtfunction(contact)">{{ contact }}{{ checkifselected(contact) }}</p>
                 </p>
               </div>
+              <p> </p>
               <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ recv }}</text>
             </div>
           </div>
@@ -132,6 +142,31 @@ body {
   justify-content: space-between;
   flex-direction: column;
   background: #f0e7d8;
+}
+.pagetitle{
+  display: flex;
+  width: 240px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #131313;
+  font-family: New York;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 496;
+  line-height: normal;
+  text-transform: uppercase;
+}
+/* h1.{
+  font-size: 25px;
+} */
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 13px;
 }
 
 .setting {
@@ -157,12 +192,6 @@ body {
   line-height: 0px;
   /* line-height: 103.822%; 20.764px */
 }
-.navigation {
-  display: flex;
-  width: 300px;
-  align-items: center;
-  gap: 23px;
-}
 
 .letterinputspace {
   display: flex;
@@ -177,6 +206,34 @@ body {
   background: #9fb9c7;
 }
 
+.rec{
+  display: flex;
+  width: 100px;
+  height: 27px;
+  flex-direction: column;
+  justify-content: center;
+  color: #000;
+  font-family: SF Pro Display;
+  /* font-size: 12px; */
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  /* background-color: #EDB4C7; */
+  border-radius: 7px;
+  border: 1.3px solid #000;
+  /* padding-bottom: 5px; */
+}
+.receiver{
+  color: #000;
+  font-family: SF Pro Display;
+  position: relative;
+  font-style: normal;
+  font-weight: 500;
+  padding-left: 10px;
+  line-height: 0;
+  background-color: #EDB4C7;
+  text-align: bottom;
+}
 textarea.letter-content {
   display: flex;
   width: 260px;
@@ -264,5 +321,6 @@ input.contact {
   border: 1.5px solid #000;
   font-size: 12px;
   align-items: flex-start;
+  /* padding: 5px 5px 5px 5px; */
 }
 </style>
