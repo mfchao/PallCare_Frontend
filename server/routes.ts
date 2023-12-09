@@ -736,16 +736,16 @@ class Routes {
   }
 
   @Router.get("/contact/:username")
-  async getInitialBoundPatientNamebyContactUsername(username:string){
+  async getInitialBoundPatientNamebyContactUsername(username: string) {
     const user = await User.getUserByUsername(username);
-    const contacts =  await Contact.getContactbyContactid(user._id);
+    const contacts = await Contact.getContactbyContactid(user._id);
     //if no such contacts
     if (!contacts) {
       throw new Error("Contact not found,or this is a patient");
     }
     //else return the initial bounded patient name
-    return (await User.getUserById(contacts[0].owner)).username
-  } 
+    return (await User.getUserById(contacts.owner)).username;
+  }
 
   @Router.post("/contact/passcode")
   async createPatientPasscode(session: WebSessionDoc, passcode: string) {
