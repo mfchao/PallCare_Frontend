@@ -91,6 +91,15 @@ export default class ContactConcept {
     }
     return result;
   }
+
+  async getContactbyContactid(contact: ObjectId){
+    const contacts = await this.contacts.readMany({ contact });
+    if (contacts.length === 0) {
+      return null;
+    }
+    return contacts[0];
+  }
+
   async getInAppContactsbyOwner(owner: ObjectId) {
     const contacts = await this.contacts.readMany({ owner, type: "User" });
     return contacts;
