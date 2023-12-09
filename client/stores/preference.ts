@@ -28,8 +28,7 @@ export const usePreferenceStore = defineStore(
     };
 
     const getBoundPatientNamebyContactUsername = async (username: string) => {
-      const { patient_username } = await fetchy(`/api/contact/${username}`, "GET", { alert: false });
-      console.log(patient_username);
+      const patient_username  = await fetchy(`/api/contact/${username}`, "GET", { alert: false });
       patientUsername.value = patient_username;
     };
 
