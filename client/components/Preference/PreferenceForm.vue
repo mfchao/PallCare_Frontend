@@ -21,6 +21,9 @@ const { fontSize } = storeToRefs(usePreferenceStore());
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+}));
 
 let age = ref("");
 let aid = ref("");
@@ -55,9 +58,9 @@ async function update() {
 
 <template>
 
-    <div v-if="userType == 'patient'" class="dropdown-wrapper">
-        <select v-model="age" class="styled-dropdown">
-          <option disabled value="">Please select your age</option>
+    <div v-if="userType == 'patient'" class="dropdown-wrapper" :style="styleObject">
+        <select v-model="age" class="styled-dropdown" :style="styleObject" >
+          <option :style="styleObject" disabled value="">Please select your age</option>
           <option>under 18</option>
           <option>18-25</option>
           <option>26-35</option>
@@ -69,9 +72,9 @@ async function update() {
           <option>85+</option>
         </select>
       </div>
-      <div v-else-if="userType == 'family'" class="dropdown-wrapper">
-        <select v-model="age" class="styled-dropdown">
-          <option disabled value="">Relationship to Patient</option>
+      <div v-else-if="userType == 'family'" class="dropdown-wrapper" :style="styleObject">
+        <select v-model="age" class="styled-dropdown" :style="styleObject">
+          <option :style="styleObject" disabled value="">Relationship to Patient</option>
           <option>Spouse</option>
           <option>Parent</option>
           <option>Child</option>
@@ -81,17 +84,17 @@ async function update() {
         </select>
       </div>
       
-        <div class="dropdown-wrapper">
-          <select v-model="aid" class="styled-dropdown">
-            <option disabled value="">Do you need a visual aid?</option>
+        <div class="dropdown-wrapper" :style="styleObject">
+          <select v-model="aid" class="styled-dropdown" :style="styleObject">
+            <option :style="styleObject" disabled value="">Do you need visual aid?</option>
             <option>Yes</option>
             <option>No</option>
           </select>
         </div>
 
-        <div class="dropdown-wrapper">
-          <select v-model="font" class="styled-dropdown">
-            <option disabled value="">Preferred font size</option>
+        <div class="dropdown-wrapper" :style="styleObject">
+          <select v-model="font" class="styled-dropdown" :style="styleObject">
+            <option :style="styleObject" disabled value="">Preferred font size</option>
             <option>larger</option>
             <option>large</option>
             <option>medium</option>
@@ -121,7 +124,7 @@ h1 {
   p {
     position: relative;
     display: block;
-    font-size: 0.9em;
+    font-size: var(--font-size);
     color: grey;
     margin-right: auto;
     margin-left: auto;
@@ -160,6 +163,7 @@ h1 {
     -moz-appearance: none;
     margin-bottom: 20px;
     width: 250px;
+    font-size: var(--font-size);
   }
   
   .dropdown-wrapper {
@@ -171,7 +175,7 @@ h1 {
   
   .dropdown-wrapper::after {
     content: "▼";
-    font-size: 12px;
+    font-size: var(--font-size);
     position: relative;
     right: 30px; 
     top: 30%;
@@ -182,5 +186,9 @@ h1 {
     position: absolute;
     bottom: 60px;
     right: 20px;
+  }
+
+  option {
+    font-size: var(--font-size);
   }
 </style>

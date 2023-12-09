@@ -2,17 +2,22 @@
 import router from "@/router";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
+import { computed, ref } from "vue";
 
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
 import PreferenceForm from "../components/Preference/PreferenceForm.vue";
 import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
 const { currentUsername, isFamily } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
 const { updatePreferences, resetStore } = usePreferenceStore();
+const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 
 const days = ref<number>();
+
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+}));
 
 async function updateTimeCapsule() {
   await updatePreferences({ timeCapsule: days.value! });
@@ -40,7 +45,7 @@ async function goHome() {
     <div class="navigation">
       <img @click="goHome" src="@/assets/images/back.svg" class="back-button" />
     </div>
-    <h1 class="title">Settings</h1>
+    <h1 :style="styleObject" class="title">Settings</h1>
 
     <div class="buttons">
       <button @click="logout">Logout</button>
@@ -54,7 +59,7 @@ async function goHome() {
     <div v-if="!isFamily">
       <form @submit.prevent="updateTimeCapsule">
         <fieldset>
-          <legend>Update Time Capsule</legend>
+          <legend :style="styleObject" >Update Time Capsule</legend>
           <input class="custom-input" placeholder="Number of Days" v-model="days" required />
           <button type="submit">Update Days</button>
         </fieldset>
@@ -62,7 +67,7 @@ async function goHome() {
     </div>
 
     <div v-if="!isFamily" class="preferences">
-      <p>Update User Preferences:</p>
+      <p :style="styleObject" >Update User Preferences:</p>
       <PreferenceForm />
     </div>
   </main>
@@ -122,8 +127,20 @@ main {
   margin-bottom: 20px;
 }
 
+h3 {
+  font-size: var(--font-size);
+}
+
+p {
+  font-size: var(--font-size);
+}
+
+legend {
+  font-size: var(--font-size);
+}
+
 h1 {
-  font-size: 1.5em;
+  font-size: var(--font-size);
   line-height: 0;
 }
 </style>

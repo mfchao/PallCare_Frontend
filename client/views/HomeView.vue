@@ -119,8 +119,8 @@ onBeforeMount(async () => {
             <p>Loading Moods...</p>
           </div>
 
-          <div v-if="!isFamily" class="botton">
-            <button @click="contacts" class="bluebuttoncenterlong" >Contacts</button>
+          <div class="botton">
+            <button v-if="!isFamily" @click="contacts" class="bluebuttoncenterlong" >Contacts</button>
             <button @click="settings" class="blackbuttoncenterlong" >Settings</button>
           </div>
           

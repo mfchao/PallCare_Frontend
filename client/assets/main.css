@@ -239,6 +239,11 @@ h3 {
   font-size: var(--font-size);
 }
 
+p {
+  font-size: var(--font-size);
+}
+
+
 
 
 .navigation {

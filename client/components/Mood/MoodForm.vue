@@ -78,16 +78,16 @@ onBeforeMount(() => {
     </div>
     <div class="moods" >
         <div class="mood"  @click="selectMood(`${happy}`)">
-            <p :class="{ 'selected-emoji': selectedMood === `${happy}` }">{{happy}}</p>
+            <h5 :class="{ 'selected-emoji': selectedMood === `${happy}` }">{{happy}}</h5>
         </div>
         <div class="mood" @click="selectMood(`${chill}`)">
-            <p :class="{ 'selected-emoji': selectedMood === `${chill}` }">{{chill}}</p>
+            <h5 :class="{ 'selected-emoji': selectedMood === `${chill}` }">{{chill}}</h5>
         </div>
         <div class="mood" @click="selectMood(`${stressed}`)">
-            <p :class="{ 'selected-emoji': selectedMood === `${stressed}` }">{{stressed}}</p>
+            <h5 :class="{ 'selected-emoji': selectedMood === `${stressed}` }">{{stressed}}</h5>
         </div>
         <div class="mood" @click="selectMood(`${sad}`)">
-            <p :class="{ 'selected-emoji': selectedMood === `${sad}` }">{{sad}}</p>
+            <h5 :class="{ 'selected-emoji': selectedMood === `${sad}` }">{{sad}}</h5>
         </div>
         <div>
             <div class="other-container">
