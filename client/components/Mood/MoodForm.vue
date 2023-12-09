@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { useMoodStore } from "@/stores/mood";
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { formatDateCustom } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
+
+
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+    }));
+
+    const { fontSize } = storeToRefs(usePreferenceStore());
 
 
 const isLoading = ref(true);
@@ -16,16 +24,25 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 const customEmoji = ref('');
 const selectedMood = ref('');
 
-async function create(mood:string) {
+function selectMood(mood:string) {
   selectedMood.value = mood;
-  await createMood(mood, notify.value);
-  await refreshMood(currentUsername.value);
+}
+
+async function create() {
+    if (customEmoji.value) {
+        await createMood(customEmoji.value, notify.value);
+        customEmoji.value  ='';
+    } else if (selectedMood.value) {
+        await createMood(selectedMood.value, notify.value);
+        customEmoji.value  ='';
+  }
+  void refreshMood(currentUsername.value);
   await getPreviousMoods(currentUsername.value);
 }
 
 async function clear() {
   await deleteMood();
-  await refreshMood(currentUsername.value);
+  void refreshMood(currentUsername.value);
   selectedMood.value = '';
   customEmoji.value = ''; 
 
@@ -33,7 +50,9 @@ async function clear() {
 
 async function submitCustomMood(event: Event) {
   event.preventDefault(); 
-  await create(customEmoji.value);
+  await createMood(customEmoji.value, notify.value);
+  void refreshMood(currentUsername.value);
+  await getPreviousMoods(currentUsername.value);
 }
 
 const happy =  String.fromCodePoint(0x1F603);
@@ -42,7 +61,7 @@ const stressed =  String.fromCodePoint(0x1F616);
 const sad =  String.fromCodePoint(0x1F614); 
 
 onBeforeMount(() => {
-    refreshMood(currentUsername.value);
+    void refreshMood(currentUsername.value);
     isLoading.value = false;
 
     if(hasMood) {
@@ -55,31 +74,33 @@ onBeforeMount(() => {
     <div class="container">
 
     <div>
-        <h2>How are you feeling today?</h2>
+        <h2 :style="styleObject">How are you feeling today?</h2>
     </div>
     <div class="moods" >
-        <div class="mood"  @click="create(`${happy}`)">
+        <div class="mood"  @click="selectMood(`${happy}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${happy}` }">{{happy}}</p>
         </div>
-        <div class="mood" @click="create(`${chill}`)">
+        <div class="mood" @click="selectMood(`${chill}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${chill}` }">{{chill}}</p>
         </div>
-        <div class="mood" @click="create(`${stressed}`)">
+        <div class="mood" @click="selectMood(`${stressed}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${stressed}` }">{{stressed}}</p>
         </div>
-        <div class="mood" @click="create(`${sad}`)">
+        <div class="mood" @click="selectMood(`${sad}`)">
             <p :class="{ 'selected-emoji': selectedMood === `${sad}` }">{{sad}}</p>
         </div>
         <div>
             <div class="other-container">
                 <p class="other">Other:</p>
-                <form @submit="submitCustomMood">
+                <form @click="selectMood(`${customEmoji}`)">
                     <input class="custom-input" v-model="customEmoji" placeholder="Enter Emoji" />
                 </form>
             </div>
-            
         </div>
+
     </div>
+    <button @click="create">Submit Mood</button>
+
     <hr class="separator">
 
     <h2>Mood Tracker</h2>
@@ -91,7 +112,7 @@ onBeforeMount(() => {
         </div>
     </div>
     <div v-else-if="!isLoading">
-        <p class="past-mood-text">Your previous moods will show up here.</p>
+        <p class="past-mood-text" :style="styleObject">Your previous moods will show up here.</p>
     </div>
     <div v-else>
         <p>Loading...</p>
@@ -257,6 +278,11 @@ button {
     border-radius: 10px;
     margin-right: 10px;
 }
+
+h2 {
+    
+    font-size: var(--font-size);
+  }
 
 
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { usePreferenceStore } from "@/stores/preference";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent, onBeforeMount, ref } from "vue";
 import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
 import EditWishForm from "./EditWishForm.vue";
 
+
 const WishComponent = defineAsyncComponent(() => import("./WishComponent.vue"));
 const { isLoggedIn } = storeToRefs(useUserStore());
+const { patientUsername } = storeToRefs(usePreferenceStore());
 
 const loaded = ref(false);
 let wishes = ref<Array<Record<string, string>>>([]);
@@ -31,7 +34,12 @@ function updateEditing(id: string) {
 }
 
 onBeforeMount(async () => {
-  await getWishes();
+  if (patientUsername.value) {
+    await getWishes(patientUsername.value);
+  } else {
+    await getWishes();
+  }
+  
   loaded.value = true;
 });
 </script>

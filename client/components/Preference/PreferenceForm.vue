@@ -5,21 +5,26 @@ import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
 
 
-const {  updatePreferences } = usePreferenceStore();
+const {  updatePreferences, getPreferences } = usePreferenceStore();
 const { setNavOff } = useNavigationStore();
 const { userType} = storeToRefs(useUserStore());
 const { getUserType } = useUserStore();
 const { currentUsername } = storeToRefs(useUserStore());
+const { fontSize } = storeToRefs(usePreferenceStore());
 
 
+const currentRoute = useRoute();
+const currentRouteName = computed(() => currentRoute.name);
 
 
 let age = ref("");
 let aid = ref("");
+let font = ref("");
 
 
 async function update() {
@@ -31,10 +36,13 @@ async function update() {
   }
   await updatePreferences({ age: age.value });
   await updatePreferences({ visualAid: visualAid });
+  await updatePreferences({ fontSize: font.value });
 
-  if(userType.value == "patient"){
+  await getPreferences();
+
+  if(userType.value == "patient" && currentRouteName.value != 'Settings'){
     void router.push({ name: "PreferencePb" });
-  }else{
+  }else if (currentRouteName.value != 'Settings'){
     void router.push({ name: "PreferenceFb" });
   }
 
@@ -81,7 +89,25 @@ async function update() {
           </select>
         </div>
 
-        <button class="next-button" @click="update" src="@/assets/images/next.svg">Update</button>
+        <div class="dropdown-wrapper">
+          <select v-model="font" class="styled-dropdown">
+            <option disabled value="">Preferred font size</option>
+            <option>larger</option>
+            <option>large</option>
+            <option>medium</option>
+            <option>small</option>
+            <option>smaller</option>
+          </select>
+        </div>
+
+        <div v-if="currentRouteName == 'Settings'">
+          <button  @click="update" src="@/assets/images/next.svg">Update</button>
+        </div>
+        <div v-else>
+          <img class="next-button"  @click="update" src="@/assets/images/next.svg"/>  
+        </div>
+        
+
 
 </template>
 
@@ -151,5 +177,10 @@ h1 {
     top: 30%;
     transform: translateY(-30%);
     pointer-events: none;
+  }
+  .next-button {
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
   }
 </style>

@@ -8,9 +8,9 @@ import { ref } from "vue";
 import PreferenceForm from "../components/Preference/PreferenceForm.vue";
 import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
-const { currentUsername } = storeToRefs(useUserStore());
+const { currentUsername, isFamily } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
-const { updatePreferences } = usePreferenceStore();
+const { updatePreferences, resetStore } = usePreferenceStore();
 
 const days = ref<number>();
 
@@ -19,11 +19,13 @@ async function updateTimeCapsule() {
 }
 
 async function logout() {
+  resetStore();
   await logoutUser();
   void router.push({ name: "Home" });
 }
 
 async function delete_() {
+  resetStore();
   await deleteUser();
   void router.push({ name: "Home" });
 }
@@ -47,7 +49,8 @@ async function goHome() {
     <div>
       <UpdateUserForm />
     </div>
-    <div>
+
+    <div v-if="!isFamily">
       <form @submit.prevent="updateTimeCapsule">
         <fieldset>
           <legend>Update Time Capsule</legend>
@@ -57,7 +60,7 @@ async function goHome() {
       </form>
     </div>
 
-    <div class="preferences">
+    <div v-if="!isFamily" class="preferences">
       <p>Update User Preferences:</p>
       <PreferenceForm />
     </div>
@@ -101,6 +104,8 @@ main {
   flex-direction: column;
   justify-content: center;
   position: relative;
+  min-height: 100vh;
+  padding-top: 30px;
 }
 
 .back-button {

@@ -43,6 +43,14 @@ export default class PreferenceConcept {
     return userPreferences;
   }
 
+  async getFontSize(user: ObjectId) {
+    const userPreferences = await this.preferences.readOne({ user });
+    if (!userPreferences) {
+      throw new NotFoundError("No preferences found for this user.");
+    }
+    return userPreferences.fontSize;
+  }
+
   /**
    * Create or Update a preference for a specific user
    * @param user ObjectId associated with a user
