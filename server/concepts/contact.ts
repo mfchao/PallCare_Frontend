@@ -58,6 +58,14 @@ export default class ContactConcept {
     return await this.patientPasscodes.readOne({ _id });
   }
 
+  async getPatientPasscode(patient: ObjectId) {
+    const patientPasscode = await this.patientPasscodes.readOne({ patient });
+    if (!patientPasscode) {
+      throw new NotFoundError("No passcode associated with this patient.");
+    }
+    return patientPasscode.passcode;
+  }
+
   async verifyPatientPasscode(patient: ObjectId, passcode: string) {
     const patientPasscode = await this.patientPasscodes.readOne({ patient });
     if (!patientPasscode) {

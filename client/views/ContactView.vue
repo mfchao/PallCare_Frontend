@@ -3,6 +3,7 @@ import { default as AppContactComponent } from "@/components/Contact/AppContactC
 import EmailContactComponent from "@/components/Contact/EmailContactComponent.vue";
 import router from "@/router";
 import { useContactStore } from "@/stores/contact";
+import { fetchy } from "@/utils/fetchy";
 import { computed, onBeforeMount, ref } from "vue";
 
 const { createEmailContact, createUserContact, getContacts, getAllEmailContacts, getAllAppContactsUsername } = useContactStore();
@@ -44,6 +45,11 @@ async function back() {
     void router.push({ name: "Home" });
 }
 
+async function sendemailinvite() {
+  // let passcode = await fetchy(`/api/contact/passcode`,"GET")
+  // console.log(appUser.value)
+  // return await fetchy(`/api/email/invite`, "POST", { body: { to: appUser.value, content: passcode } })
+}
 
 function showAddApp()  {
     showAddAppContacts.value = true;
@@ -60,9 +66,11 @@ function cancel()  {
     showAddEmailContacts.value = false;
 }
 
-function submitAddApp()  {
+async function submitAddApp()  {
     // await createUserContact()
-
+    let passcode = await fetchy(`/api/contact/passcode`,"GET")
+    console.log(appUser.value)
+    await fetchy(`/api/email/invite`, "POST", { body: { to: appUser.value, content: passcode } })
     showAddAppContacts.value = false;
     appUser.value ='';
 }
@@ -128,7 +136,7 @@ onBeforeMount(async () => {
                     <label for="content">Invite App User:</label>
                     <textarea id="content" v-model="appUser" placeholder="User Email" required> </textarea>
                     <div class="buttons">
-                      <button type="submit" class="" >Submit</button>
+                      <button type="submit" class="" @click="sendemailinvite">Submit</button>
                       <button class="" @click="cancel" >Cancel</button>
                     </div>
                   </form>

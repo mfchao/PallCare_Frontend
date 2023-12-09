@@ -741,6 +741,12 @@ class Routes {
     return await Contact.createPatientPasscode(user, passcode);
   }
 
+  @Router.get("/contact/passcode")
+  async getPatientPasscode(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Contact.getPatientPasscode(user);
+  }
+
   @Router.post("/contact/passcode/verified")
   async verifyPatientPasscode(patientname: string, passcode: string) {
     const patient = await User.getUserByUsername(patientname);
@@ -772,6 +778,15 @@ class Routes {
   async sendEmail(user: ObjectId, to: string, content: string) {
     const username = (await User.getUserById(user)).username;
     await Email.send(username, to, content);
+    return { msg: "Email sent!" };
+  }
+
+  @Router.post("/email/invite")
+  async sendEmailinvitation(session: WebSessionDoc, to: string, content: string) {
+    const user = WebSession.getUser(session);
+    const username = (await User.getUserById(user)).username;
+    let contents = username + " has invited you to join ALWAYS! Please use the passcode below to register! \n" + "PASSCODE" + content;
+    await Email.send(username, to, contents);
     return { msg: "Email sent!" };
   }
 
