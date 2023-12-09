@@ -745,7 +745,7 @@ class Routes {
       throw new Error("Contact not found,or this is a patient");
     }
     //else return the initial bounded patient name
-    return (await User.getUserById(contacts.owner)).username;
+    return (await User.getUserById(contacts[0].owner)).username;
   }
 
   @Router.post("/contact/passcode")

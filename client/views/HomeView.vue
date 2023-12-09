@@ -59,12 +59,16 @@ async function letter() {
 
 onBeforeMount(async () => {
 
-  await getBoundPatientNamebyContactUsername(currentUsername.value);
 
   isLoading.value = true;
   await getUserType(currentUsername.value);
+
+  await getBoundPatientNamebyContactUsername(currentUsername.value);
+
+
   if(isFamily && patientUsername.value) {
     setNavOff();
+
     void refreshMood(patientUsername.value);
   } else if (currentUsername.value){
     void refreshMood(currentUsername.value);
