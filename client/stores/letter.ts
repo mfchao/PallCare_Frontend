@@ -72,6 +72,10 @@ export const useLetterStore = defineStore(
       }
     };
 
+    // const getLetterbyReceiver = async (_id: ObjectId) => {
+    //   const user = await fetchy(`/api/user/${_id}`, "GET");
+    // }
+
     const getDelayByContentId = async (_id: ObjectId) => {
       return await fetchy(`/api/delay/content/${_id}`, "GET");
     };

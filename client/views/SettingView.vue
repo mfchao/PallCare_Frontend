@@ -37,9 +37,10 @@ async function goHome() {
 
 <template>
   <main class="column">
-    <img @click="goHome" src="@/assets/images/back.svg" class="back-button" />
-
-    <h1 class="title">Settings for {{ currentUsername }}</h1>
+    <div class="navigation">
+      <img @click="goHome" src="@/assets/images/back.svg" class="back-button" />
+    </div>
+    <h1 class="title">Settings</h1>
 
     <div class="buttons">
       <button @click="logout">Logout</button>
@@ -96,7 +97,7 @@ button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2.5em;
+  gap: 25px
 }
 
 main {
@@ -105,7 +106,7 @@ main {
   justify-content: center;
   position: relative;
   min-height: 100vh;
-  padding-top: 30px;
+  padding-top: 60px;
 }
 
 .back-button {
@@ -115,6 +116,9 @@ main {
 }
 
 .title {
+  text-align: center;
+  height: auto;
+  width: 200px;
   margin-bottom: 20px;
 }
 

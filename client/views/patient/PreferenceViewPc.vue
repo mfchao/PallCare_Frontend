@@ -48,7 +48,7 @@ async function update() {
   
     <h2 :style="styleObject">Set a friend passcode</h2>
 
-    <p :style="styleObject">Non-patient users who set you as their patient contact (your family, your friends) need this passcode to activate and view your content.</p>
+    <p :style="styleObject">Other users who want to connect you on ALWAYS (your family, your friends) will need this passcode to activate their account.</p>
       
     <div class="password">
       <input type="password" v-model="passcode1" maxlength="1" size="1" class="custom-input">
@@ -56,14 +56,19 @@ async function update() {
       <input type="password" v-model="passcode3" maxlength="1" size="1" class="custom-input">
       <input type="password" v-model="passcode4" maxlength="1" size="1" class="custom-input">
   
+    </div > 
+    <div class="finish">
+      <button class="blackbuttoncenterlong" @click="goHome" > Finish</button>
     </div>
-    
-      <button class="next-button" @click="goHome" > Finish</button>
-  
     </main>
   </template>
   
   <style scoped>
+  .finish {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
   h1 {
     text-align: center;
   }
@@ -116,13 +121,13 @@ async function update() {
   
   .back-button {
     position: absolute;
-    top: 20px;
+    top: 60px;
     left: 20px;
   }
   
   .next-button {
     position: absolute;
-    bottom: 60px;
+    bottom: 80px;
     right: 20px;
   }
   </style>

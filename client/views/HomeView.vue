@@ -39,7 +39,9 @@ async function settings() {
 }
 
 async function contacts() {
+  let buttonbg = true;
   void router.push({ name: "Contact" });
+  buttonbg = false;
 }
 
 async function diary() {
@@ -72,6 +74,7 @@ onBeforeMount(async () => {
 });
 
 
+
 </script>
 
 <template>
@@ -84,7 +87,7 @@ onBeforeMount(async () => {
               <p id="date" class="text-left date" :style="styleObject">{{currentDate}}</p>
               <h1 :style="styleObject" class="text-left">Hi {{ currentUsername }} !</h1>
             </div>
-            <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
+            <!-- <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/> -->
             <div class="profile-container">
               <img class="profile-pic" src="@/assets/images/profile.svg"/>
               <div v-if="hasMood && !isFamily" class="mood-emoji">{{ userMood }}</div>
@@ -111,14 +114,14 @@ onBeforeMount(async () => {
             </div>
           </div>
 
-   
 
           <div v-else>
             <p>Loading Moods...</p>
           </div>
 
-          <div v-if="!isFamily">
-            <button @click="contacts">Your Contacts</button>
+          <div v-if="!isFamily" class="botton">
+            <button @click="contacts" class="bluebuttoncenterlong" >Contacts</button>
+            <button @click="settings" class="blackbuttoncenterlong" >Settings</button>
           </div>
           
           
@@ -135,8 +138,9 @@ onBeforeMount(async () => {
            </div>
     
           <div class="forms fade-in">
-            <div class="welcometitle>">
-              <h1>Welcome to Palliative Care App</h1>
+            <div class="welcometitle">
+              <h1>Welcome to</h1>
+              <h1 class="always">ALWAYS</h1>
             </div>
             
             <div class="info">
@@ -156,6 +160,17 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
+
+h1{
+  font-size: 35px;
+}
+h1.always{
+  font-family: New York;
+  font-size: 45px;
+  font-style: normal;
+  padding-bottom: -10px;
+}
+
 .mood-emoji {
   position: absolute;
   bottom: 0;
@@ -411,10 +426,29 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 z-index: 10;
-gap: 57px;
+gap: 50px;
 /* display: inline-flex; */
 background: #F0E7D8;
 }
 
+.bluebuttoncenterlong{
+  width: 220px;
+  height: 60px;
+}
+
+.blackbuttoncenterlong{
+  background: #EDB4C7;
+  width: 220px;
+  height: 60px;
+  color: #131313
+}
+
+.botton{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
 
 </style>

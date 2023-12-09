@@ -9,7 +9,7 @@ import LoginFormVue from "../Login/LoginForm.vue";
 import { useLetterStore } from "../../stores/letter";
 import { usePreferenceStore } from "../../stores/preference";
 
-
+const props = defineProps(["receiver"]);
 const { currentUsername } = storeToRefs(useUserStore());
 const { patientUsername } = storeToRefs(usePreferenceStore());
 
@@ -34,6 +34,16 @@ async function getEntries() {
     }
   }
   letterList.value = showletters;
+
+  if (props.receiver){
+    let newletterList = [];
+    for (let i = 0; i < letterList.value.length; i++) {
+      if (letterList.value[i].to.includes(props.receiver.value)) {
+        newletterList.push(letterList.value[i]);
+      }
+    }
+    letterList.value = newletterList;
+  }
   // diaryList.value = await getAuthorEntries(currentUsername.value);
 }
 

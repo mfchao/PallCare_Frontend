@@ -92,8 +92,9 @@ onBeforeMount(async () => {
 
 <template>
     <main>
+    <div class="navigation">
       <img @click="back" src="@/assets/images/back.svg"/>
-  
+    </div>
     <h1>Your Contacts</h1>
 
     <div class="section">
@@ -182,6 +183,7 @@ onBeforeMount(async () => {
   </template>
   
   <style scoped>
+  
   h1 {
     text-align: center;
   }
@@ -276,7 +278,7 @@ onBeforeMount(async () => {
 
     main {
       min-height: 100vh; 
-      padding-top: 5%;
+      padding-top: 15%;
       padding-left: 5%;
       padding-right: 5%;
     }

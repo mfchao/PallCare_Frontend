@@ -14,8 +14,9 @@ async function goHome() {
 
 <template>
   <main class="centered">
-    <img @click="goHome" src="@/assets/images/back.svg"/>
-
+    <div class="navigation">
+      <img @click="goHome" src="@/assets/images/back.svg"/>
+    </div>
     <h1>Welcome Back</h1>
     <LoginForm />
     

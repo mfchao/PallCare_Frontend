@@ -1,9 +1,21 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import LetterListComponent from "../../components/Letter/LetterListComponent.vue";
 import router from "../../router";
+let searchcontent = ref("");
+let receiver = "";
+async function onEnter() {
+  if (searchcontent.value == "") {
+    return;
+  } else {
+    receiver = searchcontent.value;
+    // void router.push({ name: "LetterSearch", params: { searchcontent: searchcontent.value } });
+  }
+}
 </script>
 <template>
-  <body>
+  <!-- <main> -->
+    <body>
     <div class="navigation">
       <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png" />
       <text class="pagetitle">Letter</text>
@@ -19,12 +31,22 @@ import router from "../../router";
     </div>
     <div class="previousDiarytitle">
       <text class="previousDiary">Previous Letters</text>
-      <input type="text" class="diarysearchbar" placeholder="Search" />
+      <input type="text" class="diarysearchbar" v-model="searchcontent" v-on:keyup.enter="onEnter" placeholder="" />
     </div>
-    <LetterListComponent />
-  </body>
+    <LetterListComponent :receiver="receiver"/>
+    </body>
+  <!-- </main> -->
 </template>
 <style scoped>
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  min-height: 100vh;
+  padding-top: 0px;
+  padding-left: 40px;
+}
 body {
   display: flex;
   flex-direction: row;
@@ -109,7 +131,7 @@ body {
   align-items: center;
   gap: 10px;
   border-radius: var(--numbers-spacing-12, 12px);
-  border: 1.3px solid #000;
+  border: 0px solid #000;
   background: #f0e7d8;
 }
 </style>
