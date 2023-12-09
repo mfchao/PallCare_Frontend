@@ -94,10 +94,8 @@ export default class ContactConcept {
 
   async getContactbyContactid(contact: ObjectId){
     const contacts = await this.contacts.readMany({ contact });
-    if (contacts.length === 0) {
-      return null;
-    }
-    return contacts[0];
+    //only return initial contact
+    return contacts;
   }
 
   async getInAppContactsbyOwner(owner: ObjectId) {
