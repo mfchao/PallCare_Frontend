@@ -18,6 +18,7 @@ const { getUserType } = useUserStore();
 const { refreshMood } = useMoodStore();
 const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 const { setNavOff, setNavOn } = useNavigationStore();
+const {getBoundPatientNamebyContactUsername } = usePreferenceStore();
 
 const styleObject = computed(() => ({
       '--font-size': fontSize.value,
@@ -57,6 +58,8 @@ async function letter() {
 }
 
 onBeforeMount(async () => {
+
+  await getBoundPatientNamebyContactUsername(currentUsername.value);
 
   isLoading.value = true;
   await getUserType(currentUsername.value);
