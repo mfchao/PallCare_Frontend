@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import { useDiaryStore } from "../../stores/diary";
 import { useUserStore } from "../../stores/user";
 import LetterComponent from "./LetterComponent.vue";
-import LoginFormVue from "../Login/LoginForm.vue";
 // import LetterComponent from "./LetterComponent.vue";
 import { useLetterStore } from "../../stores/letter";
 import { usePreferenceStore } from "../../stores/preference";

@@ -497,9 +497,10 @@ class Routes {
   }
 
   //CHECK//
-  @Router.get("/letter/received/:_id")
-  async getLetterbyReceiver(_id: ObjectId) {
-    return await Letter.getLetterByReceiver(_id);
+  @Router.get("/letter/received")
+  async getLetterbyReceiver(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Letter.getLetterByReceiver(user);
   }
 
   //CHECK//
