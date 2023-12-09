@@ -13,6 +13,8 @@ async function back() {
     void router.push({ name: "PreferenceP" });
 }
 
+
+
 </script>
 
 <template>

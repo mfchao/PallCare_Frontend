@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { useMoodStore } from "@/stores/mood";
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { formatDateCustom } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
+
+
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+    }));
+
+    const { fontSize } = storeToRefs(usePreferenceStore());
 
 
 const isLoading = ref(true);
@@ -66,7 +74,7 @@ onBeforeMount(() => {
     <div class="container">
 
     <div>
-        <h2>How are you feeling today?</h2>
+        <h2 :style="styleObject">How are you feeling today?</h2>
     </div>
     <div class="moods" >
         <div class="mood"  @click="selectMood(`${happy}`)">
@@ -104,7 +112,7 @@ onBeforeMount(() => {
         </div>
     </div>
     <div v-else-if="!isLoading">
-        <p class="past-mood-text">Your previous moods will show up here.</p>
+        <p class="past-mood-text" :style="styleObject">Your previous moods will show up here.</p>
     </div>
     <div v-else>
         <p>Loading...</p>
@@ -270,6 +278,11 @@ button {
     border-radius: 10px;
     margin-right: 10px;
 }
+
+h2 {
+    
+    font-size: var(--font-size);
+  }
 
 
 

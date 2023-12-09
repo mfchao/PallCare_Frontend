@@ -5,7 +5,7 @@ import { useNavigationStore } from "@/stores/navigation";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
 import ViewPatientMood from "../components/Mood/ViewPatientMood.vue";
 import { formatDate } from "../utils/formatDate";
@@ -16,9 +16,12 @@ const { currentUsername, isLoggedIn, isFamily } = storeToRefs(useUserStore());
 const { getUserType } = useUserStore();
 
 const { refreshMood } = useMoodStore();
-const { patientUsername } = storeToRefs(usePreferenceStore());
+const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 const { setNavOff, setNavOn } = useNavigationStore();
 
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+}));
 
 let currentDate = formatDate(new Date());
 
@@ -78,8 +81,8 @@ onBeforeMount(async () => {
         <div v-if="isLoggedIn" class="home-container">
           <div class="flex-container">
             <div>
-              <p id="date" class="text-left date">{{currentDate}}</p>
-              <h1 class="text-left">Hi {{ currentUsername }} !</h1>
+              <p id="date" class="text-left date" :style="styleObject">{{currentDate}}</p>
+              <h1 :style="styleObject" class="text-left">Hi {{ currentUsername }} !</h1>
             </div>
             <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/>
             <div class="profile-container">

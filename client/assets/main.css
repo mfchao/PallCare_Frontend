@@ -3,7 +3,11 @@
 :root {
   --red: rgb(208, 67, 12);
   --base-bg: #f1f3f5;
+
+  --font-size: 16px;
+  /* Default font size */
 }
+
 
 
 button.button-error {
@@ -126,7 +130,7 @@ h1 {
   color: #000;
   text-align: center;
   font-family: New York;
-  font-size: 30px;
+  font-size: var(--font-size);
   font-style: italic;
   font-weight: 496;
   line-height: normal;
@@ -142,7 +146,7 @@ h2 {
   color: #000;
   text-align: center;
   font-family: SF Pro Display;
-  font-size: 19px;
+  font-size: var(--font-size);
   font-weight: 1em;
   line-height: normal;
 }
@@ -230,6 +234,12 @@ input:checked+.slider:before {
   text-align: center;
   border-radius: 15px;
 }
+
+h3 {
+  font-size: var(--font-size);
+}
+
+
 
 .navigation {
   display: flex;

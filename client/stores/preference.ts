@@ -8,6 +8,8 @@ export const usePreferenceStore = defineStore(
   () => {
     const patientUsername = ref("");
 
+    const fontSize = ref("medium");
+
     const updatePreferences = async (patch: BodyT) => {
       await fetchy("/api/preferences", "PATCH", { body: { update: patch } });
     };
@@ -25,16 +27,29 @@ export const usePreferenceStore = defineStore(
       return await fetchy(`/api/contact/bound`, "POST", { body: { patientname } });
     };
 
+    const getPreferences = async () => {
+      let font;
+      try {
+        font = await fetchy("/api/preferences", "GET", { alert: false });
+        fontSize.value = font.fontSize;
+      } catch {
+        fontSize.value = "medium";
+      }
+    };
+
     const resetStore = () => {
       patientUsername.value = "";
+      fontSize.value = "medium";
     };
 
     return {
       patientUsername,
+      fontSize,
       updatePreferences,
       createPatientPasscode,
       verifyPatientPasscode,
       boundwithpatient,
+      getPreferences,
       resetStore,
     };
   },
