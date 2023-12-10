@@ -141,7 +141,7 @@ onBeforeMount(async () => {
 
         <div v-else>
             <div >
-              <img class="animate logo" src="@/assets/images/logo.svg" />
+              <img class="animate logo" src="@/assets/images/alwayslogo.png" />
            </div>
     
           <div class="forms fade-in">
@@ -151,7 +151,7 @@ onBeforeMount(async () => {
             </div>
             
             <div class="info">
-              <img src="@/assets/images/placeholderimage0.png" width="300"/>
+              <img src="@/assets/images/welcome.png" width="300" />
             </div>
 
             <div class="button-container">
@@ -174,8 +174,14 @@ h1{
 h1.always{
   font-family: New York;
   font-size: 45px;
-  font-style: normal;
-  padding-bottom: -10px;
+  font-weight: medium;
+  /* padding-bottom: -10px; */
+  color:  #F0E7D8;
+  background-color: #131313;
+  height: 45px;
+  width: 300px;
+  padding-top: 3px;
+  border-radius: 24px;
 }
 
 .mood-emoji {
@@ -253,8 +259,8 @@ main {
   
 .info {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  /* gap: 10px; */
 }
 
 
@@ -356,8 +362,8 @@ transform: translate(-50%, -50%);
 
 .logo {
 position: absolute;
-width: 10em;
-height: 100vh;
+width: 12em;
+height: 10em;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
@@ -433,7 +439,7 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 z-index: 10;
-gap: 50px;
+gap: 40px;
 /* display: inline-flex; */
 background: #F0E7D8;
 }

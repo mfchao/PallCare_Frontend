@@ -26,7 +26,7 @@ async function onEnter() {
     <div class="creatediv" @click="router.push({ name: 'CreateLetter' })">
       <text class="createdivtitle">Write a new letter here</text>
       <div class="blank">
-        <img src="@/assets/images/diaryicon.png" style="height: 200%; width: fit-content" />
+        <img src="@/assets/images/lettericon.png" style="height: 200%; width: fit-content" />
       </div>
     </div>
     <div class="previousDiarytitle">

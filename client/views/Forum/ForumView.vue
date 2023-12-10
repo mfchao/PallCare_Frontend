@@ -15,7 +15,7 @@ import router from "../../router";
     <div class="creatediv" @click="router.push({ name: 'CreateTopic' })">
         <text class="createdivtitle">Create a new topic!</text>
         <div class="blank">
-            <img src="@/assets/images/forumicon.png" style="height: 200%; width: fit-content;"/> 
+            <img src="@/assets/images/forumicon.png" class="icon"/> 
         </div>
     </div>
     <TopicListComponent />
@@ -33,7 +33,10 @@ body {
   background:#F0E7D8;
   gap: 15px;
 }
-
+.icon{
+  height: 180%;
+  width: fit-content;
+}
 .pagetitle{
   display: flex;
   width: 240px;
@@ -86,16 +89,12 @@ body {
 
 .blank{
   display: flex;
-  width: 50px;
-  height: 50px;
-  flex-direction: column;
-  justify-content: center;
+  width: 68px;
+  height: 62px;
+  align-items: flex-end;
+  gap: 10px;
   flex-shrink: 0;
-  color: #131313;
-  font-family: SF Pro Display;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  border-radius: 7px;
+  background-color: #f0e7d8;
 }
 </style>
