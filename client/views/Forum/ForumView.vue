@@ -6,7 +6,7 @@ import router from "../../router";
 <template>
   <body>
     <div class="navigation">
-        <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png"/>
+        <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
         <text class="pagetitle">FORUM</text>
     </div>
     <div class="pageexplainationdiv">
@@ -50,11 +50,11 @@ body {
   text-transform: uppercase;
 }
 
-.navigation{
+.navigation {
   display: flex;
-  width: 300px;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 23px;
 }
 
 .creatediv{

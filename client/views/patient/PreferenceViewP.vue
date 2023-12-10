@@ -54,10 +54,11 @@ onBeforeMount(async () => {
 
 <template>
   <main>
-    <div v-if="userType == 'patient'" class="back-button">
-      <img @click="accountType" src="@/assets/images/back.svg"/>
+    <div class="navigation">
+      <div v-if="userType == 'patient'" class="back-button">
+        <img @click="accountType" src="@/assets/images/back.svg"/>
+      </div>
     </div>
-    
     <div>
       <h1>Tell Us More About You ...</h1>
 
@@ -97,7 +98,7 @@ main {
 
 .back-button {
   position: absolute;
-  top: 20px;
+  top: 60px;
   left: 20px;
 }
 

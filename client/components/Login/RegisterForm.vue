@@ -48,7 +48,7 @@ async function register() {
       </div>
     </fieldset>  
       <div >
-        <button type="submit" class="pure-button-blue" >Register</button>
+        <button type="submit" class="blackbuttoncenterlong" >Register</button>
       </div>
 
   </form>

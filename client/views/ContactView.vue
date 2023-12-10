@@ -3,6 +3,7 @@ import { default as AppContactComponent } from "@/components/Contact/AppContactC
 import EmailContactComponent from "@/components/Contact/EmailContactComponent.vue";
 import router from "@/router";
 import { useContactStore } from "@/stores/contact";
+import { fetchy } from "@/utils/fetchy";
 import { computed, onBeforeMount, ref } from "vue";
 
 const { createEmailContact, createUserContact, getContacts, getAllEmailContacts, getAllAppContactsUsername } = useContactStore();
@@ -44,6 +45,11 @@ async function back() {
     void router.push({ name: "Home" });
 }
 
+async function sendemailinvite() {
+  // let passcode = await fetchy(`/api/contact/passcode`,"GET")
+  // console.log(appUser.value)
+  // return await fetchy(`/api/email/invite`, "POST", { body: { to: appUser.value, content: passcode } })
+}
 
 function showAddApp()  {
     showAddAppContacts.value = true;
@@ -60,9 +66,11 @@ function cancel()  {
     showAddEmailContacts.value = false;
 }
 
-function submitAddApp()  {
+async function submitAddApp()  {
     // await createUserContact()
-
+    let passcode = await fetchy(`/api/contact/passcode`,"GET")
+    console.log(appUser.value)
+    await fetchy(`/api/email/invite`, "POST", { body: { to: appUser.value, content: passcode } })
     showAddAppContacts.value = false;
     appUser.value ='';
 }
@@ -92,8 +100,9 @@ onBeforeMount(async () => {
 
 <template>
     <main>
+    <div class="navigation">
       <img @click="back" src="@/assets/images/back.svg"/>
-  
+    </div>
     <h1>Your Contacts</h1>
 
     <div class="section">
@@ -127,14 +136,14 @@ onBeforeMount(async () => {
                     <label for="content">Invite App User:</label>
                     <textarea id="content" v-model="appUser" placeholder="User Email" required> </textarea>
                     <div class="buttons">
-                      <button type="submit" class="" >Submit</button>
+                      <button type="submit" class="" @click="sendemailinvite">Submit</button>
                       <button class="" @click="cancel" >Cancel</button>
                     </div>
                   </form>
             </div>
         </div>
 
-        <button @click="showAddApp">Invite User to App</button>
+        <button class="blue" @click="showAddApp">Invite User to App</button>
     </div>
 
     <div class="section">
@@ -175,13 +184,14 @@ onBeforeMount(async () => {
                   </form>
             </div>
         </div>
-        <button @click="showAddEmail">Add Email Contact</button>
+        <button class="pink" @click="showAddEmail">Add Email Contact</button>
     </div>
   
     </main>
   </template>
   
   <style scoped>
+  
   h1 {
     text-align: center;
   }
@@ -211,6 +221,14 @@ onBeforeMount(async () => {
     margin-bottom: 10px;
   }
 
+  .blue{
+    background-color: #9FB9C7;
+    color: #131313
+  }
+  .pink{
+    background-color: #EDB4C7;
+    color: #131313
+  }
   .user {
     display: flex;
     flex-direction: row;
@@ -275,7 +293,10 @@ onBeforeMount(async () => {
     }
 
     main {
-        height: 100vh;
+      min-height: 100vh; 
+      padding-top: 15%;
+      padding-left: 5%;
+      padding-right: 5%;
     }
       
     

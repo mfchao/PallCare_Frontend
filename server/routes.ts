@@ -184,7 +184,7 @@ class Routes {
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
-  @Router.get("/wishes/author/:author")
+  @Router.get("/wishes/:author/author")
   async getWishByAuthor(username: string) {
     const user = (await User.getUserByUsername(username))._id;
     return await Responses.wishes(await Wish.getByAuthor(user));
@@ -497,8 +497,9 @@ class Routes {
   }
 
   //CHECK//
-  @Router.get("/letter/receiver")
-  async getLetterbyReceiver(user: ObjectId) {
+  @Router.get("/letter/received")
+  async getLetterbyReceiver(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
     return await Letter.getLetterByReceiver(user);
   }
 
@@ -735,10 +736,28 @@ class Routes {
     return await Contact.getEmailContactsbyOwner(user);
   }
 
+  @Router.get("/contact/:username")
+  async getInitialBoundPatientNamebyContactUsername(username: string) {
+    const user = await User.getUserByUsername(username);
+    const contacts = await Contact.getContactbyContactid(user._id);
+    //if no such contacts
+    if (!contacts) {
+      throw new Error("Contact not found,or this is a patient");
+    }
+    //else return the initial bounded patient name
+    return (await User.getUserById(contacts[0].owner)).username;
+  }
+
   @Router.post("/contact/passcode")
   async createPatientPasscode(session: WebSessionDoc, passcode: string) {
     const user = WebSession.getUser(session);
     return await Contact.createPatientPasscode(user, passcode);
+  }
+
+  @Router.get("/contact/passcode")
+  async getPatientPasscode(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    return await Contact.getPatientPasscode(user);
   }
 
   @Router.post("/contact/passcode/verified")
@@ -772,6 +791,15 @@ class Routes {
   async sendEmail(user: ObjectId, to: string, content: string) {
     const username = (await User.getUserById(user)).username;
     await Email.send(username, to, content);
+    return { msg: "Email sent!" };
+  }
+
+  @Router.post("/email/invite")
+  async sendEmailinvitation(session: WebSessionDoc, to: string, content: string) {
+    const user = WebSession.getUser(session);
+    const username = (await User.getUserById(user)).username;
+    let contents = username + " has invited you to join ALWAYS! Please use the passcode below to register! \n" + "PASSCODE" + content;
+    await Email.send(username, to, contents);
     return { msg: "Email sent!" };
   }
 

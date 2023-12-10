@@ -43,7 +43,7 @@ async function login() {
       </div>
     </fieldset>  
       <div >
-        <button type="submit" class="pure-button-blue" >Login</button>
+        <button type="submit" class="blackbuttoncenterlong" >Login</button>
       </div>
 
   </form>

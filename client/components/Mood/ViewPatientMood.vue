@@ -17,29 +17,22 @@ const isLoading = ref(true);
 
 
 onBeforeMount(async () => {
-    refreshMood(patientUsername.value);
+    void refreshMood(patientUsername.value);
     await getPreviousMoods(patientUsername.value);
     isLoading.value = false;
 });
 </script>
 
 <template>
-    <div class="container">
+    <div >
 
     <div v-if="hasMood" >
-        <h2>{{patientUsername}} is feeling</h2>
-        <div class="mood-emoji">{{ userMood }}</div>
-        <h2>right now.</h2>
+        <h2>{{patientUsername}} is feeling {{ userMood }} right now.</h2>
     </div>
     <div v-else>
         <h2> {{patientUsername}} has not set a current mood.</h2>
     </div>
 
-    
-    <hr class="separator">
-
-
-    <h2>{{patientUsername}}'s past moods</h2>
     <div class="previous-moods" v-if="hasPreviousMoods && !isLoading">
         <div v-for="(mood, index) in [...previousMoods].reverse()" :key="index" class="previous-mood">
             <p class="past-mood">{{ mood }}</p>
@@ -206,6 +199,11 @@ button {
     box-shadow: 2px 5px 5px #a8a8a8;
     border-radius: 10px;
     margin-right: 10px;
+}
+
+h2 {
+    text-align: left;
+    margin-left: 10px;
 }
 
 </style>

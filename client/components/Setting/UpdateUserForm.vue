@@ -1,12 +1,18 @@
 <script setup lang="ts">
+import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+
+const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 
 let username = ref("");
 let password = ref("");
 
 const { updateUser, updateSession } = useUserStore();
-
+const styleObject = computed(() => ({
+      '--font-size': fontSize.value,
+}));
 async function updateUsername() {
   await updateUser({ username: username.value });
   await updateSession();
@@ -24,7 +30,7 @@ async function updatePassword() {
   <div class="section">
   <form @submit.prevent="updateUsername" >
     <fieldset>
-      <legend>Change your username</legend>
+      <legend :style="styleObject">Change your username</legend>
       <input class="custom-input" type="text" placeholder="New username" v-model="username" required />
       <button type="submit" >Update username</button>
     </fieldset>
@@ -32,7 +38,7 @@ async function updatePassword() {
 
   <form @submit.prevent="updatePassword" >
     <fieldset>
-      <legend>Change your password</legend>
+      <legend :style="styleObject">Change your password</legend>
       <input class="custom-input" type="password" placeholder="New password" v-model="password" required />
       <button type="submit" >Update password</button>
     </fieldset>
@@ -85,6 +91,9 @@ button {
   height: 40px;
 }
 
+legend {
+  font-size: var(--font-size);
+}
 
 button:hover {
   background:rgba(255, 255, 255, 0.3); 

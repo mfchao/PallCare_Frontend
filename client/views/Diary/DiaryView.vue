@@ -5,7 +5,7 @@ import router from "../../router";
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.png"/>
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
       <text class="pagetitle">Diary</text>
     </div>
     <div class="pageexplainationdiv">
@@ -20,7 +20,7 @@ import router from "../../router";
     </div>
     <div class="previousDiarytitle">
       <text class="previousDiary">Previous Diaries</text>
-      <input type="text" class="diarysearchbar" placeholder="Search" />
+      <input type="text" class="diarysearchbar" placeholder="" />
     </div>
     <DiaryListComponent />
   </body>
@@ -138,7 +138,7 @@ body {
   align-items: center;
   gap: 10px;
   border-radius: var(--numbers-spacing-12, 12px);
-  border: 1.3px solid #000;
+  border: 0px solid #000;
   background: #F0E7D8;
 }
 .blank{

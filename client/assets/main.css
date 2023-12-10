@@ -3,7 +3,11 @@
 :root {
   --red: rgb(208, 67, 12);
   --base-bg: #f1f3f5;
+
+  --font-size: 16px;
+  /* Default font size */
 }
+
 
 
 button.button-error {
@@ -126,7 +130,7 @@ h1 {
   color: #000;
   text-align: center;
   font-family: New York;
-  font-size: 30px;
+  font-size: var(--font-size);
   font-style: italic;
   font-weight: 496;
   line-height: normal;
@@ -142,15 +146,13 @@ h2 {
   color: #000;
   text-align: center;
   font-family: SF Pro Display;
-  font-size: 19px;
+  font-size: var(--font-size);
   font-weight: 1em;
   line-height: normal;
 }
 
 main {
-  padding-left: 5%;
-  padding-right: 5%;
-  padding-top: 10%;
+
   background: #F0E7D8;
   animation: fadeInAll 1.5s ease-in;
 }
@@ -233,15 +235,27 @@ input:checked+.slider:before {
   border-radius: 15px;
 }
 
-.navigation{
+h3 {
+  font-size: var(--font-size);
+}
+
+p {
+  font-size: var(--font-size);
+}
+
+
+
+
+.navigation {
   display: flex;
   width: 300px;
-  align-items: center;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 23px;
 }
 
-.pagetitle{
+.pagetitle {
   display: flex;
   width: 240px;
   height: 45px;

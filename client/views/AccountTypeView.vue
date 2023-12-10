@@ -72,7 +72,7 @@ onBeforeMount(() => {
             <h2>FAMILY OR FRIENDS</h2>
         </div>
     </section>
-    <button @click="preferences" > Next</button>
+    <button class="blackbuttoncenterlong" @click="preferences" > Next</button>
   </main>
 </template>
 
@@ -82,6 +82,8 @@ main.centered {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 60px;
+  gap: 40px;
 }
 
 h1 {

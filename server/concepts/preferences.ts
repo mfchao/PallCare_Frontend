@@ -43,6 +43,14 @@ export default class PreferenceConcept {
     return userPreferences;
   }
 
+  async getFontSize(user: ObjectId) {
+    const userPreferences = await this.preferences.readOne({ user });
+    if (!userPreferences) {
+      throw new NotFoundError("No preferences found for this user.");
+    }
+    return userPreferences.fontSize;
+  }
+
   /**
    * Create or Update a preference for a specific user
    * @param user ObjectId associated with a user
@@ -50,6 +58,7 @@ export default class PreferenceConcept {
    * @returns modifies 'this.preferences'
    */
   async updatePreference(user: ObjectId, update: Partial<PreferenceDoc>) {
+    update.timeCapsule = Number(update.timeCapsule);
     await this.preferences.updateOne({ user }, update);
     return { msg: "Updated preferences.", preferences: await this.preferences.readOne({ user }) };
   }
