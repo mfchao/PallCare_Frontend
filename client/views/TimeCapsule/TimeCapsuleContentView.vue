@@ -25,13 +25,13 @@ onBeforeMount(async () => {
   <body>
   <div class="navigation">
     <img @click="router.push({ name: 'TimeCapsule' })" src="@/assets/images/back.svg" />
-    <text class="pagetitle">capsule contents</text>
+    <text class="pagetitle">TIME MACHINE contents</text>
   </div>
   <div class="pageexplainationdiv">
-      <text class="pageexplaination">In time capsule content, you are able to: 
-      <br>1. Create a letter and set it to be sent at timecapsule activation date
-      <br>2. Set an existed diary to be deleted at timecapsule activation date
-      <br>3. Create a new wish and set it to be published at timecapsule activation date
+      <text class="pageexplaination">
+      1. Create a letter and set it to be sent at activation date
+      <br>2. Set an existed diary to be deleted or published at activation date
+      <br>3. Create a new wish and set it to be published at activation date
       </text>
     </div>
     <div class="creatediv" @click="router.push({ name: 'TimeCapsuleAdd' })" @refreshContent="getTimeCapsule">
@@ -121,7 +121,7 @@ onBeforeMount(async () => {
   background-color: #f0e7d8;
 }
 .pageexplainationdiv{
-  height: 130px;
+  height: 110px;
 }
 .pageexplaination{
   font-size: 15px;
@@ -137,7 +137,7 @@ onBeforeMount(async () => {
 
 .previousDiary {
   display: flex;
-  width: 171px;
+  width: 271px;
   height: 35px;
   flex-direction: column;
   justify-content: center;
@@ -150,8 +150,8 @@ onBeforeMount(async () => {
 }
 
 .diarysearchbar {
-  display: flex;
-  width: 103px;
+
+  width: 2px;
   height: 26px;
   padding: 0px 7px;
   justify-content: flex-end;
@@ -160,5 +160,6 @@ onBeforeMount(async () => {
   border-radius: var(--numbers-spacing-12, 12px);
   border: 1.3px solid #000;
   background: #f0e7d8;
+  opacity: 0;
 }
 </style>

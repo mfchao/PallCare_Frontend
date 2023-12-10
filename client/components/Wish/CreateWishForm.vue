@@ -30,7 +30,9 @@ const createWish = async () => {
   } catch (_) {
     return;
   }
-  await addToTimeCapsule(currentUsername, wish._id, "Wish", behaviorIsSend.value ? "send" : "delete");
+  if (timeCapsule.value) {
+    await addToTimeCapsule(currentUsername, wish._id, "Wish", behaviorIsSend.value ? "send" : "delete");
+  }
   emit("refreshWishes");
   emptyForm();
   await router.push({ name: "Wish" });

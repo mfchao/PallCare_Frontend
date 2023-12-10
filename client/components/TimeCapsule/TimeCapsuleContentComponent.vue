@@ -39,7 +39,7 @@ async function initWishComponent() {
     await deleteContent();
   }
   // editRoutePath.value = `/wish/edit/${delay.content}`;
-  editRoutePath.value = "/time_capsule/content";
+  editRoutePath.value = `/time_capsule/content`;
   behaviorTag.value = props.delay.behavior;
 }
 
@@ -70,12 +70,114 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <body @click="router.push({ path: editRoutePath })">
-    <p>{{ props.delay.type }}</p>
-    <p>{{ content }}</p>
-    <p>Capsule to {{ behaviorTag }}</p>
-  </body>
-  <button @click="deleteContent">Remove</button>
+  <div @click="router.push({ path: editRoutePath })">
+    <div class="card">
+      <div class="top">
+        <span v-if="props.delay.type == 'Wish'" class="ribbon">WISH</span>
+        <span v-if="props.delay.type == 'Diary'" class="ribbon2">DIARY</span>
+        <text class="date">Capsule to {{ behaviorTag }}</text>
+      </div>
+      <div class="bottom">
+        <text class="diarycontent">{{ content.substring(0, 90) + ".." }}</text>
+        <button class="little-black-capsule" @click="deleteContent">Remove</button>
+      </div>
+    </div>
+  </div>
+  
 </template>
 
-<style scoped></style>
+<style scoped>
+
+.card {
+  display: flex;
+  width: 300px;
+  height: 95px;
+  padding: 1.5px 0px 9px 1.5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: var(--numbers-spacing-12, 12px);
+  border: 1.5px solid #000;
+}
+.top {
+  display: flex;
+  width: 350px;
+  height: 28px;
+  padding: 0px -10px;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.ribbon {
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+  position: relative;
+  left: -10px;
+  box-shadow: 2px 2px 6px #9d9c9c;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(-20deg);
+  background-color: #edb4c7;
+  color: white;
+}
+.ribbon2 {
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+  position: relative;
+  left: -10px;
+  box-shadow: 2px 2px 6px #9d9c9c;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(-20deg);
+  background-color: #9fb9c7;
+  color: rgb(0, 0, 0);
+}
+.date {
+  display: flex;
+  width: 207px;
+  height: 15px;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  color: #000;
+  font-family: SF Pro Display;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 82.938%;
+}
+.bottom {
+  display: flex;
+  width: 225px;
+  padding: 0px 20px 0px 13px;
+  align-items: flex-start;
+  gap: 0px;
+}
+.diarycontent {
+  display: flex;
+  width: 190px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #8d8989;
+  font-family: SF Pro Display;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.little-black-capsule {
+  display: flex;
+  width: 95px;
+  height: 35px;
+  background: #131313;
+  font: 100% SF Pro Display;
+  font-weight: 500;
+  line-height: 90%;
+  font-size: 16px;
+  border-radius: 20px;
+}
+</style>
