@@ -110,7 +110,7 @@ onBeforeMount(async () => {
               <img class="profile-pic-patient" src="@/assets/images/profile.svg"/>
               <h1 class="username">{{patientUsername}}</h1>
             </div>
-            
+    
             <ViewPatientMood/>
             <hr class="separator">
             
