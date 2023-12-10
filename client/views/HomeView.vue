@@ -105,7 +105,7 @@ onBeforeMount(async () => {
             <MoodForm/>
           </div>
 
-          <div v-else-if="!isLoading" class="container">
+          <div v-else-if="isFamily && !isLoading" class="container">
             <div class="header">
               <img class="profile-pic-patient" src="@/assets/images/profile.svg"/>
               <h1 class="username">{{patientUsername}}</h1>
