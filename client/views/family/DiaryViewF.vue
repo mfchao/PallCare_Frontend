@@ -12,7 +12,7 @@ const { patientUsername } = storeToRefs(usePreferenceStore());
     <main>
         <body>
             <div class="navigation">
-                <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
+                <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg"/>
                 <text class="pagetitle">Diaries by {{patientUsername}}</text>
             </div>
             <DiaryListComponent />

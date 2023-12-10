@@ -6,7 +6,7 @@ import router from "../../router";
 <template>
   <body>
     <div class="navigation">
-        <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
+        <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg"/>
         <text class="pagetitle">FORUM</text>
     </div>
     <div class="pageexplainationdiv">
