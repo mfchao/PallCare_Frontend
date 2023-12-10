@@ -4,71 +4,31 @@ import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
 
+const { setNavOff } = useNavigationStore();
 
-const { setNavOff, setNavOn } = useNavigationStore();
-
-async function back()  {
-  setNavOn();
-  await router.push({ name: props.capsule ? 'TimeCapsuleAdd' : 'Letter' })
-}
-
-
-
-const { createLetter, getLetterContactNames } = useLetterStore();
+const { createLetter } = useLetterStore();
 //to is a list of string
-const props = defineProps(["capsule"]);
-let to = Array<string>();
-let recv = ref("");
+const props = defineProps(["to"]);
 let content = ref("");
 let responseEnabled = ref<boolean>(false);
 let delay = ref("");
 let delay_date = ref("");
-let contacts = ref<string[]>([]);
 
 onBeforeMount(async () => {
   setNavOff();
-  contacts.value = await getLetterContactNames();
 });
-function checkifselected(selectedcontact: any) {
-  if (to.includes(selectedcontact)) {
-    return " ✓";
-  } else {
-    return;
-  }
-}
-async function defualtfunction(selectedcontact: any) {
-  let newrecv = "";
-  if (to.includes(selectedcontact)) {
-    to.splice(to.indexOf(selectedcontact), 1);
-    for (let i = 0; i < to.length; i++) {
-      newrecv = newrecv.concat(to[i] + "; ");
-    }
-  } else {
-    to.push(selectedcontact);
-    newrecv = recv.value.concat(selectedcontact + "; ");
-  }
-  recv.value = newrecv;
-}
+
 async function submitForm() {
   try {
-    if (props.capsule) {
-      await createLetter(to, content.value, false, "0");
-    } else {
-      await createLetter(to, content.value, responseEnabled.value, delay_date.value);
-    }
+    await createLetter(props.to, content.value, responseEnabled.value, delay_date.value);
   } catch (e) {
     await router.push({ name: "Letter" });
   }
-  await router.push({ name: props.capsule ? "TimeCapsuleContent" : "Letter" });
 }
 </script>
 <template>
   <body>
-    <div class="navigation">
-      <img @click="back" src="@/assets/images/back.svg" />
-      <text class="pagetitle">New Letter</text>
-    </div>
-
+    <text class="pagetitle">Send Letter to {{ props.to }}</text>
     <form class="create-form" @submit.prevent="submitForm">
       <div class="letterinputspace">
         <textarea class="letter-content" id="content" v-model="content" placeholder="Write the letter here!" required> </textarea>
@@ -82,7 +42,7 @@ async function submitForm() {
         <fieldset class="letter-fields">
           <div class="left">
             <!-- Response -->
-            <div v-if="!props.capsule" class="delay">
+            <div class="delay">
               <p class="form-subtitle">Allow Reply</p>
               <label class="switch">
                 <input type="checkbox" v-model="responseEnabled" />
@@ -90,7 +50,7 @@ async function submitForm() {
               </label>
             </div>
             <!-- Delay -->
-            <div v-if="!props.capsule" class="delay">
+            <div class="delay">
               <p class="form-subtitle">Delay</p>
               <label class="switch">
                 <input type="checkbox" id="delay" v-model="delay" />
@@ -101,30 +61,6 @@ async function submitForm() {
             <div v-if="delay">
               <p class="form-subtitle">Delay date</p>
               <input type="date" id="delay_date" v-model.trim="delay_date" placeholder="" required />
-            </div>
-            <!-- 
-            <div class="delay">
-              <p class="form-subtitle">Time Capsule</p>
-              <label class="switch">
-                <input type="checkbox" v-model="timecapsule">
-                <span class="slider round"></span>
-              </label>
-            </div> -->
-          </div>
-
-          <div class="right">
-            <div class="dropdown">
-              <div class="rec">
-                <text class="receiver">Receiver</text>
-               </div>
-              
-              <div class="dropdown-content">
-                <p v-for="contact in contacts" :key="contact">
-                  <p @click="defualtfunction(contact)">{{ contact }}{{ checkifselected(contact) }}</p>
-                </p>
-              </div>
-              <p> </p>
-              <text class="contact" id="to" placeholder="Enter receiver's name" required>{{ recv }}</text>
             </div>
           </div>
         </fieldset>
@@ -143,7 +79,7 @@ body {
   flex-direction: column;
   background: #f0e7d8;
 }
-.pagetitle{
+.pagetitle {
   display: flex;
   width: 240px;
   height: 45px;
@@ -152,7 +88,7 @@ body {
   flex-shrink: 0;
   color: #131313;
   font-family: New York;
-  font-size: 35px;
+  font-size: 20px;
   font-style: normal;
   font-weight: 496;
   line-height: normal;
@@ -206,7 +142,7 @@ body {
   background: #9fb9c7;
 }
 
-.rec{
+.rec {
   display: flex;
   width: 100px;
   height: 27px;
@@ -223,7 +159,7 @@ body {
   border: 1.3px solid #000;
   /* padding-bottom: 5px; */
 }
-.receiver{
+.receiver {
   color: #000;
   font-family: SF Pro Display;
   position: relative;
@@ -231,7 +167,7 @@ body {
   font-weight: 500;
   padding-left: 10px;
   line-height: 0;
-  background-color: #EDB4C7;
+  background-color: #edb4c7;
   text-align: bottom;
 }
 textarea.letter-content {

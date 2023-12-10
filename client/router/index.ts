@@ -13,6 +13,7 @@ import HomeView from "../views/HomeView.vue";
 import { CreateLetterView, EditLetterView, LetterView, ResponseLetterView } from "../views/Letter/_letterView";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
+import ProfilePageView from "../views/ProfilePageView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import SettingView from "../views/SettingView.vue";
 import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
@@ -72,9 +73,10 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/diaryF",
+      path: "/diaryF/:username",
       name: "DiaryF",
       component: DiaryViewF,
+      props: (route) => ({ username: route.params.username }),
       meta: { requiresAuth: true },
     },
     {
@@ -84,9 +86,10 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/wishF",
+      path: "/wishF/:username",
       name: "WishF",
       component: WishViewF,
+      props: (route) => ({ username: route.params.username }),
       meta: { requiresAuth: true },
     },
     {
@@ -231,6 +234,13 @@ const router = createRouter({
       path: "/time_capsule/add",
       name: "TimeCapsuleAdd",
       component: TimeCapsuleAddContentView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/profile/:username",
+      name: "PatientProfile",
+      component: ProfilePageView,
+      props: (route) => ({ username: route.params.username }),
       meta: { requiresAuth: true },
     },
     {

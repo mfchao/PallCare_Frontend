@@ -18,10 +18,10 @@ const { getUserType } = useUserStore();
 const { refreshMood } = useMoodStore();
 const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 const { setNavOff, setNavOn } = useNavigationStore();
-const {getBoundPatientNamebyContactUsername } = usePreferenceStore();
+const { getBoundPatientNamebyContactUsername } = usePreferenceStore();
 
 const styleObject = computed(() => ({
-      '--font-size': fontSize.value,
+  "--font-size": fontSize.value,
 }));
 
 let currentDate = formatDate(new Date());
@@ -32,7 +32,6 @@ async function loginUser() {
 
 async function registerUser() {
   void router.push({ name: "Register" });
-  
 }
 
 async function settings() {
@@ -58,120 +57,101 @@ async function letter() {
 }
 
 onBeforeMount(async () => {
-
-
   isLoading.value = true;
   await getUserType(currentUsername.value);
 
   await getBoundPatientNamebyContactUsername(currentUsername.value);
 
-
-  if(isFamily && patientUsername.value) {
+  if (isFamily && patientUsername.value) {
     setNavOff();
 
     void refreshMood(patientUsername.value);
-  } else if (currentUsername.value){
+  } else if (currentUsername.value) {
     void refreshMood(currentUsername.value);
   }
 
   setNavOn();
   isLoading.value = false;
-
-  
 });
-
-
-
 </script>
 
 <template>
-    <main>
-  
-<!-- home page -->
-        <div v-if="isLoggedIn" class="home-container">
-          <div class="flex-container">
-            <div>
-              <p id="date" class="text-left date" :style="styleObject">{{currentDate}}</p>
-              <h1 :style="styleObject" class="text-left">Hi {{ currentUsername }} !</h1>
-            </div>
-            <!-- <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/> -->
-            <div class="profile-container">
-              <img class="profile-pic" src="@/assets/images/profile.svg"/>
-              <div v-if="hasMood && !isFamily" class="mood-emoji">{{ userMood }}</div>
-            </div>
-          </div>
-          
-          <div v-if="!isFamily && !isLoading">
-            <MoodForm/>
-          </div>
-
-          <div v-else-if="isFamily && !isLoading" class="container">
-            <div class="header">
-              <img class="profile-pic-patient" src="@/assets/images/profile.svg"/>
-              <h1 class="username">{{patientUsername}}</h1>
-            </div>
-    
-            <ViewPatientMood/>
-            <hr class="separator">
-            
-            <div class="icon-container">
-              <img src="@/assets/images/diaryON.svg" class="navImage" @click="diary"/>
-              <img src="@/assets/images/wishON.svg" class="navImage" @click="wish"/>
-              <img src="@/assets/images/letterON.svg" class="navImage2" @click="letter"/>
-            </div>
-          </div>
-
-
-          <div v-else>
-            <p>Loading Moods...</p>
-          </div>
-
-          <div class="botton">
-            <button v-if="!isFamily" @click="contacts" class="bluebuttoncenterlong" >Contacts</button>
-            <button @click="settings" class="blackbuttoncenterlong" >Settings</button>
-          </div>
-          
-          
+  <main>
+    <!-- home page -->
+    <div v-if="isLoggedIn" class="home-container">
+      <div class="flex-container">
+        <div>
+          <p id="date" class="text-left date" :style="styleObject">{{ currentDate }}</p>
+          <h1 :style="styleObject" class="text-left">Hi {{ currentUsername }} !</h1>
         </div>
-    
-
-
-
-<!-- welcome login -->
-
-        <div v-else>
-            <div >
-              <img class="animate logo" src="@/assets/images/logo.svg" />
-           </div>
-    
-          <div class="forms fade-in">
-            <div class="welcometitle">
-              <h1>Welcome to</h1>
-              <h1 class="always">ALWAYS</h1>
-            </div>
-            
-            <div class="info">
-              <img src="@/assets/images/placeholderimage0.png" width="300"/>
-            </div>
-
-            <div class="button-container">
-              <button class="blackbutton" @click="loginUser" ><p class="login">LOGIN</p></button>
-              <button class="bluebutton" @click="registerUser"> <p class="Register">REGISTER</p></button>
-            </div>
-            
-            
-          </div>
-          
+        <!-- <img @click="settings" class="settings-icon" src="@/assets/images/settings.svg"/> -->
+        <div class="profile-container">
+          <img class="profile-pic" src="@/assets/images/profile.svg" />
+          <div v-if="hasMood && !isFamily" class="mood-emoji">{{ userMood }}</div>
         </div>
-      </main>
+      </div>
+
+      <div v-if="!isFamily && !isLoading">
+        <MoodForm />
+      </div>
+
+      <div v-else-if="isFamily && !isLoading" class="container">
+        <div class="header">
+          <img class="profile-pic-patient" src="@/assets/images/profile.svg" />
+          <h1 class="username">{{ patientUsername }}</h1>
+        </div>
+
+        <ViewPatientMood />
+        <hr class="separator" />
+
+        <div class="icon-container">
+          <img src="@/assets/images/diaryON.svg" class="navImage" @click="diary" />
+          <img src="@/assets/images/wishON.svg" class="navImage" @click="wish" />
+          <img src="@/assets/images/letterON.svg" class="navImage2" @click="letter" />
+        </div>
+      </div>
+
+      <div v-else>
+        <p>Loading Moods...</p>
+      </div>
+
+      <div class="botton">
+        <button v-if="!isFamily" @click="contacts" class="bluebuttoncenterlong">Contacts</button>
+        <button @click="settings" class="blackbuttoncenterlong">Settings</button>
+      </div>
+    </div>
+
+    <!-- welcome login -->
+
+    <div v-else>
+      <div>
+        <img class="animate logo" src="@/assets/images/logo.svg" />
+      </div>
+
+      <div class="forms fade-in">
+        <div class="welcometitle">
+          <h1>Welcome to</h1>
+          <h1 class="always">ALWAYS</h1>
+        </div>
+
+        <div class="info">
+          <img src="@/assets/images/placeholderimage0.png" width="300" />
+        </div>
+
+        <div class="button-container">
+          <button class="blackbutton" @click="loginUser"><p class="login">LOGIN</p></button>
+          <button class="bluebutton" @click="registerUser"><p class="Register">REGISTER</p></button>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
 
 <style scoped>
-
-h1{
+h1 {
   font-size: 35px;
 }
-h1.always{
+h1.always {
   font-family: New York;
   font-size: 45px;
   font-style: normal;
@@ -185,16 +165,16 @@ h1.always{
   font-size: 20px;
 }
 
-.home-container{
+.home-container {
   margin: 0px;
 }
 .separator {
-  border-top: 1px solid rgba(0, 0, 0, 0.287); 
-  margin: 20px 0; 
+  border-top: 1px solid rgba(0, 0, 0, 0.287);
+  margin: 20px 0;
 }
 .container {
   border: 2px solid black;
-  padding: 10px; 
+  padding: 10px;
   border-radius: 10px;
   margin-bottom: 20px;
   margin-top: 10px;
@@ -208,14 +188,14 @@ h1.always{
 }
 
 .username {
-  width:auto;
+  width: auto;
   margin-left: 10px;
 }
 
 .profile-pic {
   width: 100px;
   height: auto;
-  margin-right: 20px; 
+  margin-right: 20px;
 }
 
 .icon-container {
@@ -224,16 +204,16 @@ h1.always{
   width: 100%;
   margin-bottom: 10px;
 }
-.navImage{
+.navImage {
   height: 1.5em;
 }
 
-.navImage2{
+.navImage2 {
   height: 1.2em;
 }
 
 main {
-  min-height: 100vh; 
+  min-height: 100vh;
   padding-top: 5%;
   padding-left: 5%;
   padding-right: 5%;
@@ -242,21 +222,19 @@ main {
 .date {
   font-size: 0.9em;
   letter-spacing: 0.02em;
-  color:rgb(81, 81, 81);
+  color: rgb(81, 81, 81);
 }
-
 
 .mood-custom {
   border: 3px solid green;
   border-radius: 50%;
 }
-  
+
 .info {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 
 .flex-container {
   display: flex;
@@ -289,11 +267,9 @@ main {
   width: 22px;
 }
 
-
 * {
-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
-
 
 .button-container {
   display: flex;
@@ -312,7 +288,7 @@ transition: all 0.5s ease;
 }
 
 .blackbutton {
-  background: #1E1E1E;
+  background: #1e1e1e;
   border-radius: 40px;
   width: 300px;
   height: 60px;
@@ -321,9 +297,9 @@ transition: all 0.5s ease;
 }
 
 p.login {
-  color: #FFF;
+  color: #fff;
   text-align: center;
-  
+
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -340,122 +316,142 @@ p.Register {
 }
 
 button:hover {
-background:rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .selected {
-background:rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .centered {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .logo {
-position: absolute;
-width: 10em;
-height: 100vh;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
+  position: absolute;
+  width: 10em;
+  height: 100vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .bg-container {
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }
 
-.background-image  {
-width: 100%;
-height: 100%;
-object-fit: cover;
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-
-
 
 .animate {
--webkit-animation: fadeinout 4s linear forwards;
-animation: fadeinout 4s linear forwards;
+  -webkit-animation: fadeinout 4s linear forwards;
+  animation: fadeinout 4s linear forwards;
 }
 
 .fade-in {
--webkit-animation: fadein 6s linear forwards;
-animation: fadein 6s linear forwards;
+  -webkit-animation: fadein 6s linear forwards;
+  animation: fadein 6s linear forwards;
 }
 
 .fade-in-form {
--webkit-animation: fadein 0.2s linear forwards;
-animation: fadein 0.2s linear forwards;
+  -webkit-animation: fadein 0.2s linear forwards;
+  animation: fadein 0.2s linear forwards;
 }
 
 @-webkit-keyframes fadeinout {
-0%,100% { opacity: 0; }
-60% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeinout {
-0%,100% { opacity: 0; }
-60% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fadein {
-0%, 60%{ opacity: 0; }
-100% { opacity: 1; }
+  0%,
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadein {
-0%, 60% { opacity: 0; }
-100% { opacity: 1; }
+  0%,
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInAll {
-0% {opacity: 0;}
-100% {opacity: 1;}
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
 
 .forms {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 100%;
-height: 120%;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-z-index: 10;
-gap: 50px;
-/* display: inline-flex; */
-background: #F0E7D8;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 120%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  gap: 50px;
+  /* display: inline-flex; */
+  background: #f0e7d8;
 }
 
-.bluebuttoncenterlong{
+.bluebuttoncenterlong {
   width: 220px;
   height: 60px;
 }
 
-.blackbuttoncenterlong{
-  background: #EDB4C7;
+.blackbuttoncenterlong {
+  background: #edb4c7;
   width: 220px;
   height: 60px;
-  color: #131313
+  color: #131313;
 }
 
-.botton{
+.botton {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   margin-top: 20px;
 }
-
 </style>

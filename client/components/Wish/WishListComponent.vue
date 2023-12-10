@@ -6,11 +6,11 @@ import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
 import EditWishForm from "./EditWishForm.vue";
 
-
 const WishComponent = defineAsyncComponent(() => import("./WishComponent.vue"));
 const { isLoggedIn } = storeToRefs(useUserStore());
 const { patientUsername } = storeToRefs(usePreferenceStore());
-
+const { currentUsername } = useUserStore();
+const props = defineProps(["username"]);
 const loaded = ref(false);
 let wishes = ref<Array<Record<string, string>>>([]);
 let editing = ref("");
@@ -34,12 +34,11 @@ function updateEditing(id: string) {
 }
 
 onBeforeMount(async () => {
-  if (patientUsername.value) {
-    await getWishes(patientUsername.value);
+  if (props.username) {
+    await getWishes(props.username);
   } else {
-    await getWishes();
+    await getWishes(currentUsername);
   }
-  
   loaded.value = true;
 });
 </script>

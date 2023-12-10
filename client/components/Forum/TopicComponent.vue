@@ -3,6 +3,7 @@ import { useForumStore } from "@/stores/forum";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, defineAsyncComponent, onBeforeMount, ref } from "vue";
+import router from "../../router";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
@@ -57,23 +58,25 @@ onBeforeMount(async () => {
 <template>
   <div>
     <div class="card">
-        <div class="top">
-          <text v-if="isInTopic" class="date">{{ formatEntryDate(currentTopic.dateCreated) }}   By {{ currentTopic.author }}</text>
-          <text v-else class="date">{{ formatEntryDate(props.topic.dateCreated) }}    By {{ props.topic.author }}</text>
+      <div class="top">
+        <text v-if="isInTopic" class="date">
+          {{ formatEntryDate(currentTopic.dateCreated) }} By <text :style="{ 'font-size': '30px' }" @click="router.push({ path: `/profile/${currentTopic.author}` })">{{ currentTopic.author }}</text>
+        </text>
+        <text v-else class="date">{{ formatEntryDate(props.topic.dateCreated) }} By {{ props.topic.author }}</text>
+      </div>
+      <div class="top">
+        <text class="topictitle">{{ currentTopic.title }}</text>
+      </div>
+      <div class="bottom" v-if="isInTopic">
+        <text class="topiccontent">{{ currentTopic.content }}</text>
+        <div class="buttons" v-if="canEdit">
+          <button class="little-black" @click="emit('editTopic', currentTopic._id)">Edit</button>
+          <button class="little-gray" @click="deleteTopic">Delete</button>
         </div>
-        <div class="top">
-          <text class="topictitle">{{ currentTopic.title }}</text>
-        </div>
-        <div class="bottom" v-if="isInTopic">
-          <text class="topiccontent">{{ currentTopic.content }}</text>
-          <div class="buttons" v-if="canEdit">
-            <button class="little-black" @click="emit('editTopic', currentTopic._id)">Edit</button>
-            <button class="little-gray" @click="deleteTopic">Delete</button>
-          </div>
-        </div>
-        <div class="bottom" v-else>        
-          <text class="topictitle">{{ props.topic.title }}</text>
-        </div>
+      </div>
+      <div class="bottom" v-else>
+        <text class="topictitle">{{ props.topic.title }}</text>
+      </div>
     </div>
     <section class="responses" v-if="isInTopic && loaded && responses.length !== 0">
       <article v-for="response in responses" :key="response._id">
