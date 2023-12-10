@@ -62,12 +62,12 @@ onBeforeMount(() => {
     <h1>Select <br>Account Type</h1>
     <section class="option-container">
       <div class="option patient" :class="{ option: true, patient: true, selected: patient }" @click="selectPatient">
-        <img src="@/assets/images/patient.png" alt="Patient" />
+        <img src="@/assets/images/patienttype.png" alt="Patient" />
         <label>I AM A</label>
         <h2>PATIENT</h2>
     </div>
         <div class="option family" :class="{ option: true, family: true, selected: family }" @click="selectFamily" >
-            <img src="@/assets/images/family.png" alt="Family/Friends" />
+            <img src="@/assets/images/otherusertype.png" alt="Family/Friends" />
             <label>I AM</label>
             <h2>FAMILY OR FRIENDS</h2>
         </div>
