@@ -6,14 +6,14 @@ import { useLetterStore } from "../../stores/letter";
 
 const { getLetterContactNames,getLetterById, updateLetter, getDelayByContentId, getReceiversUsername } = useLetterStore();
 const props = defineProps(["_id"]);
-let to = Array<string>()
-let recv = ref("")
+let to = Array<string>();
+let recv = ref("");
 let content = ref("");
 let responseEnabled = ref<boolean>(false);
 let delay = ref(true);
 let delay_date = ref("");
-let selectedcontact = ref("")
-let contacts = <Array<object>>[]
+let selectedcontact = ref("");
+let contacts = <Array<object>>[];
 
 
 onBeforeMount(async () => {

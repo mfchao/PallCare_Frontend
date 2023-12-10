@@ -184,13 +184,13 @@ class Routes {
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
-  @Router.get("/wishes/:author/author")
-  async getWishByAuthor(username: string) {
-    const user = (await User.getUserByUsername(username))._id;
+  @Router.get("/wishes/:author")
+  async getWishByAuthor(author: string) {
+    const user = (await User.getUserByUsername(author))._id;
     return await Responses.wishes(await Wish.getByAuthor(user));
   }
 
-  @Router.get("/wishes/:_id")
+  @Router.get("/wish/:_id")
   async getWishById(_id: ObjectId) {
     return await Responses.wish(await Wish.getWishById(_id));
   }

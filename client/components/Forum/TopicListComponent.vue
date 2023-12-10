@@ -6,7 +6,6 @@ import { useForumStore } from "../../stores/forum";
 import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
 import EditTopicForm from "./EditTopicForm.vue";
-import SearchTopicForm from "./SearchTopicForm.vue";
 
 const TopicComponent = defineAsyncComponent(() => import("./TopicComponent.vue"));
 const { isLoggedIn } = storeToRefs(useUserStore());
@@ -49,11 +48,11 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <div class="searchbar">
+    <!-- <div class="searchbar">
         <h2 v-if="!searchAuthor">Topics:</h2>
         <h2 v-else>Topics by {{ searchAuthor }}:</h2>
         <SearchTopicForm @getTopicsByAuthor="getTopics" />
-    </div>
+    </div> -->
     <section class="topics" v-if="loaded && topics.length !== 0">
         <article v-for="topic in topics" :key="topic._id">
           <Suspense>
