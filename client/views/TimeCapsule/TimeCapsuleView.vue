@@ -15,10 +15,10 @@ onBeforeMount(async () => {
   <body>
     <div class="navigation">
       <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg" />
-      <text class="pagetitle">Time Capsule</text>
+      <text class="pagetitle">Time Machine</text>
     </div>
     <div class="pageexplainationdiv">
-      <text class="pageexplaination">In Time Capsule, selected contents will be activated after the automatic realease time you set. </text>
+      <text class="pageexplaination">In Time Machine, selected contents will be activated after the realease time you set. </text>
     </div>
     <div class="release">
       <div class="release-date">
