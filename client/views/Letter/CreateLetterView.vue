@@ -23,6 +23,7 @@ let content = ref("");
 let responseEnabled = ref<boolean>(false);
 let delay = ref("");
 let delay_date = ref("");
+let timemachine = ref<boolean>(false);
 let contacts = ref<string[]>([]);
 
 onBeforeMount(async () => {
