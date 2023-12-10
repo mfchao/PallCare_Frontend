@@ -87,8 +87,8 @@ body {
   align-items: center;
   gap: 39px;
   flex-shrink: 0;
-  background: #FFFFFF;
-  border-radius: 10px;
+  border-radius: var(--numbers-spacing-12, 12px);
+  background: #9FB9C7;
 }
 
 .createdivtitle{
