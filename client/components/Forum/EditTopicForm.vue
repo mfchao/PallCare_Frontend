@@ -3,7 +3,7 @@ import { ref } from "vue";
 import router from "../../router";
 import { fetchy } from "../../utils/fetchy";
 
-const props = defineProps(["topic"]);
+const props = defineProps(["topic", "_id"]);
 const title = ref(props.topic.title);
 const content = ref(props.topic.content);
 const emit = defineEmits(["editTopic", "refreshTopics"]);

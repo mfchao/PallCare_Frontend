@@ -3,10 +3,12 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { useTCStore } from "../../stores/timeCapsule";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOff } = useNavigationStore();
 const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["wish", "capsule"]);
 const emit = defineEmits(["editWish", "refreshWishes"]);
@@ -40,6 +42,11 @@ async function addWishToCapsule(behavior: "send" | "delete") {
   await addToTimeCapsule(currentUsername.value, props.wish._id, "Wish", behavior);
   emit("refreshWishes");
 }
+
+function enterEdit() {
+  router.push({ path: `/wish/edit/${props.wish._id}` });
+  setNavOff();
+}
 </script>
 
 <template>
@@ -57,7 +64,7 @@ async function addWishToCapsule(behavior: "send" | "delete") {
         <button class="little-black" @click="addWishToCapsule('delete')">Delete</button>
       </div>
       <div class="buttons" v-else-if="canEdit">
-        <button class="little-black" @click="router.push({ path: `/wish/edit/${wish._id}` })">Edit</button>
+        <button class="little-black" @click="enterEdit()">Edit</button>
         <button class="little-gray" @click="deleteWish">Delete</button>
       </div>
     </div>

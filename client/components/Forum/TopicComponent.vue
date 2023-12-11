@@ -2,28 +2,24 @@
 import { useForumStore } from "@/stores/forum";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { computed, defineAsyncComponent, onBeforeMount, ref } from "vue";
+import { defineAsyncComponent, onBeforeMount, ref } from "vue";
+import router from "../../router";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
 const PostComponent = defineAsyncComponent(() => import("../Post/PostComponent.vue"));
 const emit = defineEmits(["editTopic", "refreshTopics"]);
 const { currentUsername } = storeToRefs(useUserStore());
-const { isAuthor } = useUserStore();
+const { isAuthor } = useForumStore();
 const { currentTopic } = useForumStore();
 const { isInTopic } = useForumStore();
 
 const loaded = ref(false);
 const props = defineProps(["topic"]);
 let responses = ref<Array<Record<string, string>>>([]);
+let canEdit = ref(false);
 
-const canEdit = computed(() => {
-  if (!isInTopic) {
-    return isAuthor(props.topic.author);
-  } else {
-    return isAuthor(currentTopic.author);
-  }
-});
+console.log(canEdit);
 
 const getResponses = async () => {
   let responseResults = [];
@@ -50,7 +46,12 @@ onBeforeMount(async () => {
   if (isInTopic) {
     await getResponses();
     loaded.value = true;
+    canEdit.value = await isAuthor(currentTopic._id);
+    console.log(canEdit.value);
+  }else{
+    canEdit.value = await isAuthor(props.topic._id);
   }
+  loaded.value = true;
 });
 </script>
 
@@ -67,7 +68,7 @@ onBeforeMount(async () => {
         <div class="bottom" v-if="isInTopic">
           <text class="topiccontent">{{ currentTopic.content }}</text>
           <div class="buttons" v-if="canEdit">
-            <button class="little-black" @click="emit('editTopic', currentTopic._id)">Edit</button>
+            <button class="little-black" @click="router.push({ path: `/forum/edit/${currentTopic._id}` })">Edit</button>
             <button class="little-gray" @click="deleteTopic">Delete</button>
           </div>
         </div>
