@@ -2,8 +2,10 @@
 import { defineEmits, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
+import { useNavigationStore } from "../../stores/navigation";
 import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOff } = useNavigationStore();
 const { deletesentLetter, removeunsentletter, getReceiversUsername } = useLetterStore();
 const props = defineProps(["letter","boundpatient"]);
 const emit = defineEmits(["refreshLetters"]);
@@ -19,9 +21,15 @@ async function deleteLetterEntry() {
   await deletesentLetter(props.letter._id);
   emit("refreshLetters");
 }
+
 async function removeLetterEntry() {
   await removeunsentletter(props.letter._id);
   emit("refreshLetters");
+}
+
+function enterEdit() {
+  router.push({ path: `/letter/edit/${props.letter._id}` });
+  setNavOff();
 }
 </script>
 

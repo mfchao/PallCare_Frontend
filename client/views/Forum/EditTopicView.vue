@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import EditTopicForm from '../../components/Forum/EditTopicForm.vue';
+
+const props = defineProps({
+  _id: String
+});
 </script>
 
 <template>
   <body>
-    <EditTopicForm />
+    <EditTopicForm :_id="props._id"/>
   </body>
 </template>
 

@@ -37,6 +37,12 @@ export const useForumStore = defineStore(
       await fetchy("/api/topics", "POST", { body: { title, body } });
     };
 
+    const isAuthor = async (topicId: string) => {
+      const topic = await fetchy(`/api/topics/${topicId}`, "GET");
+      const user = await fetchy("/api/session", "GET");
+      return topic.author.toString() === user.username.toString();
+    };
+
     return {
       isInTopic,
       currentTopic,
@@ -47,6 +53,7 @@ export const useForumStore = defineStore(
       getTopics,
       getTopic,
       createTopic,
+      isAuthor,
     };
   },
   { persist: true },

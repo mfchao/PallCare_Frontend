@@ -2,8 +2,10 @@
 import { ref } from "vue";
 import LetterListComponent from "../../components/Letter/LetterListComponent.vue";
 import router from "../../router";
+
 let searchcontent = ref("");
 let receiver = "";
+
 async function onEnter() {
   if (searchcontent.value == "") {
     return;
@@ -13,6 +15,7 @@ async function onEnter() {
   }
 }
 </script>
+
 <template>
   <!-- <main> -->
     <body>
@@ -37,6 +40,7 @@ async function onEnter() {
     </body>
   <!-- </main> -->
 </template>
+
 <style scoped>
 main {
   display: flex;

@@ -2,11 +2,15 @@
 import TopicComponent from '../../components/Forum/TopicComponent.vue';
 import router from '../../router';
 import { useForumStore } from '../../stores/forum';
+import { useNavigationStore } from '../../stores/navigation';
 
 const { exitTopic } = useForumStore();
+const { setNavOn } = useNavigationStore();
 
 const exit = () => {
+  // console.log('exit');
   exitTopic();
+  setNavOn();
   router.push({ name: 'Forum' });
 }
 </script>
