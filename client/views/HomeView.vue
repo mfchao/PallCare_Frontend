@@ -8,6 +8,7 @@ import { storeToRefs } from "pinia";
 import { computed, onBeforeMount, ref } from "vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
 import ViewPatientMood from "../components/Mood/ViewPatientMood.vue";
+import { useForumStore } from "../stores/forum";
 import { formatDate } from "../utils/formatDate";
 
 const isLoading = ref(true);
@@ -19,6 +20,7 @@ const { refreshMood } = useMoodStore();
 const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
 const { setNavOff, setNavOn } = useNavigationStore();
 const { getBoundPatientNamebyContactUsername, updatePrefStore } = usePreferenceStore();
+const { resetStore } = useForumStore();
 
 const styleObject = computed(() => ({
   "--font-size": fontSize.value,
@@ -70,7 +72,7 @@ onBeforeMount(async () => {
   } else if (currentUsername.value) {
     void refreshMood(currentUsername.value);
   }
-
+  resetStore(); // update the forum prior to clicking on it
   setNavOn();
   isLoading.value = false;
 });
