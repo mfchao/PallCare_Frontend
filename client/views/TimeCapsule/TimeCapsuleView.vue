@@ -45,7 +45,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 60px 18px 120px 18px;
+  padding: 60px 18px 150px 18px;
   justify-content: space-between;
   flex-direction: column;
   background: #f0e7d8;

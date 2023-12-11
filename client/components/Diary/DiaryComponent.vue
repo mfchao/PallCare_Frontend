@@ -165,7 +165,8 @@ menu {
   display: flex;
   width: 95px;
   height: 35px;
-  background: #595858;
+  background: #9fb9c7;
+  color: #131313;
   font: 100% SF Pro Display;
   font-weight: 500;
   line-height: 90%;

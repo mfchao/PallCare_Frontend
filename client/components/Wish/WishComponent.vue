@@ -11,7 +11,7 @@ import { formatEntryDate } from "../../utils/formatDate";
 const { setNavOff } = useNavigationStore();
 const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["wish", "capsule"]);
-const emit = defineEmits(["editWish", "refreshWishes"]);
+const emit = defineEmits(["refreshWishes"]);
 const { currentUsername } = storeToRefs(useUserStore());
 const { isContact, isAuthor } = useUserStore();
 
@@ -59,9 +59,9 @@ function enterEdit() {
     </div>
     <div class="bottom">
       <text v-if="canView" class="wishcontent">{{ props.wish.content.substring(0, 90) + ".." }}</text>
-      <div class="buttons" v-if="props.capsule">
-        <button v-if="props.wish.visibility == 'private'" class="little-black" @click="addWishToCapsule('send')">Send</button>
-        <button class="little-black" @click="addWishToCapsule('delete')">Delete</button>
+      <div class="buttons-capsule" v-if="props.capsule">
+        <button v-if="props.wish.visibility == 'private'" class="little-gray-capsule" @click="addWishToCapsule('send')">Future Publish</button>
+        <button class="little-black-capsule" @click="addWishToCapsule('delete')">Future Delete</button>
       </div>
       <div class="buttons" v-else-if="canEdit">
         <button class="little-black" @click="enterEdit()">Edit</button>
@@ -72,6 +72,39 @@ function enterEdit() {
 </template>
 
 <style scoped>
+.buttons-capsule{
+  display: flex;
+  width: 70px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+  position: relative;
+  top: -15px;
+}
+.little-gray-capsule {
+  display: flex;
+  width: 95px;
+  height: 35px;
+  background: #9fb9c7;
+  color: #131313;
+  font: 100% SF Pro Display;
+  font-weight: 500;
+  line-height: 90%;
+  font-size: 16px;
+  border-radius: 20px;
+}
+.little-black-capsule {
+  display: flex;
+  width: 95px;
+  height: 35px;
+  background: #131313;
+  font: 100% SF Pro Display;
+  font-weight: 500;
+  line-height: 90%;
+  font-size: 16px;
+  border-radius: 20px;
+}
 .card {
   display: flex;
   width: 300px;
@@ -93,7 +126,7 @@ p {
   height: 28px;
   padding: 0px -10px;
   align-items: center;
-  gap: 40px;
+  gap: 5px;
   flex-shrink: 0;
 }
 .date {

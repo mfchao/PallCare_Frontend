@@ -103,6 +103,9 @@ export default class LetterConcept<T> {
     const letters = await this.letters.readMany({type: "letters"});
     let result: LetterDoc<T>[] = [];
     for (const letter of letters) {
+      if (!letter.to) {
+        continue;
+      }
       for (const to of letter.to) {
         if (await compareIdbyString(to, receiver)) {
           result.push(letter);

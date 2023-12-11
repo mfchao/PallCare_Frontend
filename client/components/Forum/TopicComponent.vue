@@ -86,7 +86,7 @@ onBeforeMount(async () => {
     loaded.value = true;
     canEdit.value = await isAuthor(currentTopic._id);
     // console.log(canEdit.value);
-  }else{
+  } else {
     canEdit.value = await isAuthor(props.topic._id);
   }
   loaded.value = true;
