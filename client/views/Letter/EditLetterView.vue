@@ -2,8 +2,9 @@
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
+import { useNavigationStore } from "../../stores/navigation";
 
-
+const { setNavOn } = useNavigationStore();
 const { getLetterContactNames,getLetterById, updateLetter, getDelayByContentId, getReceiversUsername } = useLetterStore();
 const props = defineProps(["_id"]);
 let to = Array<string>();
@@ -14,18 +15,6 @@ let delay = ref(true);
 let delay_date = ref("");
 let selectedcontact = ref("");
 let contacts = <Array<object>>[];
-
-
-onBeforeMount(async () => {
-  const letter = await getLetterById(props._id)
-  content.value = letter.content;
-  responseEnabled.value = letter.responseEnabled;
-  delay_date.value = ((await getDelayByContentId(props._id))[0].activation).toString().substring(0,10)
-
-  let receiversstring = (await getReceiversUsername(letter.to)).toString()
-  selectedcontact.value = receiversstring
-  contacts = await getLetterContactNames();
-});
 
 async function defualtfunction(selectedcontact:any){
   let newrecv = ""
@@ -39,6 +28,7 @@ async function defualtfunction(selectedcontact:any){
     newrecv = recv.value.concat(selectedcontact+"; ")}
   recv.value = newrecv
 }
+
 async function submitForm() {
   // await updateLetter(props._id, { to:to, content: content.value, responseEnabled: responseEnabled.value, delay: delay_date.value});
   if (!delay.value){
@@ -51,11 +41,27 @@ async function submitForm() {
   await router.push({ name: "Letter" });
 }
 
+function returnToLetter() {
+  router.push({ name: "Letter" });
+  setNavOn();
+}
+
+onBeforeMount(async () => {
+  const letter = await getLetterById(props._id)
+  content.value = letter.content;
+  responseEnabled.value = letter.responseEnabled;
+  delay_date.value = ((await getDelayByContentId(props._id))[0].activation).toString().substring(0,10)
+
+  let receiversstring = (await getReceiversUsername(letter.to)).toString()
+  selectedcontact.value = receiversstring
+  contacts = await getLetterContactNames();
+});
 </script>
+
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Letter' })" src="@/assets/images/back.svg"/>
+      <img @click="returnToLetter()" src="@/assets/images/back.svg"/>
       <h1>Edit Letter</h1>
     </div>
 

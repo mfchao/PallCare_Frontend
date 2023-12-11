@@ -2,7 +2,9 @@
 import { defineEmits, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
+import { useNavigationStore } from "../../stores/navigation";
 
+const { setNavOff } = useNavigationStore();
 const { deletesentLetter, removeunsentletter, getReceiversUsername } = useLetterStore();
 const props = defineProps(["letter"]);
 const emit = defineEmits(["refreshLetters"]);
@@ -18,9 +20,15 @@ async function deleteLetterEntry() {
   await deletesentLetter(props.letter._id);
   emit("refreshLetters");
 }
+
 async function removeLetterEntry() {
   await removeunsentletter(props.letter._id);
   emit("refreshLetters");
+}
+
+function enterEdit() {
+  router.push({ path: `/letter/edit/${props.letter._id}` });
+  setNavOff();
 }
 </script>
 
@@ -36,7 +44,7 @@ async function removeLetterEntry() {
     <div class="bottom">
       <text v-if="props.letter.content !== null" class="diarycontent" @click="router.push({ path: `/letter/response/${letter._id}` })">{{ props.letter.content.substring(0, 90) + ".." }}</text>
       <div class="buttons">
-        <button v-if="props.letter.send == false" class="little-black" @click="router.push({ path: `/letter/edit/${letter._id}` })">Edit</button>
+        <button v-if="props.letter.send == false" class="little-black" @click="enterEdit()">Edit</button>
         <button v-if="props.letter.send == false" class="little-gray" @click="removeLetterEntry">Remove</button>
         <button v-if="props.letter.send == true" class="little-gray" @click="deleteLetterEntry">Delete</button>
       </div>

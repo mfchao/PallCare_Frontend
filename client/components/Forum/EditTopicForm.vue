@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import router from "../../router";
+import { useForumStore } from "../../stores/forum";
 import { fetchy } from "../../utils/fetchy";
 
+const { getTopic } = useForumStore();
+const { isInTopic, currentTopic } = useForumStore();
 const props = defineProps(["topic", "_id"]);
-const title = ref(props.topic.title);
-const content = ref(props.topic.content);
+const title = ref(currentTopic.title);
+const content = ref(currentTopic.content);
 const emit = defineEmits(["editTopic", "refreshTopics"]);
 
 const editTopic = async () => {
   try {
-    await fetchy(`/api/topics/${props.topic._id}`, "PATCH", 
+    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", 
     { body: { update: { title: title.value, content: content.value } } });
   } catch (e) {
     return;
@@ -18,16 +21,17 @@ const editTopic = async () => {
   emit("editTopic");
   emit("refreshTopics");
 };
+
 </script>
 
 <template>
     <div calss="navigation">
-      <img @click="router.push({ name: 'Topic/' + props.topic._id })" src="@/assets/images/back.svg" alt="arrow" />
+      <img @click="router.push({ name: 'Topic'})" src="@/assets/images/back.svg" alt="arrow" />
     </div>
     <form class="create-form" @submit.prevent="editTopic">
         <div class="inputspace">
         <input class="topic-title" id="title" v-model="title" placeholder="Enter Your New Title" required />
-        <textarea class="topic-content" id="content" v-model="content" required> {{ props.topic.content }} </textarea>
+        <textarea class="topic-content" id="content" v-model="content" required> {{ currentTopic.content }} </textarea>
         </div>
         
         <div class="base">

@@ -19,8 +19,6 @@ const props = defineProps(["topic"]);
 let responses = ref<Array<Record<string, string>>>([]);
 let canEdit = ref(false);
 
-console.log(canEdit);
-
 const getResponses = async () => {
   let responseResults = [];
   try {
@@ -47,7 +45,7 @@ onBeforeMount(async () => {
     await getResponses();
     loaded.value = true;
     canEdit.value = await isAuthor(currentTopic._id);
-    console.log(canEdit.value);
+    // console.log(canEdit.value);
   }else{
     canEdit.value = await isAuthor(props.topic._id);
   }
