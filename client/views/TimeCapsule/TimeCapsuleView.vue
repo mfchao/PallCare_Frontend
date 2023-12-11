@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { useTCStore } from "../../stores/timeCapsule";
 import { formatEntryDate } from "../../utils/formatDate";
+
+const { setNavOff } = useNavigationStore();
 const { getReleaseDate } = useTCStore();
 let releaseDate = ref<string>();
+
+function enterRoute(routename: string) {
+  router.push({ name: routename });
+  setNavOff();
+}
 
 onBeforeMount(async () => {
   releaseDate.value = formatEntryDate(await getReleaseDate());
@@ -27,16 +35,17 @@ onBeforeMount(async () => {
       <img src="@/assets/images/timecapsule.png" class="timeimage"/>
       <!-- <TimeCapsuleBGComponent /> -->
     </div>
-    <button class="bluebuttoncenterlong" @click="router.push({ name: 'Settings' })">Edit Release Time</button>
-    <button class="blackbuttoncenterlong" @click="router.push({ name: 'TimeCapsuleContent' })">Edit Contents</button>
+    <button class="bluebuttoncenterlong" @click="enterRoute('Settings')">Edit Release Time</button>
+    <button class="blackbuttoncenterlong" @click="enterRoute('TimeCapsuleContent')">Edit Contents</button>
   </body>
 </template>
+
 <style scoped>
 body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 60px 18px 120px 18px;
+  padding: 60px 18px 150px 18px;
   justify-content: space-between;
   flex-direction: column;
   background: #f0e7d8;

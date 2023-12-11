@@ -4,9 +4,11 @@ import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useDelayStore } from "../../stores/delay";
 import { useDiaryStore } from "../../stores/diary";
+import { useNavigationStore } from "../../stores/navigation";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
 
+const { setNavOn } = useNavigationStore();
 const { currentUsername } = useUserStore();
 const { addToTimeCapsule } = useTCStore();
 const { getDiaryById, modifyDiaryContent } = useDiaryStore();
@@ -42,6 +44,12 @@ async function submitForm() {
   await editTimeCapsule();
   await router.push({ name: "Diary" });
 }
+
+function returnToDiary() {
+  router.push({ name: "Diary" });
+  setNavOn();
+}
+
 onBeforeMount(async () => {
   const diary = await getDiaryById(props._id);
   content.value = diary.content;
@@ -57,10 +65,11 @@ onBeforeMount(async () => {
   }
 });
 </script>
+
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Diary' })" src="@/assets/images/back.svg" />
+      <img @click="returnToDiary" src="@/assets/images/back.svg" />
       <h1>Edit Diary</h1>
     </div>
     <text class="entry-date"></text>

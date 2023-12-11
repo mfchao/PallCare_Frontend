@@ -10,7 +10,7 @@ import EditTopicView from "../views/Forum/EditTopicView.vue";
 import ForumView from "../views/Forum/ForumView.vue";
 import TopicView from "../views/Forum/TopicView.vue";
 import HomeView from "../views/HomeView.vue";
-import { CreateLetterView, EditLetterView, LetterView, ResponseLetterView } from "../views/Letter/_letterView";
+import { CreateLetterView, EditLetterView, LetterView, ResponseLetterView, ResponseLetterViewF } from "../views/Letter/_letterView";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import ProfilePageView from "../views/ProfilePageView.vue";
@@ -136,6 +136,13 @@ const router = createRouter({
       path: "/letter/response/:_id",
       name: "ResponseLetter",
       component: ResponseLetterView,
+      props: (route) => ({ _id: route.params._id }),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/letter/responseF/:_id",
+      name: "ResponseLetterF",
+      component: ResponseLetterViewF,
       props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },

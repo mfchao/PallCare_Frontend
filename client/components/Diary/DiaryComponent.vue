@@ -3,10 +3,12 @@ import { storeToRefs } from "pinia";
 import { defineEmits } from "vue";
 import router from "../../router";
 import { useDiaryStore } from "../../stores/diary";
+import { useNavigationStore } from "../../stores/navigation";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
 import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOff } = useNavigationStore();
 const { deleteDiary } = useDiaryStore();
 const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["diary", "capsule"]);
@@ -20,6 +22,11 @@ async function deleteDiaryEntry() {
 async function addDiaryToCapsule(behavior: "send" | "delete") {
   await addToTimeCapsule(currentUsername.value, props.diary._id, "Diary", behavior);
   emit("refreshDiaries");
+}
+
+function enterEdit() {
+  router.push({ path: `/diary/edit/${props.diary._id}` });
+  setNavOff();
 }
 </script>
 
@@ -39,7 +46,7 @@ async function addDiaryToCapsule(behavior: "send" | "delete") {
         <button class="little-black-capsule" @click="addDiaryToCapsule('delete')">Future Delete</button>
       </div>
       <div class="buttons" v-else-if="props.diary.author == currentUsername">
-        <button class="little-black" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button>
+        <button class="little-black" @click="enterEdit()">Edit</button>
         <button class="little-gray" @click="deleteDiaryEntry">Delete</button>
       </div>
     </div>
@@ -158,7 +165,8 @@ menu {
   display: flex;
   width: 95px;
   height: 35px;
-  background: #595858;
+  background: #9fb9c7;
+  color: #131313;
   font: 100% SF Pro Display;
   font-weight: 500;
   line-height: 90%;

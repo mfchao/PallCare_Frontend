@@ -3,9 +3,11 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import TimeCapsuleContentComponent from "../../components/TimeCapsule/TimeCapsuleContentComponent.vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
 
+const { setNavOn } = useNavigationStore();
 const loaded = ref(false);
 const { getSelectContent } = useTCStore();
 const { currentUsername } = storeToRefs(useUserStore());
@@ -13,6 +15,11 @@ let delays = ref<Array<Record<string, string>>>([]);
 
 async function getTimeCapsule() {
   delays.value = await getSelectContent(currentUsername.value);
+}
+
+function returnToTimeCapsule() {
+  router.push({ name: "TimeCapsule" });
+  setNavOn();
 }
 
 onBeforeMount(async () => {
@@ -24,7 +31,7 @@ onBeforeMount(async () => {
 <template>
   <body>
   <div class="navigation">
-    <img @click="router.push({ name: 'TimeCapsule' })" src="@/assets/images/back.svg" />
+    <img @click="returnToTimeCapsule()" src="@/assets/images/back.svg" />
     <text class="pagetitle">TIME MACHINE contents</text>
   </div>
   <div class="pageexplainationdiv">

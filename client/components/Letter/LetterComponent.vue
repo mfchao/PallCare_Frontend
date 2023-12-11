@@ -2,9 +2,12 @@
 import { defineEmits, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useLetterStore } from "../../stores/letter";
+import { useNavigationStore } from "../../stores/navigation";
+import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOff } = useNavigationStore();
 const { deletesentLetter, removeunsentletter, getReceiversUsername } = useLetterStore();
-const props = defineProps(["letter"]);
+const props = defineProps(["letter","boundpatient"]);
 const emit = defineEmits(["refreshLetters"]);
 let recv = ref("");
 
@@ -18,24 +21,34 @@ async function deleteLetterEntry() {
   await deletesentLetter(props.letter._id);
   emit("refreshLetters");
 }
+
 async function removeLetterEntry() {
   await removeunsentletter(props.letter._id);
   emit("refreshLetters");
+}
+
+function enterEdit() {
+  router.push({ path: `/letter/edit/${props.letter._id}` });
+  setNavOff();
 }
 </script>
 
 <template>
   <div class="card">
-    <div class="top">
+    <div v-if="!boundpatient" class="top">
       <span v-if="props.letter.send == true" class="ribbon">SENT</span>
       <span v-else class="ribbon2">UNSENT</span>
       <!-- <text class="date" v-if="props.diary.dateCreated !== props.diary.dateUpdated">Edited on: {{ formatEntryDate(props.diary.dateUpdated) }}</text>
       <text class="date" v-else>Created on: {{ formatEntryDate(props.diary.dateCreated) }}</text> -->
       <text class="to">TO: {{ recv.substring(0, 23) + ".." }}</text>
     </div>
+    <div v-else class="top2">
+      <text>Date: {{ formatEntryDate(props.letter.dateUpdated) }}</text>
+    </div>
     <div class="bottom">
-      <text v-if="props.letter.content !== null" class="diarycontent" @click="router.push({ path: `/letter/response/${letter._id}` })">{{ props.letter.content.substring(0, 90) + ".." }}</text>
-      <div class="buttons">
+      <text v-if="props.letter.content !== null && !boundpatient" class="diarycontent" @click="router.push({ path: `/letter/response/${letter._id}` })">{{ props.letter.content.substring(0, 90) + ".." }}</text>
+      <text v-else @click="router.push({ path: `/letter/responseF/${letter._id}`})">{{ props.letter.content.substring(0, 90) + ".." }}</text>
+      <div v-if="!boundpatient" class="buttons">
         <button v-if="props.letter.send == false" class="little-black" @click="router.push({ path: `/letter/edit/${letter._id}` })">Edit</button>
         <button v-if="props.letter.send == false" class="little-gray" @click="removeLetterEntry">Remove</button>
         <button v-if="props.letter.send == true" class="little-gray" @click="deleteLetterEntry">Delete</button>
@@ -68,6 +81,17 @@ p {
   align-items: center;
   gap: 15px;
   flex-shrink: 0;
+}
+.top2 {
+  display: flex;
+  width: 350px;
+  height: 28px;
+  padding-left: 20px;
+  padding: 10px -10px;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+  color: #9fb9c7;
 }
 
 .date {

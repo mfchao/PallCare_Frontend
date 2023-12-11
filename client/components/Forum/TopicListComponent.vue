@@ -3,10 +3,11 @@ import { storeToRefs } from "pinia";
 import { defineAsyncComponent, onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useForumStore } from "../../stores/forum";
+import { useNavigationStore } from "../../stores/navigation";
 import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
-import EditTopicForm from "./EditTopicForm.vue";
 
+const { setNavOff } = useNavigationStore();
 const TopicComponent = defineAsyncComponent(() => import("./TopicComponent.vue"));
 const { isLoggedIn } = storeToRefs(useUserStore());
 const { pagenumber } = storeToRefs(useForumStore());
@@ -39,6 +40,7 @@ function updateEditing(id: string) {
 async function enter(id: string) {
   await enterTopic(id);
   router.push({ name: "Topic" });
+  setNavOff();
 }
 
 onBeforeMount(async () => {
@@ -57,7 +59,6 @@ onBeforeMount(async () => {
         <article v-for="topic in topics" :key="topic._id">
           <Suspense>
             <TopicComponent v-if="editing !== topic._id" :topic="topic" @click="enter(topic._id)" @refreshTopics="getTopics" @editTopic="updateEditing" />
-            <EditTopicForm v-else :topic="topic" @refreshTopics="getTopics" @editTopic="updateEditing" />
           </Suspense>
         </article>
     </section>

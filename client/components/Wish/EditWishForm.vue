@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { useWishStore } from "../../stores/wish";
 import { fetchy } from "../../utils/fetchy";
 
+const { setNavOn } = useNavigationStore();
 const{ getWishById } = useWishStore();
 const props = defineProps(["_id"]);
 const content = ref("");
@@ -20,6 +22,11 @@ const editWish = async () => {
   emit("refreshWishes");
 };
 
+function returnToWish() {
+  router.push({ name: "Wish" });
+  setNavOn();
+}
+
 onBeforeMount(async () => {
   const wish = await getWishById(props._id);
   content.value = wish.content;
@@ -29,7 +36,7 @@ onBeforeMount(async () => {
 
 <template>
     <div class="navigation">
-      <img @click="router.push({ name: 'Wish' })" src="@/assets/images/back.svg"/>
+      <img @click="returnToWish()" src="@/assets/images/back.svg"/>
       <h1>Edit Wish</h1>
     </div>
     <form class="create-form" @submit.prevent="editWish">
