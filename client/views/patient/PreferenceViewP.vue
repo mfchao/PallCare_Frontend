@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import PreferenceForm from "@/components/Preference/PreferenceForm.vue";
 import router from "@/router";
 import { useNavigationStore } from "@/stores/navigation";
@@ -8,20 +7,14 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
-
-
-const {  updatePreferences } = usePreferenceStore();
+const { updatePreferences } = usePreferenceStore();
 const { setNavOff } = useNavigationStore();
-const { userType} = storeToRefs(useUserStore());
+const { userType } = storeToRefs(useUserStore());
 const { getUserType } = useUserStore();
 const { currentUsername } = storeToRefs(useUserStore());
 
-
-
-
 let age = ref("");
 let aid = ref("");
-
 
 async function accountType() {
   void router.push({ name: "AccountType" });
@@ -34,41 +27,35 @@ async function update() {
   } else {
     visualAid = false;
   }
-  await updatePreferences({ age: age.value });
-  await updatePreferences({ visualAid: visualAid });
+  await updatePreferences({ age: age.value, visualAid: visualAid });
 
-  if(userType.value == "patient"){
+  if (userType.value == "patient") {
     void router.push({ name: "PreferencePb" });
-  }else{
+  } else {
     void router.push({ name: "PreferenceFb" });
   }
-
 }
 
 onBeforeMount(async () => {
   await getUserType(currentUsername.value);
   setNavOff();
 });
-
 </script>
 
 <template>
   <main>
     <div class="navigation">
       <div v-if="userType == 'patient'" class="back-button">
-        <img @click="accountType" src="@/assets/images/back.svg"/>
+        <img @click="accountType" src="@/assets/images/back.svg" />
       </div>
     </div>
     <div>
       <h1>Tell Us More About You ...</h1>
 
-      <PreferenceForm/>
-  
-      <p>These can be changed later in settings</p>
-      
-    </div>
-    
+      <PreferenceForm />
 
+      <p>These can be changed later in settings</p>
+    </div>
   </main>
 </template>
 
@@ -107,9 +94,4 @@ main {
   bottom: 60px;
   right: 20px;
 }
-
-
 </style>
-
-
-

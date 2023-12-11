@@ -37,38 +37,37 @@ async function logout() {
 <template>
   <header>
     <nav v-if="isLoggedIn && showNav && !isFamily">
- 
       <ul>
         <li>
-        <RouterLink :to="{ name: 'Forum' }" > 
-          <img v-if="currentRouteName == 'Forum'" src="@/assets/images/forumON.svg" class="navImage"/>
-          <img v-if="currentRouteName != 'Forum'" src="@/assets/images/forumOFF.svg" class="navImage"/>
-         </RouterLink>
+          <RouterLink :to="{ name: 'Forum' }">
+            <img v-if="currentRouteName == 'Forum'" src="@/assets/images/forumON.svg" class="navImage" />
+            <img v-if="currentRouteName != 'Forum'" src="@/assets/images/forumOFF.svg" class="navImage" />
+          </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Diary' }" > 
-            <img v-if="currentRouteName == 'Diary'" src="@/assets/images/diaryON.svg" class="navImage"/>
-            <img v-if="currentRouteName != 'Diary'" src="@/assets/images/diaryOFF.svg" class="navImage"/>
-           </RouterLink>
+          <RouterLink :to="{ name: 'Diary' }">
+            <img v-if="currentRouteName == 'Diary'" src="@/assets/images/diaryON.svg" class="navImage" />
+            <img v-if="currentRouteName != 'Diary'" src="@/assets/images/diaryOFF.svg" class="navImage" />
+          </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'TimeCapsule' }" > 
-            <img v-if="currentRouteName == 'TimeCapsule'" src="@/assets/images/capsuleON.svg" class="navImage"/>
-            <img v-if="currentRouteName != 'TimeCapsule'" src="@/assets/images/capsuleOFF.svg" class="navImage"/>
-           </RouterLink>
+          <RouterLink :to="{ name: 'TimeCapsule' }">
+            <img v-if="currentRouteName == 'TimeCapsule'" src="@/assets/images/capsuleON.svg" class="navImage" />
+            <img v-if="currentRouteName != 'TimeCapsule'" src="@/assets/images/capsuleOFF.svg" class="navImage" />
+          </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'Wish' }" > 
-            <img v-if="currentRouteName == 'Wish'" src="@/assets/images/wishON.svg" class="navImage"/>
-            <img v-if="currentRouteName != 'Wish'" src="@/assets/images/wishOFF.svg" class="navImage"/>
-           </RouterLink>
+          <RouterLink :to="{ name: 'Wish' }">
+            <img v-if="currentRouteName == 'Wish'" src="@/assets/images/wishON.svg" class="navImage" />
+            <img v-if="currentRouteName != 'Wish'" src="@/assets/images/wishOFF.svg" class="navImage" />
+          </RouterLink>
         </li>
-       
+
         <li>
-          <RouterLink :to="{ name: 'Letter' }" > 
-            <img v-if="currentRouteName == 'Letter'" src="@/assets/images/letterON.svg" class="navImage2"/>
-            <img v-if="currentRouteName != 'Letter'" src="@/assets/images/letterOFF.svg" class="navImage2"/>
-           </RouterLink>
+          <RouterLink :to="{ name: 'Letter' }">
+            <img v-if="currentRouteName == 'Letter'" src="@/assets/images/letterON.svg" class="navImage2" />
+            <img v-if="currentRouteName != 'Letter'" src="@/assets/images/letterOFF.svg" class="navImage2" />
+          </RouterLink>
         </li>
       </ul>
     </nav>
@@ -103,11 +102,9 @@ ul {
   flex-direction: row;
   width: 350px;
   list-style-type: none;
-  margin: 0; 
+  margin: 0;
   padding: 10px;
 }
-
-
 
 h1 {
   font-size: 2em;
@@ -130,17 +127,16 @@ a {
   text-decoration: none;
 }
 
-
 .underline {
   text-decoration: underline;
 }
 
-.navImage{
+.navImage {
   height: 1.5em;
   z-index: 100;
 }
 
-.navImage2{
+.navImage2 {
   height: 1.2em;
   z-index: 100;
 }

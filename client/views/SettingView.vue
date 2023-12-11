@@ -2,7 +2,7 @@
 import router from "@/router";
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
-import { computed, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 
 import { storeToRefs } from "pinia";
 import PreferenceForm from "../components/Preference/PreferenceForm.vue";
@@ -10,13 +10,13 @@ import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
 const { currentUsername, isFamily } = storeToRefs(useUserStore());
 const { logoutUser, deleteUser } = useUserStore();
-const { updatePreferences, resetStore } = usePreferenceStore();
-const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
+const { updatePreferences, resetStore, updatePrefStore } = usePreferenceStore();
+const { patientUsername, fontSize, timeCapsule } = storeToRefs(usePreferenceStore());
 
-const days = ref<number>();
+const days = ref<number>(timeCapsule.value);
 
 const styleObject = computed(() => ({
-      '--font-size': fontSize.value,
+  "--font-size": fontSize.value,
 }));
 
 async function updateTimeCapsule() {
@@ -38,6 +38,10 @@ async function delete_() {
 async function goHome() {
   void router.push({ name: "Home" });
 }
+
+onBeforeMount(async () => {
+  await updatePrefStore();
+});
 </script>
 
 <template>
@@ -59,15 +63,15 @@ async function goHome() {
     <div v-if="!isFamily">
       <form @submit.prevent="updateTimeCapsule">
         <fieldset>
-          <legend :style="styleObject" >Update Time Capsule</legend>
-          <input class="custom-input" placeholder="Number of Days" v-model="days" required />
+          <legend :style="styleObject">Update Time Capsule</legend>
+          <input class="custom-input" v-model="days" required />
           <button type="submit">Update Days</button>
         </fieldset>
       </form>
     </div>
 
     <div v-if="!isFamily" class="preferences">
-      <p :style="styleObject" >Update User Preferences:</p>
+      <p :style="styleObject">Update User Preferences:</p>
       <PreferenceForm />
     </div>
   </main>
@@ -102,7 +106,7 @@ button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 25px
+  gap: 25px;
 }
 
 main {

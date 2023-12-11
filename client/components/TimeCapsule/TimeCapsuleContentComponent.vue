@@ -75,6 +75,7 @@ onBeforeMount(async () => {
       <div class="top">
         <span v-if="props.delay.type == 'Wish'" class="ribbon">WISH</span>
         <span v-if="props.delay.type == 'Diary'" class="ribbon2">DIARY</span>
+        <span v-if="props.delay.type == 'Letter'" class="ribbon3">LETTER</span>
         <text class="date">Capsule to {{ behaviorTag }}</text>
       </div>
       <div class="bottom">
@@ -134,6 +135,19 @@ onBeforeMount(async () => {
   background-color: #9fb9c7;
   color: rgb(0, 0, 0);
 }
+.ribbon3 {
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+  position: relative;
+  left: -10px;
+  box-shadow: 2px 2px 6px #9d9c9c;
+  text-align: center;
+  border-radius: 25px;
+  transform: rotate(-20deg);
+  background-color: #FF4D9D;
+  color: rgb(255, 255, 255);
+}
 .date {
   display: flex;
   width: 207px;
@@ -153,11 +167,11 @@ onBeforeMount(async () => {
   width: 225px;
   padding: 0px 20px 0px 13px;
   align-items: flex-start;
-  gap: 0px;
+  gap: -2px;
 }
 .diarycontent {
   display: flex;
-  width: 190px;
+  width: 180px;
   height: 45px;
   flex-direction: column;
   justify-content: center;
@@ -173,7 +187,7 @@ onBeforeMount(async () => {
   display: flex;
   width: 95px;
   height: 35px;
-  background: #131313;
+  background: #7c7c7c;
   font: 100% SF Pro Display;
   font-weight: 500;
   line-height: 90%;

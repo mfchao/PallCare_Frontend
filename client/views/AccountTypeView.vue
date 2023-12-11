@@ -4,31 +4,26 @@ import { useNavigationStore } from "@/stores/navigation";
 import { useUserStore } from "@/stores/user";
 import { onBeforeMount, ref } from "vue";
 
-
-
 const family = ref(false);
 const patient = ref(false);
 const userType = ref("");
 const { getUserType, isFamily } = useUserStore();
 
-
-
 const { updateUser } = useUserStore();
 const { setNavOff } = useNavigationStore();
 
-
 function selectFamily() {
-    family.value = true;
-    patient.value = false;
+  family.value = true;
+  patient.value = false;
 }
 
 function selectPatient() {
-    patient.value = true;
-    family.value = false;
+  patient.value = true;
+  family.value = false;
 }
 
 async function preferences() {
-    if (family.value) {
+  if (family.value) {
     userType.value = "family";
   } else if (patient.value) {
     userType.value = "patient";
@@ -38,41 +33,33 @@ async function preferences() {
   // await getUserType();
 
   if (family.value) {
-      void router.push({ name: "PreferenceF" });
+    void router.push({ name: "PreferenceF" });
   } else if (patient.value) {
     void router.push({ name: "PreferenceP" });
   }
 }
 
-
-
 onBeforeMount(() => {
   setNavOff();
 });
-
-
-
-
 </script>
 
 <template>
- 
-
   <main class="centered">
-    <h1>Select <br>Account Type</h1>
+    <h1>Select <br />Account Type</h1>
     <section class="option-container">
       <div class="option patient" :class="{ option: true, patient: true, selected: patient }" @click="selectPatient">
         <img src="@/assets/images/patienttype.png" alt="Patient" />
         <label>I AM A</label>
         <h2>PATIENT</h2>
-    </div>
-        <div class="option family" :class="{ option: true, family: true, selected: family }" @click="selectFamily" >
-            <img src="@/assets/images/otherusertype.png" alt="Family/Friends" />
-            <label>I AM</label>
-            <h2>FAMILY OR FRIENDS</h2>
-        </div>
+      </div>
+      <div class="option family" :class="{ option: true, family: true, selected: family }" @click="selectFamily">
+        <img src="@/assets/images/otherusertype.png" alt="Family/Friends" />
+        <label>I AM</label>
+        <h2>FAMILY OR FRIENDS</h2>
+      </div>
     </section>
-    <button class="blackbuttoncenterlong" @click="preferences" > Next</button>
+    <button class="blackbuttoncenterlong" @click="preferences">Next</button>
   </main>
 </template>
 
@@ -91,7 +78,7 @@ h1 {
 }
 
 h2 {
-  margin: 5px
+  margin: 5px;
 }
 
 .selected {
@@ -113,15 +100,14 @@ h2 {
   border-radius: 10px;
   padding: 10px;
   width: 150px;
-
 }
 
 .option.family {
-  background-color: #EDB4C7; 
+  background-color: #edb4c7;
 }
 
 .option.patient {
-  background-color: #9FB9C7; 
+  background-color: #9fb9c7;
 }
 
 .option img {
@@ -136,15 +122,3 @@ h2 {
   margin-top: 10px;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
