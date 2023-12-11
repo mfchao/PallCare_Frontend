@@ -18,6 +18,7 @@ import RegisterView from "../views/RegisterView.vue";
 import SettingView from "../views/SettingView.vue";
 import { TimeCapsuleAddContentView, TimeCapsuleContentView, TimeCapsuleView } from "../views/TimeCapsule/_timeCapsuleViews";
 import CreateWishView from "../views/Wish/CreateWishView.vue";
+import EditWishViewVue from "../views/Wish/EditWishView.vue";
 import WishBoardViewVue from "../views/Wish/WishBoardView.vue";
 import DiaryViewF from "../views/family/DiaryViewF.vue";
 import LetterViewF from "../views/family/LetterViewF.vue";
@@ -179,6 +180,13 @@ const router = createRouter({
       path: "/wish/create",
       name: "CreateWish",
       component: CreateWishView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/wish/edit/:_id",
+      name: "EditWish",
+      component: EditWishViewVue,
+      props: (route) => ({ _id: route.params._id }),
       meta: { requiresAuth: true },
     },
     {

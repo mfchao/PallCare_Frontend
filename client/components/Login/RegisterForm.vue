@@ -6,30 +6,21 @@ import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import { usePreferenceStore } from "../../stores/preference";
 
-
-
 const username = ref("");
 const password = ref("");
-const { createUser, loginUser, updateSession, getUserType} = useUserStore();
-const { refreshMood} = useMoodStore();
+const { createUser, loginUser, updateSession, getUserType } = useUserStore();
+const { refreshMood } = useMoodStore();
 const { isFamily } = storeToRefs(useUserStore());
 const { patientUsername } = storeToRefs(usePreferenceStore());
 
-
 async function register() {
-
   await createUser(username.value, password.value);
   await loginUser(username.value, password.value);
   void updateSession();
 
-
- 
-
-
-  void router.push({ 
-    name: "AccountType", 
+  void router.push({
+    name: "AccountType",
   });
-
 }
 </script>
 
@@ -46,11 +37,10 @@ async function register() {
         <!-- <label for="aligned-password">Password</label> -->
         <input class="input-bar" type="password" v-model.trim="password" id="aligned-password" placeholder="Password" required />
       </div>
-    </fieldset>  
-      <div >
-        <button type="submit" class="blackbuttoncenterlong" >Register</button>
-      </div>
-
+    </fieldset>
+    <div>
+      <button type="submit" class="blackbuttoncenterlong">Register</button>
+    </div>
   </form>
 </template>
 
@@ -59,7 +49,7 @@ h3 {
   display: flex;
   justify-content: center;
 }
-.pure-form{
+.pure-form {
   display: flex;
   width: 297px;
   height: 221px;
@@ -69,13 +59,13 @@ h3 {
   gap: 18px;
   flex-shrink: 0;
 }
-.pure-control-group{
+.pure-control-group {
   display: flex;
   width: 290px;
   flex-direction: column;
   align-items: flex-start;
 }
-.form-title{
+.form-title {
   display: flex;
   width: 240px;
   height: 20px;
@@ -88,19 +78,18 @@ h3 {
   font-weight: 500;
   line-height: normal;
 }
-input.input-bar{
+input.input-bar {
   width: 297px;
   height: 45px;
   padding: 0px 12px;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;  
+  align-items: flex-start;
   border: 1.5px solid #000;
   border-radius: var(--numbers-spacing-12, 12px);
-  background-color: #F0E7D8;
+  background-color: #f0e7d8;
 }
 button:hover {
-background:rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.3);
 }
-
 </style>

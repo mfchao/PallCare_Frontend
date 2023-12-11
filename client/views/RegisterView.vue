@@ -2,7 +2,6 @@
 import RegisterForm from "@/components/Login/RegisterForm.vue";
 import router from "@/router";
 
-
 async function goHome() {
   void router.push({ name: "Home" });
 }
@@ -11,14 +10,13 @@ async function goHome() {
 <template>
   <main class="centered">
     <div class="navigation">
-      <img @click="goHome" src="@/assets/images/back.svg"/>
+      <img @click="goHome" src="@/assets/images/back.svg" />
       <!-- <button @click="goHome" > BACK</button> -->
     </div>
-    
+
     <h1>Register</h1>
     <section>
-        <RegisterForm />
-
+      <RegisterForm />
     </section>
   </main>
 </template>
@@ -48,23 +46,23 @@ h1 {
   align-items: flex-start;
   gap: 10px;
 }
-.centered{
-position: absolute;
-top: 40%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 100vw;
-height: 120vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-z-index: 10;
-gap: 27px;
-/* display: inline-flex; */
+.centered {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 120vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  gap: 27px;
+  /* display: inline-flex; */
 }
 
-img:hover{
+img:hover {
   width: 60px;
 }
 </style>

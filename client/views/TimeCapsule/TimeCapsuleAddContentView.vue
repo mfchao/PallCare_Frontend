@@ -36,18 +36,19 @@ onBeforeMount(async () => {
       <text class="pagetitle">Add Contents</text>
     </div>
     <div class="creatediv" @click="router.push({ path: `/letter/create/${true}` })">
-      <text class="createdivtitle">Write a new letter here</text>
+      <text class="createdivtitle">Write a new letter to store in Time Machine</text>
       <div class="blank">
         <img src="@/assets/images/diaryicon.png" style="height: 200%; width: fit-content" />
       </div>
     </div>
-    <button @click="router.push({ path: `/letter/create/${true}` })">Create a new letter to store in Time Capsule</button>
-    <h1>Select Diaries to Add to Time Capsule</h1>
+    <text></text>
+    <text class="types">Select Diaries to Add</text>
     <article v-for="diary in diaries" :key="diary._id">
       <!-- TODO: add DIARY component w/ conditional styling -->
       <DiaryComponent :diary="diary" :capsule="true" @refreshDiaries="refreshDiaries(diary._id)" />
     </article>
-    <h1>Select Wishes to Add to Time Capsule</h1>
+    <text></text>
+    <text  class="types">Select Wishes to Add</text>
     <article v-for="wish in wishes" :key="wish._id">
       <!-- TODO: add WISH component w/ conditional styling -->
       <Suspense>
@@ -58,11 +59,15 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
+/* template{
+  background-color: antiquewhite;
+  height: 120%;
+} */
 body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 60px 18px 120px 18px;
+  padding: 60px 18px 400px 18px;
   justify-content: space-between;
   flex-direction: column;
   background: #f0e7d8;
@@ -99,6 +104,37 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+.pagetitle {
+  display: flex;
+  width: 240px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #131313;
+  font-family: New York;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 496;
+  line-height: normal;
+  text-transform: uppercase;
+}
+/* .typetitle{
+  justify-content: left;
+  width: 209px;
+} */
+.types{
+  display: flex;
+  width: 290px;
+  height: 45px;
+  flex-direction: column;
+  flex-shrink: 0;
+  color: #131313;
+  font-family: New York;
+  font-size: 18px;
+  font-weight: 496;
+  line-height: normal;
 }
 .blank {
   display: flex;

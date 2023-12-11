@@ -2,16 +2,17 @@
 import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-
-const { patientUsername, fontSize } = storeToRefs(usePreferenceStore());
+import { computed, onBeforeMount, ref } from "vue";
+const { getPreferences } = usePreferenceStore();
+const { patientUsername } = storeToRefs(usePreferenceStore());
 
 let username = ref("");
 let password = ref("");
+let fontSize = ref("");
 
 const { updateUser, updateSession } = useUserStore();
 const styleObject = computed(() => ({
-      '--font-size': fontSize.value,
+  "--font-size": fontSize.value,
 }));
 async function updateUsername() {
   await updateUser({ username: username.value });
@@ -24,28 +25,30 @@ async function updatePassword() {
   await updateSession();
   password.value = "";
 }
+onBeforeMount(async () => {
+  fontSize.value = (await getPreferences()).fontSize;
+});
 </script>
 
 <template>
   <div class="section">
-  <form @submit.prevent="updateUsername" >
-    <fieldset>
-      <legend :style="styleObject">Change your username</legend>
-      <input class="custom-input" type="text" placeholder="New username" v-model="username" required />
-      <button type="submit" >Update username</button>
-    </fieldset>
-  </form>
+    <form @submit.prevent="updateUsername">
+      <fieldset>
+        <legend :style="styleObject">Change your username</legend>
+        <input class="custom-input" type="text" placeholder="New username" v-model="username" required />
+        <button type="submit">Update username</button>
+      </fieldset>
+    </form>
 
-  <form @submit.prevent="updatePassword" >
-    <fieldset>
-      <legend :style="styleObject">Change your password</legend>
-      <input class="custom-input" type="password" placeholder="New password" v-model="password" required />
-      <button type="submit" >Update password</button>
-    </fieldset>
-  </form>
-</div>
+    <form @submit.prevent="updatePassword">
+      <fieldset>
+        <legend :style="styleObject">Change your password</legend>
+        <input class="custom-input" type="password" placeholder="New password" v-model="password" required />
+        <button type="submit">Update password</button>
+      </fieldset>
+    </form>
+  </div>
 </template>
-
 
 <style>
 fieldset {
@@ -65,7 +68,7 @@ h2 {
   background: transparent;
   padding: 10px;
   outline: none;
-  appearance: none; 
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 150px;
@@ -85,8 +88,6 @@ legend {
   font-size: 0.9em;
 }
 
-
-
 button {
   height: 40px;
 }
@@ -96,7 +97,6 @@ legend {
 }
 
 button:hover {
-  background:rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.3);
 }
 </style>
-

@@ -23,6 +23,7 @@ let content = ref("");
 let responseEnabled = ref<boolean>(false);
 let delay = ref("");
 let delay_date = ref("");
+let timemachine = ref<boolean>(false);
 let contacts = ref<string[]>([]);
 
 onBeforeMount(async () => {
@@ -48,10 +49,10 @@ async function defualtfunction(selectedcontact: any) {
     newrecv = recv.value.concat(selectedcontact + "; ");
   }
   recv.value = newrecv;
-}
+} 
 async function submitForm() {
   try {
-    if (props.capsule) {
+    if (props.capsule || timemachine.value) {
       await createLetter(to, content.value, false, "0");
     } else {
       await createLetter(to, content.value, responseEnabled.value, delay_date.value);
@@ -110,6 +111,13 @@ async function submitForm() {
                 <span class="slider round"></span>
               </label>
             </div> -->
+            <div v-if="!props.capsule && !delay" class="timemachine">
+              <p class="form-subtitle">Add to Time Machine</p>
+              <label class="switch">
+                <input type="checkbox" v-model="timemachine" />
+                <span class="slider round"></span>
+              </label>
+            </div>
           </div>
 
           <div class="right">
@@ -249,16 +257,16 @@ textarea.letter-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
 }
 
 .letter-fields {
   display: flex;
   width: 290px;
   height: 120px;
-  padding: 10px 0px 10px 10px;
+  padding: 10px 0px 15px 10px;
   align-items: column;
-  gap: 13px;
+  gap: 12.5px;
   flex-shrink: 0;
   border-radius: var(--numbers-spacing-12, 12px);
   border: 1.5px solid #000;
@@ -280,7 +288,12 @@ textarea.letter-content {
   align-items: center;
   gap: 22px;
 }
-
+.timemachine{
+  display: flex;
+  /* align-items: center; */
+  flex-direction: column;
+  gap: -2px;
+}
 .form-subtitle {
   color: #000;
   font-family: SF Pro Display;

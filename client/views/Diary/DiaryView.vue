@@ -5,14 +5,14 @@ import router from "../../router";
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png"/>
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg"/>
       <text class="pagetitle">Diary</text>
     </div>
     <div class="pageexplainationdiv">
       <text class="pageexplaination">Diary is a place where you can write some daily feelings and choose to either set it private or public to your contacts.</text>
     </div>
     <div class="creatediv" @click="router.push({ name: 'CreateDiary' })">
-      <text class="createdivtitle">Write your \n new diary today</text>
+      <text class="createdivtitle">Write your new diary today</text>
       <div class="blank">
         <img src="@/assets/images/diaryicon.png" style="height: 200%; width: fit-content;"/>
       </div>

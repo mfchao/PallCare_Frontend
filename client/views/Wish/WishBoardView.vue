@@ -19,7 +19,7 @@ onBeforeMount(async()=> {
 <template>
   <body>
     <div class="navigation">
-      <img @click="back" src="@/assets/images/Home.png"/>
+      <img @click="back" src="@/assets/images/home.svg"/>
       <text class="pagetitle">WISH</text>
     </div>
     <div class="pageexplainationdiv">
@@ -28,7 +28,7 @@ onBeforeMount(async()=> {
     <div class="creatediv" @click="router.push({ name: 'CreateWish' })">
       <text class="createdivtitle">Create a new wish!</text>
       <div class="blank">
-        <img src="@/assets/images/wishicon.png" style="height: 200%; width: fit-content;"/> 
+        <img src="@/assets/images/wishicon.png" class="icon"/>
       </div>
     </div>
     <WishListComponent />
@@ -52,7 +52,10 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
+.icon{
+  height: 200%;
+  width: fit-content;
+}
 .pagetitle{
   display: flex;
   width: 240px;
@@ -84,8 +87,8 @@ body {
   align-items: center;
   gap: 39px;
   flex-shrink: 0;
-  background: #FFFFFF;
-  border-radius: 10px;
+  border-radius: var(--numbers-spacing-12, 12px);
+  background: #9FB9C7;
 }
 
 .createdivtitle{
@@ -105,16 +108,12 @@ body {
 
 .blank{
   display: flex;
-  width: 50px;
-  height: 50px;
-  flex-direction: column;
-  justify-content: center;
+  width: 68px;
+  height: 62px;
+  align-items: flex-end;
+  gap: 10px;
   flex-shrink: 0;
-  color: #131313;
-  font-family: SF Pro Display;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  border-radius: 7px;
+  background-color: #f0e7d8;
 }
 </style>

@@ -34,9 +34,9 @@ async function addDiaryToCapsule(behavior: "send" | "delete") {
     </div>
     <div class="bottom">
       <text class="diarycontent">{{ props.diary.content.substring(0, 90) + ".." }}</text>
-      <div class="buttons" v-if="props.capsule">
-        <button v-if="props.diary.hidden" class="little-black" @click="addDiaryToCapsule('send')">Reveal</button>
-        <button class="little-black" @click="addDiaryToCapsule('delete')">Delete</button>
+      <div class="buttons-capsule" v-if="props.capsule">
+        <button v-if="props.diary.hidden" class="little-gray-capsule" @click="addDiaryToCapsule('send')">Future Reveal</button>
+        <button class="little-black-capsule" @click="addDiaryToCapsule('delete')">Future Delete</button>
       </div>
       <div class="buttons" v-else-if="props.diary.author == currentUsername">
         <button class="little-black" @click="router.push({ path: `/diary/edit/${diary._id}` })">Edit</button>
@@ -68,7 +68,7 @@ p {
   height: 28px;
   padding: 0px -10px;
   align-items: center;
-  gap: 40px;
+  gap: 2px;
   flex-shrink: 0;
 }
 .date {
@@ -107,6 +107,16 @@ p {
   gap: 8px;
   flex-shrink: 0;
 }
+.buttons-capsule{
+  display: flex;
+  width: 70px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+  position: relative;
+  top: -15px;
+}
 menu {
   list-style-type: none;
   display: flex;
@@ -143,6 +153,28 @@ menu {
   background: #131313;
   font: 100% SF Pro Display;
   font-size: 16px;
+}
+.little-gray-capsule {
+  display: flex;
+  width: 95px;
+  height: 35px;
+  background: #595858;
+  font: 100% SF Pro Display;
+  font-weight: 500;
+  line-height: 90%;
+  font-size: 16px;
+  border-radius: 20px;
+}
+.little-black-capsule {
+  display: flex;
+  width: 95px;
+  height: 35px;
+  background: #131313;
+  font: 100% SF Pro Display;
+  font-weight: 500;
+  line-height: 90%;
+  font-size: 16px;
+  border-radius: 20px;
 }
 .ribbon {
   width: 60px;

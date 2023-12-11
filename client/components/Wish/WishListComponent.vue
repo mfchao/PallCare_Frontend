@@ -19,7 +19,8 @@ async function getWishes(author?: string) {
   let wishResults;
   try {
     if (author) {
-      wishResults = await fetchy("/api/wishes", "GET", { query: { author } });
+      wishResults = await fetchy(`/api/wishes/${author}`, "GET");
+      wishResults = wishResults.filter((wish: any) => wish.visibility === "public" || wish.visibility === "contacts");
     } else {
       wishResults = await fetchy("/api/wishes", "GET");
     }

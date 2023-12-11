@@ -17,7 +17,7 @@ async function onEnter() {
   <!-- <main> -->
     <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png" />
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg" />
       <text class="pagetitle">Letter</text>
     </div>
     <div class="pageexplainationdiv">
@@ -26,7 +26,7 @@ async function onEnter() {
     <div class="creatediv" @click="router.push({ name: 'CreateLetter' })">
       <text class="createdivtitle">Write a new letter here</text>
       <div class="blank">
-        <img src="@/assets/images/diaryicon.png" style="height: 200%; width: fit-content" />
+        <img src="@/assets/images/lettericon.png" style="height: 200%; width: fit-content" />
       </div>
     </div>
     <div class="previousDiarytitle">

@@ -14,16 +14,17 @@ onBeforeMount(async () => {
 <template>
   <body>
     <div class="navigation">
-      <img @click="router.push({ name: 'Home' })" src="@/assets/images/Home.png" />
-      <text class="pagetitle">Time Capsule</text>
+      <img @click="router.push({ name: 'Home' })" src="@/assets/images/home.svg" />
+      <text class="pagetitle">Time Machine</text>
     </div>
     <div class="pageexplainationdiv">
-      <text class="pageexplaination">In Time Capsule, selected contents will be activated after the automatic realease time you set. </text>
+      <text class="pageexplaination">In Time Machine, selected contents will be activated after the realease time you set. </text>
     </div>
     <div class="release">
       <div class="release-date">
         <text class="date">Earliest Release Date {{ releaseDate }}</text>
       </div>
+      <img src="@/assets/images/timecapsule.png" class="timeimage"/>
       <!-- <TimeCapsuleBGComponent /> -->
     </div>
     <button class="bluebuttoncenterlong" @click="router.push({ name: 'Settings' })">Edit Release Time</button>
@@ -40,6 +41,10 @@ body {
   flex-direction: column;
   background: #f0e7d8;
   gap: 15px;
+}
+.timeimage {
+  width: 450px;
+  height: 450px;
 }
 .navigation {
   display: flex;
@@ -85,6 +90,7 @@ body {
   border-radius: 7px;
   border: 0.5px solid #000;
   background: var(--color-background-input, #fff);
+  opacity: 0.8;
 }
 
 .date {

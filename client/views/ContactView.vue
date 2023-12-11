@@ -113,7 +113,7 @@ onBeforeMount(async () => {
         </div>
 
         <div v-if="loaded && appUsers.length !== 0">
-        <article v-for="appUser in displayedAppUsers" :key="appUser._id">
+        <article v-for="appUser in appUsers">
             <AppContactComponent :appUser="appUser"/>
         </article>
         </div>  
