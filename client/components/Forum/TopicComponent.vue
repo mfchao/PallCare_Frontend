@@ -60,7 +60,9 @@ const updateLike = async () => {
   if (!isLikedbyUser.value) {
     try {
       /* add the current user to the list of likes */
-      const new_likes = currentTopic.likes.push(currentUsername.value);
+      
+      const new_likes = currentTopic.likes.concat(currentUsername.value);
+      // console.log(new_likes);
       await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: new_likes } } });
       isLikedbyUser.value = true;
       updateCurrentTopic();
@@ -69,7 +71,9 @@ const updateLike = async () => {
   }} else {{
     try {
       /* remove the current user to the list of likes */
+      // console.log(currentTopic.likes);
       const new_likes = currentTopic.likes.filter((user:string) => user.toString() !== currentUsername.value);
+      // console.log(new_likes);
       await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: new_likes } } });
       isLikedbyUser.value = false;
       updateCurrentTopic();
@@ -93,12 +97,12 @@ onBeforeMount(async () => {
   if (isInTopic) {
     // console.log("in topic");
     await getResponses();
-    console.log(currentTopic.likes);
+    // console.log(currentTopic);
     isLikedbyUser.value = currentTopic.likes.includes(currentUsername.value);
     loaded.value = true;
     canEdit.value = await isAuthor(currentTopic._id);
     // console.log(canEdit.value);
-    console.log(isLikedbyUser.value);
+    // console.log(isLikedbyUser.value);
   } else {
     canEdit.value = await isAuthor(props.topic._id);
   }
