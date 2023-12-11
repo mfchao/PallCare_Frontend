@@ -20,7 +20,7 @@ onBeforeMount(async()=> {
   <body>
     <div class="navigation">
       <img @click="back" src="@/assets/images/back.svg" />
-      <h1>New Wish</h1>
+      <text class="pagetitle">New Wish</text>
     </div>
     <CreateWishForm />
   </body>
@@ -36,15 +36,29 @@ body {
   flex-direction: column;
   background: #f0e7d8;
 }
+.pagetitle{
+  display: flex;
+  width: 240px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #131313;
+  font-family: New York;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 496;
+  line-height: normal;
+  text-transform: uppercase;
+}
 .navigation {
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: space-between;
-  padding: 0 1rem;
-  height: 4rem;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
+  align-items: center;
+  padding-bottom: 13px;
 }
+
 .navigation img {
   width: 1.5rem;
   height: 1.5rem;

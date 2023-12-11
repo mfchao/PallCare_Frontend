@@ -16,6 +16,8 @@ const { isInTopic } = useForumStore();
 
 const loaded = ref(false);
 const props = defineProps(["topic"]);
+const isLikedbyUser = ref(false);
+
 let responses = ref<Array<Record<string, string>>>([]);
 let canEdit = ref(false);
 
@@ -34,13 +36,51 @@ const getResponses = async () => {
 const deleteTopic = async () => {
   try {
     await fetchy(`/api/topics/${currentTopic._id}`, "DELETE");
+    router.push({ name: "Forum" });
   } catch {
     return;
   }
   emit("refreshTopics");
 };
 
+const createResponse = async () => {
+  try {
+    await fetchy(`/api/posts`, "POST", { body: { content: "", topic: currentTopic._id } });
+  } catch {
+    return;
+  }
+  await getResponses();
+};
+
+const updateLike = async () => {
+
+  if (!isLikedbyUser.value) {
+    try {
+    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: currentTopic.likes.push(currentUsername.value) } } });
+    isLikedbyUser.value = false;
+  } catch {
+    return;
+  }} else {{
+    try {
+    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: currentTopic.likes.splice(currentTopic.likes.indexOf(currentUsername.value), 1) } } });
+    isLikedbyUser.value = false;
+  } catch {
+    return;
+  }}
+};
+  emit("refreshTopics");
+};
+
 onBeforeMount(async () => {
+  
+  // if (!props.topic.likes) {
+  //   try {
+  //     await fetchy(`/api/topics/${props.topic._id}`, "PATCH", { body: { update: { likes: [] } } });
+  //   } catch {
+  //     return;
+  //   }
+  // }
+  isLikedbyUser.value = currentTopic.likes.includes(currentUsername.value);
   if (isInTopic) {
     await getResponses();
     loaded.value = true;
@@ -55,23 +95,38 @@ onBeforeMount(async () => {
 
 <template>
   <div>
-    <div class="card">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <div class="card" v-if="isInTopic">
         <div class="top">
-          <text v-if="isInTopic" class="date">{{ formatEntryDate(currentTopic.dateCreated) }}   By {{ currentTopic.author }}</text>
-          <text v-else class="date">{{ formatEntryDate(props.topic.dateCreated) }}    By {{ props.topic.author }}</text>
-        </div>
+            <text class="date">{{ formatEntryDate(currentTopic.dateCreated) }}   By {{ currentTopic.author }}</text>
+            <div class = "buttons" v-if="canEdit">
+              <button class="little-black" @click="router.push({ path: `/forum/edit/${currentTopic._id}` })"> <i class="fa fa-pencil" aria-hidden="true"></i></button>
+              <button class="little-gray" @click="deleteTopic"> <i class="fa fa-trash" aria-hidden="true"></i></button>
+            </div>    
+        </div> 
         <div class="top">
           <text class="topictitle">{{ currentTopic.title }}</text>
         </div>
-        <div class="bottom" v-if="isInTopic">
+        <div class="bottom">
           <text class="topiccontent">{{ currentTopic.content }}</text>
-          <div class="buttons" v-if="canEdit">
-            <button class="little-black" @click="router.push({ path: `/forum/edit/${currentTopic._id}` })">Edit</button>
-            <button class="little-gray" @click="deleteTopic">Delete</button>
+          <div class="buttons-bottom">
+            <button class="little-black" @click="createResponse"><i class="fa fa-reply" aria-hidden="true"></i></button>
+            <button :class="isLikedbyUser ? 'little-black' : 'little-gray'" @click="updateLike">
+              <i class="fa" :class="isLikedbyUser ? 'fa-thumbs-down' : 'fa-thumbs-up'" aria-hidden="true"></i>
+            </button>
           </div>
-        </div>
-        <div class="bottom" v-else>        
+        </div>       
+    </div>
+    <div class="card-forum" v-else>
+        <div class="top">
+            <text class="date">{{ formatEntryDate(props.topic.dateCreated) }}   By {{ props.topic.author }}</text>  
+        </div> 
+        <div class="top">
           <text class="topictitle">{{ props.topic.title }}</text>
+        </div>
+        <div class="bottom">
+          <text class="topiccontent">{{ props.topic.content }}</text>
         </div>
     </div>
     <section class="responses" v-if="isInTopic && loaded && responses.length !== 0">
@@ -86,6 +141,17 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
+.card-forum{
+  display: flex;
+  width: 300px;
+  height: 100px;
+  padding: 1.5px 0px 9px 1.5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1.5px solid #000;  
+  border-radius: var(--numbers-spacing-12, 12px);
+}
 .card {
   display: flex;
   width: 300px;
@@ -94,8 +160,8 @@ onBeforeMount(async () => {
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-  border-radius: var(--numbers-spacing-12, 12px);
-  border: 1.5px solid #000;
+  /* add a line to the bottom of the card */
+  border-bottom: 1.5px solid #000;  
 }
 
 p {
@@ -103,9 +169,10 @@ p {
 }
 .top {
   display: flex;
-  width: 350px;
-  height: 28px;
+  width: 300px;
+  height: 20px;
   padding: 0px -10px;
+  flex-direction: row;
   align-items: center;
   gap: 40px;
   flex-shrink: 0;
@@ -119,7 +186,7 @@ p {
   flex-shrink: 0;
   color: #000;
   font-family: SF Pro Display;
-  font-size: 16px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 400;
   line-height: 82.938%;
@@ -127,9 +194,9 @@ p {
 .topictitle {
   display: flex;
   width: 190px;
-  height: 45px;
+  height: 15px;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   flex-shrink: 0;
   color: #000;
   font-family: SF Pro Display;
@@ -155,22 +222,30 @@ p {
 .buttons {
   display: flex;
   width: 66px;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-end;
   gap: 8px;
   flex-shrink: 0;
 }
+.buttons-bottom {
+  display: flex;
+  width: 66px;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+}
 .bottom {
   display: flex;
   width: 225px;
-  padding: 0px 20px 0px 13px;
-  align-items: flex-start;
+  padding: 0px 1px 0px 1px;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 20px;
 }
 .little-black {
   display: flex;
-  width: 75px;
-  height: 25px;
+  width: 50px;
+  height: 20px;
   padding: 10px;
   background: #131313;
   font: 100% SF Pro Display;
@@ -178,8 +253,8 @@ p {
 }
 .little-gray {
   display: flex;
-  width: 75px;
-  height: 25px;
+  width: 50px;
+  height: 20px;
   padding: 10px;
   background: rgb(101, 103, 104);
   font: 100% SF Pro Display;

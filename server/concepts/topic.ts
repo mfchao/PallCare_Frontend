@@ -8,13 +8,14 @@ export interface TopicDoc extends BaseDoc {
   title: string;
   content: string;
   responses: Array<ObjectId>;
+  likes: Array<String>;
 }
 
 export default class TopicConcept {
   public readonly topics = new DocCollection<TopicDoc>("topics");
 
   async create(author: ObjectId, title: string, content: string) {
-    const _id = await this.topics.createOne({ author, title, content, responses: [] });
+    const _id = await this.topics.createOne({ author, title, content, responses: [], likes: [] });
     return { msg: "Topic successfully created!", topic: await this.topics.readOne({ _id }) };
   }
 
@@ -96,7 +97,7 @@ export default class TopicConcept {
 
   private sanitizeUpdate(update: Partial<TopicDoc>) {
     // Make sure the update cannot change the author.
-    const allowedUpdates = ["title", "content"];
+    const allowedUpdates = ["title", "content", "responses", "likes"];
     for (const key in update) {
       if (!allowedUpdates.includes(key)) {
         throw new NotAllowedError(`Cannot update ${key}!`);
