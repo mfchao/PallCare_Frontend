@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import TopicListComponent from "../../components/Forum/TopicListComponent.vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
+
+const { setNavOff } = useNavigationStore();
+
+function createTopic() {
+  setNavOff();
+  router.push({ name: "CreateTopic" });
+}
 </script>
 
 <template>
@@ -12,7 +20,7 @@ import router from "../../router";
     <div class="pageexplainationdiv">
         <text class="pageexplaination">Forum is a place where you can share your thoughts and ideas with others.</text>
     </div>
-    <div class="creatediv" @click="router.push({ name: 'CreateTopic' })">
+    <div class="creatediv" @click="createTopic()">
         <text class="createdivtitle">Create a new topic!</text>
         <div class="blank">
             <img src="@/assets/images/forumicon.png" class="icon"/> 

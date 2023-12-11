@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOn } = useNavigationStore(); 
 const { currentUsername } = useUserStore();
 const title = ref("");
 const content = ref("");
@@ -23,6 +25,7 @@ const CreateTopic = async () => {
   }
   emit("refreshTopics");
   emptyForm();
+  setNavOn();
   await router.push({ name: "Forum" });
 };
 
@@ -40,7 +43,7 @@ const emptyForm = () => {
       <textarea class="topic-content" id="content" v-model="content" placeholder="Write Down Your Topic!" required> </textarea>
     </div>
 
-    <li><button class="bluebuttoncenterlong" type="submit">Save</button></li>
+    <li><button class="bluebuttoncenterlong" type="submit">Submit</button></li>
 
   </form>
 </template>
