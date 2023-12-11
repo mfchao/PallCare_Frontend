@@ -7,6 +7,7 @@ import { useTCStore } from "../../stores/timeCapsule";
 import { useUserStore } from "../../stores/user";
 import { formatEntryDate } from "../../utils/formatDate";
 
+
 const { deleteDiary } = useDiaryStore();
 const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["diary", "capsule"]);

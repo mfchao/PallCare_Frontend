@@ -17,7 +17,7 @@ let letterList = ref<Array<Record<string, string>>>([]);
 
 async function getEntries() {
   let allLetters
-  console.log(patientUsername.value)
+  // console.log(patientUsername.value)
   if (patientUsername.value) {
     allLetters = await getLetterReceivedbyUser()
   }
@@ -55,7 +55,7 @@ onBeforeMount(async () => {
 <template>
   <section v-if="loaded && letterList.length !== 0">
     <article v-for="letter in letterList" :key="letter._id">
-      <LetterComponent :letter="letter" @refreshLetters="getEntries" />
+      <LetterComponent :letter="letter" :boundpatient="patientUsername" @refreshLetters="getEntries" />
     </article>
   </section>
   <p v-else-if="loaded">No letters found</p>
