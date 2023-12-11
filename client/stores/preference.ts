@@ -10,8 +10,27 @@ export const usePreferenceStore = defineStore(
 
     const fontSize = ref("medium");
 
+    const timeCapsule = ref(14);
+
+    const visualAid = ref(false);
+
+    const age = ref("under 18");
+
+    const updatePrefStore = async () => {
+      const pref = await getPreferences();
+      fontSize.value = pref.fontSize;
+      timeCapsule.value = pref.timeCapsule;
+      visualAid.value = pref.visualAid;
+      age.value = pref.age;
+    };
+
+    const getPreferences = async () => {
+      return await fetchy("/api/preferences", "GET", { alert: false });
+    };
+
     const updatePreferences = async (patch: BodyT) => {
       await fetchy("/api/preferences", "PATCH", { body: { update: patch } });
+      await updatePrefStore();
     };
 
     const createPatientPasscode = async (passcode: string) => {
@@ -37,24 +56,17 @@ export const usePreferenceStore = defineStore(
       }
     };
 
-    const getPreferences = async () => {
-      let font;
-      try {
-        font = await fetchy("/api/preferences", "GET", { alert: false });
-        fontSize.value = font.fontSize;
-      } catch {
-        fontSize.value = "medium";
-      }
-    };
-
     const resetStore = () => {
       patientUsername.value = "";
-      fontSize.value = "medium";
     };
 
     return {
       patientUsername,
       fontSize,
+      timeCapsule,
+      visualAid,
+      age,
+      updatePrefStore,
       updatePreferences,
       createPatientPasscode,
       verifyPatientPasscode,
