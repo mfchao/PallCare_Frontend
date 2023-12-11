@@ -798,7 +798,7 @@ class Routes {
   async sendEmailinvitation(session: WebSessionDoc, to: string, content: string) {
     const user = WebSession.getUser(session);
     const username = (await User.getUserById(user)).username;
-    let contents = username + " has invited you to join ALWAYS! Please use the passcode below to register! \n" + "PASSCODE" + content;
+    const contents = username + " has invited you to join ALWAYS! Please use the passcode below to register! \n" + "PASSCODE" + content;
     await Email.send(username, to, contents);
     return { msg: "Email sent!" };
   }

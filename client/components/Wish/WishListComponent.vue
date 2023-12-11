@@ -4,23 +4,25 @@ import { storeToRefs } from "pinia";
 import { defineAsyncComponent, onBeforeMount, ref } from "vue";
 import { useUserStore } from "../../stores/user";
 import { fetchy } from "../../utils/fetchy";
-import EditWishForm from "./EditWishForm.vue";
 
 const WishComponent = defineAsyncComponent(() => import("./WishComponent.vue"));
 const { isLoggedIn } = storeToRefs(useUserStore());
 const { patientUsername } = storeToRefs(usePreferenceStore());
-const { currentUsername } = useUserStore();
+const { currentUsername, isContact, isAuthor } = useUserStore();
 const props = defineProps(["username"]);
 const loaded = ref(false);
 let wishes = ref<Array<Record<string, string>>>([]);
-let editing = ref("");
+
+function canView(wish: any) {
+  return wish.visibility === "public" || isAuthor(wish.author) || (wish.visibility === "contacts" && isContact(wish.author));
+}
 
 async function getWishes(author?: string) {
   let wishResults;
   try {
     if (author) {
       wishResults = await fetchy(`/api/wishes/${author}`, "GET");
-      wishResults = wishResults.filter((wish: any) => wish.visibility === "public" || wish.visibility === "contacts");
+      wishResults = wishResults.filter((wish: any) => canView(wish));
     } else {
       wishResults = await fetchy("/api/wishes", "GET");
     }
@@ -28,10 +30,6 @@ async function getWishes(author?: string) {
     return;
   }
   wishes.value = wishResults;
-}
-
-function updateEditing(id: string) {
-  editing.value = id;
 }
 
 onBeforeMount(async () => {
@@ -48,8 +46,7 @@ onBeforeMount(async () => {
   <section class="wishes" v-if="loaded && wishes.length !== 0">
     <article v-for="wish in wishes" :key="wish._id">
       <Suspense>
-        <WishComponent v-if="editing !== wish._id" :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
-        <EditWishForm v-else :wish="wish" @refreshWishes="getWishes" @editWish="updateEditing" />
+        <WishComponent :wish="wish" @refreshWishes="getWishes" />
       </Suspense>
     </article>
   </section>
