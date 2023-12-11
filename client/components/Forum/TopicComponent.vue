@@ -4,13 +4,15 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent, onBeforeMount, ref } from "vue";
 import router from "../../router";
+import { useNavigationStore } from "../../stores/navigation";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
 
+const { setNavOn } = useNavigationStore();
 const PostComponent = defineAsyncComponent(() => import("../Post/PostComponent.vue"));
 const emit = defineEmits(["editTopic", "refreshTopics"]);
 const { currentUsername } = storeToRefs(useUserStore());
-const { isAuthor } = useForumStore();
+const { isAuthor, resetStore, updateCurrentTopic } = useForumStore();
 const { currentTopic } = useForumStore();
 const { isInTopic } = useForumStore();
 
@@ -37,6 +39,8 @@ const deleteTopic = async () => {
   try {
     await fetchy(`/api/topics/${currentTopic._id}`, "DELETE");
     router.push({ name: "Forum" });
+    resetStore();
+    setNavOn();
   } catch {
     return;
   }
@@ -53,17 +57,22 @@ const createResponse = async () => {
 };
 
 const updateLike = async () => {
-
   if (!isLikedbyUser.value) {
     try {
-    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: currentTopic.likes.push(currentUsername.value) } } });
-    isLikedbyUser.value = false;
+      /* add the current user to the list of likes */
+      const new_likes = currentTopic.likes.push(currentUsername.value);
+      await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: new_likes } } });
+      isLikedbyUser.value = true;
+      updateCurrentTopic();
   } catch {
     return;
   }} else {{
     try {
-    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: currentTopic.likes.splice(currentTopic.likes.indexOf(currentUsername.value), 1) } } });
-    isLikedbyUser.value = false;
+      /* remove the current user to the list of likes */
+      const new_likes = currentTopic.likes.filter((user:string) => user.toString() !== currentUsername.value);
+      await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { likes: new_likes } } });
+      isLikedbyUser.value = false;
+      updateCurrentTopic();
   } catch {
     return;
   }}
@@ -80,12 +89,16 @@ onBeforeMount(async () => {
   //     return;
   //   }
   // }
-  isLikedbyUser.value = currentTopic.likes.includes(currentUsername.value);
+  
   if (isInTopic) {
+    // console.log("in topic");
     await getResponses();
+    console.log(currentTopic.likes);
+    isLikedbyUser.value = currentTopic.likes.includes(currentUsername.value);
     loaded.value = true;
     canEdit.value = await isAuthor(currentTopic._id);
     // console.log(canEdit.value);
+    console.log(isLikedbyUser.value);
   } else {
     canEdit.value = await isAuthor(props.topic._id);
   }
@@ -99,21 +112,22 @@ onBeforeMount(async () => {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="card" v-if="isInTopic">
         <div class="top">
-            <text class="date">{{ formatEntryDate(currentTopic.dateCreated) }}   By {{ currentTopic.author }}</text>
-            <div class = "buttons" v-if="canEdit">
-              <button class="little-black" @click="router.push({ path: `/forum/edit/${currentTopic._id}` })"> <i class="fa fa-pencil" aria-hidden="true"></i></button>
-              <button class="little-gray" @click="deleteTopic"> <i class="fa fa-trash" aria-hidden="true"></i></button>
-            </div>    
+          <text class="date">{{ formatEntryDate(currentTopic.dateCreated) }}</text>
+          <text class="author" @click="router.push({ path: `/profile/${currentTopic.author}` })">BY {{ currentTopic.author }}</text>   
         </div> 
         <div class="top">
           <text class="topictitle">{{ currentTopic.title }}</text>
+          <div class = "buttons" v-if="canEdit">
+            <button class="little-black" @click="router.push({ path: `/forum/edit/${currentTopic._id}` })"> <i class="fa fa-pencil" aria-hidden="true"></i></button>
+            <button class="little-gray" @click="deleteTopic"> <i class="fa fa-trash" aria-hidden="true"></i></button>
+          </div> 
         </div>
         <div class="bottom">
           <text class="topiccontent">{{ currentTopic.content }}</text>
           <div class="buttons-bottom">
             <button class="little-black" @click="createResponse"><i class="fa fa-reply" aria-hidden="true"></i></button>
-            <button :class="isLikedbyUser ? 'little-black' : 'little-gray'" @click="updateLike">
-              <i class="fa" :class="isLikedbyUser ? 'fa-thumbs-down' : 'fa-thumbs-up'" aria-hidden="true"></i>
+            <button :class="isLikedbyUser ? 'little-red' : 'little-gray'" @click="updateLike">
+              <i class="fa fa-thumbs-up" aria-hidden="true"></i>
             </button>
           </div>
         </div>       
@@ -191,6 +205,23 @@ p {
   font-weight: 400;
   line-height: 82.938%;
 }
+.author {
+  display: flex;
+  width: 207px;
+  height: 18px;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  color: #000;
+  font-family: SF Pro Display;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 82.938%;
+}
+.author:hover {
+  text-decoration:underline;
+}
 .topictitle {
   display: flex;
   width: 190px;
@@ -257,6 +288,15 @@ p {
   height: 20px;
   padding: 10px;
   background: rgb(101, 103, 104);
+  font: 100% SF Pro Display;
+  font-size: 16px;
+}
+.little-red {
+  display: flex;
+  width: 50px;
+  height: 20px;
+  padding: 10px;
+  background: pink;
   font: 100% SF Pro Display;
   font-size: 16px;
 }

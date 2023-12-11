@@ -15,6 +15,10 @@ export const useForumStore = defineStore(
       pagenumber.value = 1;
     };
 
+    const updateCurrentTopic = async () => {
+      currentTopic.value = await getTopic(currentTopic.value._id);
+    };
+
     const enterTopic = async (topicId: string) => {
       isInTopic.value = true;
       currentTopic.value = await getTopic(topicId);
@@ -54,6 +58,7 @@ export const useForumStore = defineStore(
       getTopic,
       createTopic,
       isAuthor,
+      updateCurrentTopic,
     };
   },
   { persist: true },
