@@ -35,7 +35,7 @@ export const useContactStore = defineStore(
 
     const getAllAppContactsUsername = async () => {
       const appcontact = await fetchy(`/api/contact/inapp`, "GET");
-      const contactlist = [];
+      const contactlist = []
       for (const contact of appcontact) {
         try {
           let contactname = await fetchy(`/api/user/username/${contact.contact}`, "GET");
