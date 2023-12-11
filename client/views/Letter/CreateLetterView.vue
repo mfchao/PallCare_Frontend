@@ -204,7 +204,7 @@ body {
 .letterinputspace {
   display: flex;
   width: 300px;
-  height: 300px;
+  height: 350px;
   padding-top: 10px;
   /* padding-bottom: 0px; */
   flex-direction: column;
@@ -245,7 +245,7 @@ body {
 textarea.letter-content {
   display: flex;
   width: 260px;
-  height: 226px;
+  height: 296px;
   padding: 10px 11px;
   flex-direction: column;
   align-items: flex-start;
