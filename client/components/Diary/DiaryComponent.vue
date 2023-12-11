@@ -24,8 +24,8 @@ async function addDiaryToCapsule(behavior: "send" | "delete") {
   emit("refreshDiaries");
 }
 
-function enterEdit() {
-  router.push({ path: `/diary/edit/${props.diary._id}` });
+async function enterEdit() {
+  await router.push({ path: `/diary/edit/${props.diary._id}` });
   setNavOff();
 }
 </script>
@@ -114,7 +114,7 @@ p {
   gap: 8px;
   flex-shrink: 0;
 }
-.buttons-capsule{
+.buttons-capsule {
   display: flex;
   width: 70px;
   flex-direction: column;

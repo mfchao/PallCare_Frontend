@@ -12,15 +12,15 @@ const loaded = ref(false);
 let diaryList = ref<Array<Record<string, string>>>([]);
 
 async function getEntries() {
-  if (props.username) {
-    return await getAuthorEntries(props.username);
+  if (props.username !== undefined) {
+    diaryList.value = await getAuthorEntries(props.username);
   } else {
-    return await getAuthorEntries(currentUsername.value);
+    diaryList.value = await getAuthorEntries(currentUsername.value);
   }
 }
 
 onBeforeMount(async () => {
-  diaryList.value = await getEntries();
+  await getEntries();
   loaded.value = true;
 });
 </script>
