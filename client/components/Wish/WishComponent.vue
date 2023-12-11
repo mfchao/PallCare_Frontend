@@ -11,7 +11,7 @@ import { formatEntryDate } from "../../utils/formatDate";
 const { setNavOff } = useNavigationStore();
 const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["wish", "capsule"]);
-const emit = defineEmits(["editWish", "refreshWishes"]);
+const emit = defineEmits(["refreshWishes"]);
 const { currentUsername } = storeToRefs(useUserStore());
 const { isContact, isAuthor } = useUserStore();
 
