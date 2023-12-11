@@ -10,7 +10,7 @@ export const useWishStore = defineStore(
     };
 
     const getWishById = async (_id: ObjectId) => {
-      return await fetchy(`/api/wishes/${_id}`, "GET");
+      return await fetchy(`/api/wish/${_id}`, "GET");
     };
 
     return {

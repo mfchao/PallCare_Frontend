@@ -2,6 +2,7 @@
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
+import router from "../../router";
 import { useTCStore } from "../../stores/timeCapsule";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
@@ -56,7 +57,7 @@ async function addWishToCapsule(behavior: "send" | "delete") {
         <button class="little-black" @click="addWishToCapsule('delete')">Delete</button>
       </div>
       <div class="buttons" v-else-if="canEdit">
-        <button class="little-black" @click="emit('editWish', props.wish._id)">Edit</button>
+        <button class="little-black" @click="router.push({ path: `/wish/edit/${wish._id}` })">Edit</button>
         <button class="little-gray" @click="deleteWish">Delete</button>
       </div>
     </div>
