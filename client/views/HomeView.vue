@@ -6,6 +6,7 @@ import { usePreferenceStore } from "@/stores/preference";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, onBeforeMount, ref } from "vue";
+import DelayedLettersComponent from "../components/Letter/DelayedLettersComponent.vue";
 import MoodForm from "../components/Mood/MoodForm.vue";
 import ViewPatientMood from "../components/Mood/ViewPatientMood.vue";
 import { useForumStore } from "../stores/forum";
@@ -96,6 +97,7 @@ onBeforeMount(async () => {
 
       <div v-if="!isFamily && !isLoading">
         <MoodForm />
+        <DelayedLettersComponent :num_letters="Number(3)" />
       </div>
 
       <div v-else-if="isFamily && !isLoading" class="container">
@@ -122,7 +124,6 @@ onBeforeMount(async () => {
         <button v-if="!isFamily" @click="contacts" class="bluebuttoncenterlong">Contacts</button>
         <button @click="settings" class="blackbuttoncenterlong">Settings</button>
       </div>
-      {{ expiredUsers }}
     </div>
 
     <!-- welcome login -->

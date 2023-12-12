@@ -19,7 +19,7 @@ import Responses from "./responses";
 // HELPER FUNCTIONS FOR ROUTES
 //===============================================================
 async function timeCapsuleByOwner(user: ObjectId) {
-  return (await Delay.getDelaysByOwner(user)).filter((delay) => Delay.isTimeCapsule(delay._id));
+  return (await Delay.getDelaysByOwner(user)).filter((delay) => delay.activation.getTime() === new Date(0).getTime());
 }
 
 class Routes {
@@ -330,10 +330,10 @@ class Routes {
     return await Delay.getDelayByContent(contentID);
   }
 
-  @Router.get("/delay/owner")
-  async getDelaysByUser(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
-    return await Delay.getDelaysByOwner(user);
+  @Router.get("/delay/owner/:username")
+  async getDelaysByUser(username: string) {
+    const user = await User.getUserByUsername(username);
+    return await Delay.getDelaysByOwner(user._id);
   }
 
   @Router.get("/expired/delay")

@@ -59,10 +59,10 @@ export const useLetterStore = defineStore(
     };
 
     const getLetterReceivedbyUser = async () => {
-      let letters =  await fetchy(`/api/letter/received`, "GET");
+      const letters = await fetchy(`/api/letter/received`, "GET");
       console.log(letters);
       return letters;
-    }
+    };
 
     const updateLetter = async (_id: ObjectId, content: string, responseEnabled: boolean, delay: string) => {
       if (delay !== "") {

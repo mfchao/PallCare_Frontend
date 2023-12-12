@@ -20,6 +20,10 @@ export const useDelayStore = defineStore(
       return await fetchy(`/api/delay/content/${contentID}`, "GET");
     };
 
+    const getUserDelays = async (username: string) => {
+      return await fetchy(`/api/delay/owner/${username}`, "GET");
+    };
+
     const deleteDelay = async (_id: ObjectId) => {
       return await fetchy(`/api/delay/${_id}`, "DELETE");
     };
@@ -40,6 +44,7 @@ export const useDelayStore = defineStore(
       createDelay,
       getAllExpiredDelays,
       getDelayById,
+      getUserDelays,
       getDelayByContent,
       deleteDelay,
       isDelayExpired,

@@ -87,7 +87,7 @@ export default class DelayConcept {
   }
 
   async getDelaysByOwner(owner: ObjectId) {
-    return await this.delays.readMany({ owner }, { sort: { dateUpdated: -1 } });
+    return await this.delays.readMany({ owner }, { sort: { activation: 1, dateUpdated: -1 } });
   }
 
   async delete(_id: ObjectId) {
@@ -103,12 +103,12 @@ export default class DelayConcept {
 
   async isExpired(_id: ObjectId) {
     const delay = await this.getDelayById(_id);
-    return !this.isTimeCapsule(_id) && delay.activation.getTime() > Date.now();
+    return !this.isTimeCapsule(_id) && delay.activation.getTime() < Date.now();
   }
 
   async isTimeCapsule(_id: ObjectId) {
     const delay = await this.getDelayById(_id);
-    return delay.activation.toString() === new Date(0).toString();
+    return delay.activation.getTime() === new Date(0).getTime();
   }
 
   async getAllExpiredDelays() {
