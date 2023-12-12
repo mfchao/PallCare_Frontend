@@ -29,12 +29,22 @@ export const useTCStore = defineStore(
       await fetchy(`/api/delay/${delay}`, "DELETE");
     };
 
+    const releaseTimeCapsule = async (username: string) => {
+      await fetchy(`/api/timecapsule/${username}`, "DELETE");
+    };
+
+    const getUsersWithExpiredTC = async () => {
+      return await fetchy("/api/expired/timecapsule", "GET");
+    };
+
     return {
       getReleaseDate,
       getSelectContent,
       getUnselectedContent,
       addToTimeCapsule,
       removeFromTimeCapsule,
+      getUsersWithExpiredTC,
+      releaseTimeCapsule,
     };
   },
   { persist: true },

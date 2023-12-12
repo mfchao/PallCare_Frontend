@@ -45,8 +45,8 @@ async function submitForm() {
   await router.push({ name: "Diary" });
 }
 
-function returnToDiary() {
-  router.push({ name: "Diary" });
+async function returnToDiary() {
+  await router.push({ name: "Diary" });
   setNavOn();
 }
 

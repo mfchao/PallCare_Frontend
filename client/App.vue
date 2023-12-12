@@ -6,6 +6,8 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
+import { useDelayStore } from "./stores/delay";
+import { useTCStore } from "./stores/timeCapsule";
 
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
@@ -14,9 +16,21 @@ const { isLoggedIn, isFamily } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 const { showNav } = storeToRefs(useNavigationStore());
 const { logoutUser } = useUserStore();
+const { getAllExpiredDelays, executeDelay } = useDelayStore();
+const { getUsersWithExpiredTC, releaseTimeCapsule } = useTCStore();
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
+  const delays: any[] = await getAllExpiredDelays();
+  delays.forEach(async (delay) => {
+    try {
+      await executeDelay(delay._id);
+    } catch {
+      // continues
+    }
+  });
+  const expiredUsersTC = await getUsersWithExpiredTC();
+  expiredUsersTC.forEach(releaseTimeCapsule);
   if (isLoggedIn.value) {
     try {
       await userStore.updateSession();

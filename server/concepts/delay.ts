@@ -58,7 +58,7 @@ export default class DelayConcept {
   async getDelayById(_id: ObjectId) {
     const delay = await this.delays.readOne({ _id });
     if (!delay) {
-      throw new NotFoundError("No such delay", _id);
+      throw new NotFoundError(`No such delay ${_id}`);
     }
     return delay;
   }
@@ -66,7 +66,7 @@ export default class DelayConcept {
   async getDelayByContent(content: ObjectId) {
     // loop through all delays and find the one with the matching content
     const delays = await this.delays.readMany({});
-    const result = []
+    const result = [];
     for (const delay of delays) {
       //compare by string
       if (await compareIdbyString(delay.content, content)) {
@@ -108,11 +108,11 @@ export default class DelayConcept {
 
   async isTimeCapsule(_id: ObjectId) {
     const delay = await this.getDelayById(_id);
-    return delay.activation === new Date(0);
+    return delay.activation.toString() === new Date(0).toString();
   }
 
-  async checkExpiredDelays(owner: ObjectId) {
-    const delays = await this.getDelaysByOwner(owner);
-    return delays.filter(async (delay) => await this.isExpired(delay._id));
+  async getAllExpiredDelays() {
+    const delays = await this.delays.readMany({});
+    return delays.filter((delay) => delay.activation.getTime() !== new Date(0).getTime() && delay.activation.getTime() <= Date.now());
   }
 }

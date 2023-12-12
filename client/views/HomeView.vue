@@ -122,6 +122,7 @@ onBeforeMount(async () => {
         <button v-if="!isFamily" @click="contacts" class="bluebuttoncenterlong">Contacts</button>
         <button @click="settings" class="blackbuttoncenterlong">Settings</button>
       </div>
+      {{ expiredUsers }}
     </div>
 
     <!-- welcome login -->

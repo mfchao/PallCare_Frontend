@@ -85,26 +85,4 @@ export default class PreferenceConcept {
     const userPref = await this.getUserPreferences(user);
     return Date.now() >= userPref.expiry;
   }
-
-  // /**
-  //  * Change the amount of time between prompting a user to update their preferences
-  //  * @param user ObjectId associated with a user
-  //  * @param interval (updated) amount of time for users to be prompted about preferences
-  //  * @returns updates 'this.preferences.interval' to interval
-  //  */
-  // async changeInterval(user: ObjectId, interval: number) {
-  //   await this.preferences.updateOne({ user }, { interval });
-  //   return { msg: "Changed user's preference interval." };
-  // }
-
-  // /**
-  //  * Updates the expiry date for a user
-  //  * @param user ObjectId associated with a user
-  //  * @returns sets 'this.preferences.expiry' = current time + 'this.preferences.interval'
-  //  */
-  // async updateExpiry(user: ObjectId) {
-  //   const userPref = await this.getUserPreferences(user);
-  //   await this.preferences.updateOne({ user }, { expiry: Date.now() + userPref.interval });
-  //   return { msg: "Updated Preferences' expiry" };
-  // }
 }

@@ -70,6 +70,7 @@ class Routes {
   async logIn(session: WebSessionDoc, username: string, password: string) {
     const u = await User.authenticate(username, password);
     WebSession.start(session, u._id);
+    await User.update(u._id, { lastLogin: new Date() });
     return { msg: "Logged in!" };
   }
 
@@ -335,6 +336,11 @@ class Routes {
     return await Delay.getDelaysByOwner(user);
   }
 
+  @Router.get("/expired/delay")
+  async getAllExpiredDelays() {
+    return await Delay.getAllExpiredDelays();
+  }
+
   @Router.get("/delay/expired/:_id")
   async isDelayExpired(_id: ObjectId) {
     return await Delay.isExpired(_id);
@@ -387,6 +393,14 @@ class Routes {
       } else {
         throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Letter.`);
       }
+    } else if (delay.type === "Wish") {
+      if (delay.behavior === "send") {
+        return await Wish.update(delay.content, { visibility: "public" });
+      } else if (delay.behavior === "delete") {
+        return await Wish.delete(delay.content);
+      } else {
+        throw new NotAllowedError(`Behavior "${delay.behavior}" is not supported for a Delayed Wish.`);
+      }
     } else {
       throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
     }
@@ -414,6 +428,25 @@ class Routes {
     return await timeCapsuleByOwner(user._id);
   }
 
+  @Router.get("/expired/timecapsule/")
+  async getUsersWithExpiredTC() {
+    const expired: string[] = [];
+    const allUsers = (await User.getUsers()).filter((user) => user.userType === "patient");
+    for (const user of allUsers) {
+      try {
+        const pref = await Preference.getUserPreferences(user._id);
+        const capsuleDate = new Date(user.lastLogin);
+        capsuleDate.setDate(user.lastLogin.getDate() + Number(pref.timeCapsule));
+        if (capsuleDate.getTime() < new Date().getTime()) {
+          expired.push(user.username);
+        }
+      } catch {
+        // continue
+      }
+    }
+    return expired;
+  }
+
   @Router.get("/timecapsule/not_selected/:username")
   async getContentNotInTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
@@ -424,7 +457,7 @@ class Routes {
   }
 
   /**System function**/
-  @Router.delete("timecapsule/:username")
+  @Router.delete("/timecapsule/:username")
   async releaseTimeCapsule(username: string) {
     const user = await User.getUserByUsername(username);
     if (user.userType !== "patient") {
@@ -437,21 +470,36 @@ class Routes {
         case "Diary":
           switch (delay.behavior) {
             case "send":
-              return await Diary.update(delay.content, { hidden: false });
+              await Diary.update(delay.content, { hidden: false });
+              break;
             case "delete":
-              return await Diary.delete(delay.content);
+              await Diary.delete(delay.content);
+              break;
             default:
               throw new NotAllowedError(`Delay does not currently support behavior of type ${delay.behavior}.`);
           }
+          break;
         case "Letter":
           switch (delay.behavior) {
             case "send":
-              return await Letter.sendLetter(delay.content);
-            case "delete":
-              return await Letter.deleteLetter_server(delay.content);
+              await Letter.sendLetter(delay.content);
+              break;
             default:
               throw new NotAllowedError(`Delay does not currently support behavior of type ${delay.behavior}.`);
           }
+          break;
+        case "Wish":
+          switch (delay.behavior) {
+            case "send":
+              await Wish.update(delay.content, { visibility: "public" });
+              break;
+            case "delete":
+              await Wish.delete(delay.content);
+              break;
+            default:
+              throw new NotAllowedError(`Delay does not currently support behavior of type ${delay.behavior}.`);
+          }
+          break;
         default:
           throw new NotAllowedError(`Delay does not currently support content of type ${delay.type}.`);
       }

@@ -43,8 +43,8 @@ async function addWishToCapsule(behavior: "send" | "delete") {
   emit("refreshWishes");
 }
 
-function enterEdit() {
-  router.push({ path: `/wish/edit/${props.wish._id}` });
+async function enterEdit() {
+  await router.push({ path: `/wish/edit/${props.wish._id}` });
   setNavOff();
 }
 </script>
@@ -72,7 +72,7 @@ function enterEdit() {
 </template>
 
 <style scoped>
-.buttons-capsule{
+.buttons-capsule {
   display: flex;
   width: 70px;
   flex-direction: column;

@@ -8,6 +8,9 @@ export const useDelayStore = defineStore(
     const createDelay = async (contentID: ObjectId, type: "Diary" | "Letter" | "Wish", behavior: "send" | "delete", activation: string) => {
       return await fetchy(`/api/delay/${contentID}`, "POST", { body: { type, behavior, activation } });
     };
+    const getAllExpiredDelays = async () => {
+      return await fetchy("/api/expired/delay", "GET");
+    };
 
     const getDelayById = async (_id: ObjectId) => {
       return await fetchy(`apy/delay/${_id}`, "GET");
@@ -35,6 +38,7 @@ export const useDelayStore = defineStore(
 
     return {
       createDelay,
+      getAllExpiredDelays,
       getDelayById,
       getDelayByContent,
       deleteDelay,
