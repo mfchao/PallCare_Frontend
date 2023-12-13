@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
-import { formatDate } from "@/utils/formatDate";
+import { formatEntryDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
 import { fetchy } from "../../utils/fetchy";
 
@@ -19,53 +19,108 @@ const deletePost = async () => {
 </script>
 
 <template>
-  <p class="author">{{ props.post.author }}</p>
-  <p>{{ props.post.content }}</p>
-  <div class="base">
-    <menu v-if="props.post.author == currentUsername">
-      <li><button class="btn-small pure-button" @click="emit('editPost', props.post._id)">Edit</button></li>
-      <li><button class="button-error btn-small pure-button" @click="deletePost">Delete</button></li>
-    </menu>
-    <article class="timestamp">
-      <p v-if="props.post.dateCreated !== props.post.dateUpdated">Edited on: {{ formatDate(props.post.dateUpdated) }}</p>
-      <p v-else>Created on: {{ formatDate(props.post.dateCreated) }}</p>
-    </article>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <div class="card">
+    <div class="top">
+      <text class="date">{{ formatEntryDate(props.post.dateCreated) }}</text>
+      <text class="author">by {{ props.post.author }}</text>
+    </div>
+    <div class="bottom">
+      <text class="content">{{ props.post.content }}</text>
+      
+    </div>    
+    <div class="buttons-bottom">
+        <button class="little-gray" @click="deletePost"><i class="fa fa-trash"></i></button>
+      </div>
   </div>
 </template>
 
 <style scoped>
-p {
-  margin: 0em;
-}
-
-.author {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-menu {
-  list-style-type: none;
+.card {
   display: flex;
+  width: 300px;
+  height: 100px;
+  padding: 1.5px 0px 9px 1.5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1.5px solid #000;  
+  border-radius: var(--numbers-spacing-12, 12px);
+}
+.top {
+  display: flex;
+  width: 300px;
+  height: 20px;
+  padding: 0px -10px;
   flex-direction: row;
-  gap: 1em;
-  padding: 0;
-  margin: 0;
-}
-
-.timestamp {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 0.9em;
-  font-style: italic;
-}
-
-.base {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 40px;
+  flex-shrink: 0;
 }
-
-.base article:only-child {
-  margin-left: auto;
+.date {
+  display: flex;
+  width: 207px;
+  height: 18px;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  color: #000;
+  font-family: SF Pro Display;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 82.938%;
+}
+.author {
+  display: flex;
+  width: 207px;
+  height: 18px;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  color: #000;
+  font-family: SF Pro Display;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 82.938%;
+}
+.content {
+  display: flex;
+  width: 190px;
+  height: 45px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #8d8989;
+  font-family: SF Pro Display;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.bottom {
+  display: flex;
+  width: 225px;
+  padding: 0px 1px 0px 1px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 20px;
+}
+.buttons-bottom {
+  display: flex;
+  width: 66px;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  gap: 8px;
+}
+.little-gray {
+  display: flex;
+  width: 50px;
+  height: 20px;
+  padding: 10px;
+  background: rgb(101, 103, 104);
+  font: 100% SF Pro Display;
+  font-size: 16px;
 }
 </style>
