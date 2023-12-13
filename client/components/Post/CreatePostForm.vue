@@ -16,7 +16,7 @@ const createPost = async (content: string) => {
   } catch (_) {
     return;
   }
-  emit("refreshResponses", new_post._id);
+  emit("refreshResponses", new_post);
   emptyForm();
 };
 
@@ -26,15 +26,15 @@ const emptyForm = () => {
 </script>
 
 <template>
-  <div class="response" @submit.prevent="createPost(content)">
+  <form class="response" @submit.prevent="createPost(content)">
     <textarea id="content" v-model="content" placeholder="Write Your Response!" required> </textarea>
     <button type="submit" class="pure-button-primary pure-button">submit</button>
-  </div>
+  </form>
 </template>
 
 <style scoped>
-.response {
-  width: 300px;
+form {
+  width: 100%;
   height: 100px;
   display: flex;
   flex-direction: column;
