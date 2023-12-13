@@ -7,15 +7,16 @@ import router from "../../router";
 import { useNavigationStore } from "../../stores/navigation";
 import { fetchy } from "../../utils/fetchy";
 import { formatEntryDate } from "../../utils/formatDate";
+import CreatePostForm from "../Post/CreatePostForm.vue";
 
 const { setNavOn } = useNavigationStore();
 const PostComponent = defineAsyncComponent(() => import("../Post/PostComponent.vue"));
-const emit = defineEmits(["editTopic", "refreshTopics"]);
+const isCreatingResponse = ref(false);
+const emit = defineEmits(["editTopic", "refreshTopics", "refreshResponses"]);
 const { currentUsername } = storeToRefs(useUserStore());
 const { isAuthor, resetStore, updateCurrentTopic } = useForumStore();
 const { currentTopic } = useForumStore();
 const { isInTopic } = useForumStore();
-
 const loaded = ref(false);
 const props = defineProps(["topic"]);
 const isLikedbyUser = ref(false);
@@ -35,6 +36,16 @@ const getResponses = async () => {
   responses.value = responseResults;
 };
 
+const refreshResponses = async (new_post_id: string) => {
+  // add the new post to the list of responses
+  const new_responses = currentTopic.responses.concat(new_post_id);
+  await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { responses: new_responses } } });
+  updateCurrentTopic();
+  await getResponses();
+  isCreatingResponse.value = false;
+  emit("refreshTopics");
+};
+
 const deleteTopic = async () => {
   try {
     await fetchy(`/api/topics/${currentTopic._id}`, "DELETE");
@@ -48,12 +59,7 @@ const deleteTopic = async () => {
 };
 
 const createResponse = async () => {
-  try {
-    await fetchy(`/api/posts`, "POST", { body: { content: "", topic: currentTopic._id } });
-  } catch {
-    return;
-  }
-  await getResponses();
+  isCreatingResponse.value = true;
 };
 
 const updateLike = async () => {
@@ -84,16 +90,7 @@ const updateLike = async () => {
   emit("refreshTopics");
 };
 
-onBeforeMount(async () => {
-  
-  // if (!props.topic.likes) {
-  //   try {
-  //     await fetchy(`/api/topics/${props.topic._id}`, "PATCH", { body: { update: { likes: [] } } });
-  //   } catch {
-  //     return;
-  //   }
-  // }
-  
+onBeforeMount(async () => {  
   if (isInTopic) {
     // console.log("in topic");
     await getResponses();
@@ -147,7 +144,9 @@ onBeforeMount(async () => {
           <text class="topiccontent">{{ props.topic.content }}</text>
         </div>
     </div>
+    
     <section class="responses" v-if="isInTopic && loaded && responses.length !== 0">
+      <CreatePostForm v-if="isCreatingResponse" @refreshResponses="refreshResponses" />
       <article v-for="response in responses" :key="response._id">
         <Suspense>
           <PostComponent :post="response" />
@@ -247,7 +246,7 @@ p {
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
-  color: #8d8989;
+  color: #000000;
   font-family: SF Pro Display;
   font-size: 14px;
   font-style: normal;

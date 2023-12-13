@@ -244,9 +244,15 @@ class Routes {
 
   @Router.patch("/topics/:_id")
   async updateTopic(session: WebSessionDoc, _id: ObjectId, update: Partial<TopicDoc>) {
-    const user = WebSession.getUser(session);
-    await Topic.isAuthor(user, _id);
-    return await Topic.update(_id, update);
+    // if updating the topic's title or content, update the dateUpdated field
+    if (update.title || update.content) {
+      const user = WebSession.getUser(session);
+      await Topic.isAuthor(user, _id);
+      update.dateUpdated = new Date();
+      return await Topic.update(_id, update);
+    } else if (update.likes || update.responses) {
+      return await Topic.update(_id, update);
+    }
   }
 
   @Router.delete("/topics/:_id")

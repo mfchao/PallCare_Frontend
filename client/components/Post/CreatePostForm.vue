@@ -3,17 +3,20 @@ import { ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
 const content = ref("");
-const emit = defineEmits(["refreshPosts"]);
+const emit = defineEmits(["refreshResponses"]);
 
 const createPost = async (content: string) => {
+  let new_post;
   try {
-    await fetchy("/api/posts", "POST", {
-      body: { content },
-    });
+    new_post = (
+      await fetchy("/api/posts", "POST", {
+        body: { content: content },
+      })
+    ).post;
   } catch (_) {
     return;
   }
-  emit("refreshPosts");
+  emit("refreshResponses", new_post._id);
   emptyForm();
 };
 
@@ -23,29 +26,39 @@ const emptyForm = () => {
 </script>
 
 <template>
-  <form @submit.prevent="createPost(content)">
-    <label for="content">Post Contents:</label>
-    <textarea id="content" v-model="content" placeholder="Create a post!" required> </textarea>
-    <button type="submit" class="pure-button-primary pure-button">Create Post</button>
-  </form>
+  <div class="response" @submit.prevent="createPost(content)">
+    <textarea id="content" v-model="content" placeholder="Write Your Response!" required> </textarea>
+    <button type="submit" class="pure-button-primary pure-button">submit</button>
+  </div>
 </template>
 
 <style scoped>
-form {
-  background-color: var(--base-bg);
-  border-radius: 1em;
+.response {
+  width: 300px;
+  height: 100px;
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
 }
 
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  height: 6em;
-  padding: 0.5em;
-  border-radius: 4px;
+#content {
+  width:90%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
   resize: none;
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
 }
 </style>
