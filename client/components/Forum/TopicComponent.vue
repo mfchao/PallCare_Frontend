@@ -26,22 +26,30 @@ let canEdit = ref(false);
 
 const getResponses = async () => {
   let responseResults = [];
-  try {
-    for (let response of currentTopic.responses) {
-      responseResults.push(await fetchy(`/api/posts/${response}`, "GET"));
+  let deletedResponses = Array<string>();
+  for (let response of currentTopic.responses) {
+    try {
+      const responseResult = await fetchy(`/api/posts/${response}`, "GET");
+      responseResults.push(responseResult);
+    } catch (_) {
+      deletedResponses.push(response);
     }
-  } catch (_) {
-    return;
   }
   responses.value = responseResults;
+  // remove deleted responses from the list of responses
+  if (deletedResponses.length !== 0) {
+    const new_responses = currentTopic.responses.filter((response: string) => !deletedResponses.includes(response));
+    await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { responses: new_responses } } });
+  }
 };
 
-const refreshResponses = async (new_post_id: string) => {
+const refreshResponses = async (new_post: Record<string, string>) => {
   // add the new post to the list of responses
-  const new_responses = currentTopic.responses.concat(new_post_id);
+  const new_responses = currentTopic.responses.concat(new_post._id);
   await fetchy(`/api/topics/${currentTopic._id}`, "PATCH", { body: { update: { responses: new_responses } } });
   updateCurrentTopic();
-  await getResponses();
+  // await getResponses();
+  responses.value.push(new_post);
   isCreatingResponse.value = false;
   emit("refreshTopics");
 };

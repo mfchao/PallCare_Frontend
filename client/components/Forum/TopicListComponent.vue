@@ -25,6 +25,8 @@ async function getTopics(author?: string) {
       topicResults = await fetchy("/api/topics", "GET", { query: { author } });
     } else {
       topicResults = await fetchy("/api/topics", "GET");
+      // filter out deleted users' topics
+      topicResults.topics = topicResults.topics.filter((topic: any) => topic.author !== "DELETED_USER");
     }
   } catch (_) {
     return;
