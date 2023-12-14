@@ -30,7 +30,7 @@ export interface DelayDoc extends BaseDoc {
 // export function testBehavior(content: any, other: string) {
 //   console.log(content, other );
 // }
-export async function compareIdbyString(a: ObjectId, b: ObjectId) {
+export function compareIdbyString(a: ObjectId, b: ObjectId) {
   return a.toString() === b.toString();
 }
 
@@ -69,21 +69,11 @@ export default class DelayConcept {
     const result = [];
     for (const delay of delays) {
       //compare by string
-      if (await compareIdbyString(delay.content, content)) {
+      if (compareIdbyString(delay.content, content)) {
         result.push(delay);
       }
     }
-    return result;
-  }
-
-  async deletedelayByContent(content: ObjectId, behavior: "send" | "delete" | "reveal" | "hide") {
-    const delays = await this.getDelayByContent(content);
-    for (const delay of delays) {
-      if (delay.behavior === behavior) {
-        await this.delays.deleteOne({ _id: delay._id });
-      }
-    }
-    return { msg: "Deleted Delay!" };
+    return result[0];
   }
 
   async getDelaysByOwner(owner: ObjectId) {

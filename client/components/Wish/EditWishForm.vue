@@ -1,16 +1,46 @@
 <script setup lang="ts">
+import { ObjectId } from "mongodb";
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
+import { useDelayStore } from "../../stores/delay";
 import { useNavigationStore } from "../../stores/navigation";
+import { useTCStore } from "../../stores/timeCapsule";
+import { useUserStore } from "../../stores/user";
 import { useWishStore } from "../../stores/wish";
 import { fetchy } from "../../utils/fetchy";
 
 const { setNavOn } = useNavigationStore();
 const { getWishById } = useWishStore();
+const { currentUsername } = useUserStore();
+const { getDelayByContent, deleteDelay, updateDelay } = useDelayStore();
+const { addToTimeCapsule } = useTCStore();
 const props = defineProps(["_id"]);
 const content = ref("");
 const visibility = ref("");
+const hidden = ref(false);
 const emit = defineEmits(["editWish", "refreshWishes"]);
+let prevDelayId = ref<ObjectId>();
+let timeCapsule = ref<boolean>(false);
+let behaviorIsSend = ref<boolean>(false);
+
+function resetBehaviorOptions() {
+  if (!hidden.value) {
+    behaviorIsSend.value = false;
+  }
+}
+async function editTimeCapsule() {
+  // new addition to capsule
+  if (timeCapsule.value) {
+    if (!prevDelayId.value) {
+      await addToTimeCapsule(currentUsername, props._id, "Diary", behaviorIsSend.value ? "send" : "delete");
+    } else {
+      await updateDelay(prevDelayId.value, { behavior: behaviorIsSend.value ? "send" : "delete" });
+    }
+  } // was in capsule, and now it is deseleted
+  else if (prevDelayId.value) {
+    await deleteDelay(prevDelayId.value);
+  }
+}
 
 const editWish = async () => {
   try {
@@ -18,12 +48,14 @@ const editWish = async () => {
   } catch (e) {
     return;
   }
+  await editTimeCapsule();
   emit("editWish");
   emit("refreshWishes");
+  await returnToWish();
 };
 
-function returnToWish() {
-  router.push({ name: "Wish" });
+async function returnToWish() {
+  await router.push({ name: "Wish" });
   setNavOn();
 }
 
@@ -31,6 +63,16 @@ onBeforeMount(async () => {
   const wish = await getWishById(props._id);
   content.value = wish.content;
   visibility.value = wish.visibility;
+  hidden.value = visibility.value === "private";
+
+  try {
+    const delay = await getDelayByContent(props._id);
+    prevDelayId.value = delay._id;
+    timeCapsule.value = true;
+    behaviorIsSend.value = delay.behavior === "send";
+  } catch {
+    // catch if there not currently in time capsule --> do nothing
+  }
 });
 </script>
 
@@ -41,36 +83,52 @@ onBeforeMount(async () => {
   </div>
   <form class="create-form" @submit.prevent="editWish">
     <div calss="inputspace">
-      <textarea class="wish-content" id="content" v-model="content" required>{{ content }}</textarea>
+      <textarea class="wish-content" id="content" v-model="content" required></textarea>
     </div>
     <div class="setting">
       <div class="field-title">
         <p class="setting-title">Settings</p>
         <span class="badge">?</span>
       </div>
-      <fieldset class="wish-fields" style="{ height: timeCapsule ? '150px' : '120px' }">
+      <fieldset class="wish-fields" :style="{ height: timeCapsule ? '150px' : '120px' }">
         <div class="left">
           <!-- Private setting -->
           <div class="options">
             <p class="form-subtitle">Private</p>
             <label class="switch">
-              <input type="radio" id="private" name="visibility" value="private" v-model="visibility" />
+              <input type="radio" id="private" name="visibility" value="private" v-model="visibility" @change="resetBehaviorOptions" />
               <span class="slider round"></span>
             </label>
           </div>
           <div class="options">
             <p class="form-subtitle">Contacts Only</p>
             <label class="switch">
-              <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility" />
+              <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility" @change="resetBehaviorOptions" />
               <span class="slider round"></span>
             </label>
           </div>
           <div class="options">
             <p class="form-subtitle">Public</p>
             <label class="switch">
-              <input type="radio" id="public" name="visibility" value="public" v-model="visibility" />
+              <input type="radio" id="public" name="visibility" value="public" v-model="visibility" @change="resetBehaviorOptions" />
               <span class="slider round"></span>
             </label>
+          </div>
+          <!-- TIme capsule setting -->
+          <div class="options">
+            <p class="form-subtitle">Add to Time Machine</p>
+            <label class="switch">
+              <input type="checkbox" v-model="timeCapsule" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="options" v-if="timeCapsule">
+            <p class="form-subtitle">Behavior</p>
+            <label class="switch" v-if="timeCapsule">
+              <input type="checkbox" v-model="behaviorIsSend" :disabled="!hidden" />
+              <span class="slider round"></span>
+            </label>
+            <p class="form-subtitle">{{ behaviorIsSend ? "Send" : "Delete" }}</p>
           </div>
         </div>
       </fieldset>
@@ -106,8 +164,8 @@ onBeforeMount(async () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: space-around;
+  width: 20%;
 }
 .inputspace {
   display: flex;
