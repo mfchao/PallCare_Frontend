@@ -70,9 +70,9 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div @click="router.push({ path: editRoutePath })">
+  <div>
     <div class="card">
-      <div class="top">
+      <div class="top" @click="router.push({ path: editRoutePath })">
         <span v-if="props.delay.type == 'Wish'" class="ribbon">WISH</span>
         <span v-if="props.delay.type == 'Diary'" class="ribbon2">DIARY</span>
         <span v-if="props.delay.type == 'Letter'" class="ribbon3">LETTER</span>
@@ -84,11 +84,9 @@ onBeforeMount(async () => {
       </div>
     </div>
   </div>
-  
 </template>
 
 <style scoped>
-
 .card {
   display: flex;
   width: 300px;
@@ -145,7 +143,7 @@ onBeforeMount(async () => {
   text-align: center;
   border-radius: 25px;
   transform: rotate(-20deg);
-  background-color: #FF4D9D;
+  background-color: #ff4d9d;
   color: rgb(255, 255, 255);
 }
 .date {

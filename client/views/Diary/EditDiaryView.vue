@@ -1,36 +1,66 @@
 <script setup lang="ts">
+import { ObjectId } from "mongodb";
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
+import { useDelayStore } from "../../stores/delay";
 import { useDiaryStore } from "../../stores/diary";
-import { useNavigationStore } from "../../stores/navigation";
+import { useTCStore } from "../../stores/timeCapsule";
+import { useUserStore } from "../../stores/user";
 
-const { setNavOn } = useNavigationStore();
+const { currentUsername } = useUserStore();
+const { addToTimeCapsule } = useTCStore();
 const { getDiaryById, modifyDiaryContent } = useDiaryStore();
+const { getDelayByContent, deleteDelay, updateDelay } = useDelayStore();
 const props = defineProps(["_id"]);
 let content = ref("");
 let hidden = ref<boolean>(false);
+let prevDelayId = ref<ObjectId>();
+let timeCapsule = ref<boolean>(false);
+let behaviorIsSend = ref<boolean>(false);
+
+function resetBehaviorOptions() {
+  if (!hidden.value) {
+    behaviorIsSend.value = false;
+  }
+}
+async function editTimeCapsule() {
+  // new addition to capsule
+  if (timeCapsule.value) {
+    if (!prevDelayId.value) {
+      await addToTimeCapsule(currentUsername, props._id, "Diary", behaviorIsSend.value ? "send" : "delete");
+    } else {
+      await updateDelay(prevDelayId.value, { behavior: behaviorIsSend.value ? "send" : "delete" });
+    }
+  } // was in capsule, and now it is deseleted
+  else if (prevDelayId.value) {
+    await deleteDelay(prevDelayId.value);
+  }
+}
 
 async function submitForm() {
   await modifyDiaryContent(props._id, { content: content.value, hidden: hidden.value });
+  await editTimeCapsule();
   await router.push({ name: "Diary" });
 }
-
-async function returnToDiary() {
-  await router.push({ name: "Diary" });
-  setNavOn();
-}
-
 onBeforeMount(async () => {
   const diary = await getDiaryById(props._id);
   content.value = diary.content;
   hidden.value = diary.hidden;
+
+  try {
+    const delay = await getDelayByContent(props._id);
+    prevDelayId.value = delay._id;
+    timeCapsule.value = true;
+    behaviorIsSend.value = delay.behavior === "send";
+  } catch {
+    // catch if there not currently in time capsule --> do nothing
+  }
 });
 </script>
-
 <template>
   <body>
     <div class="navigation">
-      <img @click="returnToDiary" src="@/assets/images/back.svg" />
+      <img @click="router.push({ name: 'Diary' })" src="@/assets/images/back.svg" />
       <h1>Edit Diary</h1>
     </div>
     <text class="entry-date"></text>
@@ -44,13 +74,13 @@ onBeforeMount(async () => {
           <p class="setting-title">Settings</p>
           <span class="badge">?</span>
         </div>
-        <fieldset class="diary-fields">
+        <fieldset class="diary-fields" :style="{ height: timeCapsule ? '150px' : '120px' }">
           <div class="left">
             <!-- Private setting -->
             <div class="options">
               <p class="form-subtitle">Private</p>
               <label class="switch">
-                <input type="checkbox" id="hidden" v-model="hidden" />
+                <input type="checkbox" id="hidden" v-model="hidden" @change="resetBehaviorOptions" />
                 <span class="slider round"></span>
               </label>
             </div>
@@ -67,6 +97,22 @@ onBeforeMount(async () => {
                 <p class="form-subtitle">Create a topic</p>
                 <input type="text" class="forum-topic" />
               </div>
+            </div>
+            <!-- TIme capsule setting -->
+            <div class="options">
+              <p class="form-subtitle">Add to Time Capsule</p>
+              <label class="switch">
+                <input type="checkbox" v-model="timeCapsule" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="options" v-if="timeCapsule">
+              <p class="form-subtitle">Behavior</p>
+              <label class="switch" v-if="timeCapsule">
+                <input type="checkbox" v-model="behaviorIsSend" :disabled="!hidden" />
+                <span class="slider round"></span>
+              </label>
+              <p class="form-subtitle">{{ behaviorIsSend ? "Send" : "Delete" }}</p>
             </div>
           </div>
         </fieldset>
@@ -86,7 +132,13 @@ body {
   flex-direction: column;
   background: #f0e7d8;
 }
-
+.navigation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 20%;
+}
 .create-form {
   display: flex;
   flex-direction: column;

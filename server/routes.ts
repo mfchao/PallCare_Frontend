@@ -357,11 +357,6 @@ class Routes {
     return await Delay.delete(_id);
   }
 
-  @Router.delete("delay/content/:_id")
-  async deleteDelayByContent(_id: ObjectId, behavior: "send" | "delete" | "reveal" | "hide" = "send") {
-    return await Delay.deletedelayByContent(_id, behavior);
-  }
-
   @Router.patch("/delay/:_id")
   async updateDelay(session: WebSessionDoc, _id: ObjectId, update: Partial<DelayDoc>) {
     return await Delay.updateDelay(_id, update);
@@ -584,7 +579,7 @@ class Routes {
       const thedelay = await Delay.getDelayByContent(_id);
       if (thedelay !== null) {
         const delaydate = new Date(delay);
-        await Delay.updateDelay(thedelay[0]._id, { activation: delaydate });
+        await Delay.updateDelay(thedelay._id, { activation: delaydate });
         return { msg: "Letter updated!", delay: thedelay };
       }
     }

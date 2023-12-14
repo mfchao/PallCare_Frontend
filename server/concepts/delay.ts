@@ -76,16 +76,6 @@ export default class DelayConcept {
     return result[0];
   }
 
-  async deletedelayByContent(content: ObjectId, behavior: "send" | "delete" | "reveal" | "hide") {
-    const delays = await this.getDelayByContent(content);
-    for (const delay of delays) {
-      if (delay.behavior === behavior) {
-        await this.delays.deleteOne({ _id: delay._id });
-      }
-    }
-    return { msg: "Deleted Delay!" };
-  }
-
   async getDelaysByOwner(owner: ObjectId) {
     return await this.delays.readMany({ owner }, { sort: { activation: 1, dateUpdated: -1 } });
   }
