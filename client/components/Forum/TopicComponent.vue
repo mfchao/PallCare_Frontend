@@ -116,13 +116,13 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="topic">
     <!-- Add icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div class="card" v-if="isInTopic">
         <div class="top">
           <text class="date">{{ formatEntryDate(currentTopic.dateCreated) }}</text>
-          <text class="author" @click="router.push({ path: `/profile/${currentTopic.author}` })">BY {{ currentTopic.author }}</text>   
+          <text class="author" @click="router.push({ path: `/profile/${currentTopic.author}` })">by {{ currentTopic.author }}</text>   
         </div> 
         <div class="top">
           <text class="topictitle">{{ currentTopic.title }}</text>
@@ -166,6 +166,12 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
+.topic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
 .card-forum{
   display: flex;
   width: 300px;
@@ -220,6 +226,7 @@ p {
   display: flex;
   width: 207px;
   height: 18px;
+  text-decoration: underline;
   flex-direction: column;
   justify-content: flex-end;
   flex-shrink: 0;

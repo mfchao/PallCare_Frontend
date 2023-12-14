@@ -51,10 +51,10 @@ const deletePost = async () => {
   display: flex;
   width: 300px;
   height: 20px;
-  padding: 0px -10px;
+  padding: 0px 10px 0px 10px;
   flex-direction: row;
   align-items: center;
-  gap: 40px;
+  gap: 10px;
   flex-shrink: 0;
 }
 .date {
