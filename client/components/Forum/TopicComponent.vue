@@ -152,9 +152,8 @@ onBeforeMount(async () => {
           <text class="topiccontent">{{ props.topic.content }}</text>
         </div>
     </div>
-    
+    <CreatePostForm v-if="isCreatingResponse" @refreshResponses="refreshResponses" />
     <section class="responses" v-if="isInTopic && loaded && responses.length !== 0">
-      <CreatePostForm v-if="isCreatingResponse" @refreshResponses="refreshResponses" />
       <article v-for="response in responses" :key="response._id">
         <Suspense>
           <PostComponent :post="response" />
