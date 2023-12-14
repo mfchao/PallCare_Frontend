@@ -6,7 +6,7 @@ import { useWishStore } from "../../stores/wish";
 import { fetchy } from "../../utils/fetchy";
 
 const { setNavOn } = useNavigationStore();
-const{ getWishById } = useWishStore();
+const { getWishById } = useWishStore();
 const props = defineProps(["_id"]);
 const content = ref("");
 const visibility = ref("");
@@ -14,7 +14,7 @@ const emit = defineEmits(["editWish", "refreshWishes"]);
 
 const editWish = async () => {
   try {
-    await fetchy(`/api/wishes/${props._id}`, "PATCH", { body: { update: { content: content.value , visibility: visibility.value } } });
+    await fetchy(`/api/wishes/${props._id}`, "PATCH", { body: { update: { content: content.value, visibility: visibility.value } } });
   } catch (e) {
     return;
   }
@@ -35,48 +35,48 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <div class="navigation">
-      <img @click="returnToWish()" src="@/assets/images/back.svg"/>
-      <h1>Edit Wish</h1>
+  <div class="navigation">
+    <img @click="returnToWish()" src="@/assets/images/back.svg" />
+    <h1>Edit Wish</h1>
+  </div>
+  <form class="create-form" @submit.prevent="editWish">
+    <div calss="inputspace">
+      <textarea class="wish-content" id="content" v-model="content" required>{{ content }}</textarea>
     </div>
-    <form class="create-form" @submit.prevent="editWish">
-        <div calss="inputspace">
-            <textarea class="wish-content" id="content" v-model="content" required>{{ content }}</textarea>
+    <div class="setting">
+      <div class="field-title">
+        <p class="setting-title">Settings</p>
+        <span class="badge">?</span>
+      </div>
+      <fieldset class="wish-fields" style="{ height: timeCapsule ? '150px' : '120px' }">
+        <div class="left">
+          <!-- Private setting -->
+          <div class="options">
+            <p class="form-subtitle">Private</p>
+            <label class="switch">
+              <input type="radio" id="private" name="visibility" value="private" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="options">
+            <p class="form-subtitle">Contacts Only</p>
+            <label class="switch">
+              <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="options">
+            <p class="form-subtitle">Public</p>
+            <label class="switch">
+              <input type="radio" id="public" name="visibility" value="public" v-model="visibility" />
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <div class="setting">
-            <div class="field-title">
-            <p class="setting-title">Settings</p>
-            <span class="badge">?</span>
-            </div>
-            <fieldset class="wish-fields" style="{ height: timeCapsule ? '150px' : '120px' }">
-              <div class="left">
-                <!-- Private setting -->
-                <div class="options">
-                    <p class="form-subtitle">Private</p>
-                    <label class="switch">
-                    <input type="radio" id="private" name="visibility" value="private" v-model="visibility" />
-                    <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="options">
-                    <p class="form-subtitle">Contacts Only</p>
-                    <label class="switch">
-                    <input type="radio" id="contacts" name="visibility" value="contacts" v-model="visibility"/>
-                    <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="options">
-                    <p class="form-subtitle">Public</p>
-                    <label class="switch">
-                    <input type="radio" id="public" name="visibility" value="public" v-model="visibility" />
-                    <span class="slider round"></span>
-                    </label>
-                </div>
-              </div>
-            </fieldset>
-        </div>
-        <button type="submit" class="bluebuttoncenterlong">Save</button>
-    </form>
+      </fieldset>
+    </div>
+    <button type="submit" class="bluebuttoncenterlong">Save</button>
+  </form>
 </template>
 
 <style scoped>
@@ -139,7 +139,7 @@ textarea.wish-content {
 }
 .wish-fields {
   display: flex;
-  width:290px;
+  width: 290px;
   height: 120px;
   padding: 10px 0px 10px 10px;
   align-items: column;
@@ -148,7 +148,7 @@ textarea.wish-content {
   border-radius: var(--numbers-spacing-12, 12px);
   border: 1.5px solid #000;
 }
-.left{
+.left {
   gap: 12px;
 }
 .options {
@@ -157,13 +157,13 @@ textarea.wish-content {
   gap: 22px;
 }
 
-.form-subtitle{
+.form-subtitle {
   color: #000;
   font-family: SF Pro Display;
   font-style: normal;
   font-weight: 500;
   height: 1px;
-  line-height: 0
+  line-height: 0;
   /* line-height: 103.822%; 13.497px */
 }
 </style>

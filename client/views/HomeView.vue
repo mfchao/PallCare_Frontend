@@ -48,11 +48,11 @@ async function contacts() {
 }
 
 async function diary() {
-  void router.push({ name: "DiaryF" });
+  void router.push({ path: `/diaryF/${patientUsername.value}` });
 }
 
 async function wish() {
-  void router.push({ name: "WishF" });
+  void router.push({ path: `/wishF/${patientUsername.value}` });
 }
 
 async function letter() {
