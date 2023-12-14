@@ -116,7 +116,7 @@ onBeforeMount(async () => {
           </div>
           <!-- TIme capsule setting -->
           <div class="options">
-            <p class="form-subtitle">Add to Time Capsule</p>
+            <p class="form-subtitle">Add to Time Machine</p>
             <label class="switch">
               <input type="checkbox" v-model="timeCapsule" />
               <span class="slider round"></span>

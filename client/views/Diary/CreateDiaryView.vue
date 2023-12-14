@@ -30,14 +30,14 @@ async function submitForm() {
   await router.push({ name: "Diary" });
 }
 
-function back()  {
+function back() {
   setNavOn();
-  router.push({ name: 'Diary' })
+  router.push({ name: "Diary" });
 }
 
-onBeforeMount(async()=> {
+onBeforeMount(async () => {
   setNavOff();
-})
+});
 </script>
 <template>
   <body>
@@ -84,7 +84,7 @@ onBeforeMount(async()=> {
             </div>
             <!-- Time capsule setting -->
             <div class="options">
-              <p class="form-subtitle">Add to Time Capsule</p>
+              <p class="form-subtitle">Add to Time Machine</p>
               <label class="switch">
                 <input type="checkbox" v-model="timeCapsule" />
                 <span class="slider round"></span>
